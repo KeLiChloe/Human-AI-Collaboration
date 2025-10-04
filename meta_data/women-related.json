@@ -1,0 +1,25 @@
+{
+    "core_gender_terms": [
+            "woman", "women", "female", "feminine", "girl", "girls", "lady", "ladies",
+            "gender", "gendered", "transwoman", "women’s"
+    ],
+    "health_and_biology": [
+        "bra", "breast", "ovary", "ovarian", "cervix", "cervical", "vaginal", "uterus", "uterine", "fallopian",
+        "menstruation", "menstrual", "PMS", "menopause", "perimenopause",
+        "estrogen", "progesterone", "endometriosis", "fibroids", "PCOS",
+        "gynecology", "obstetrics", "obstetric", "OBGYN", "reproductive health",
+        "contraception", "birth control", "fertility", "infertility", "in vitro", "IVF",
+        "embryo transfer", "gestation", "pregnancy", "pregnant", "lactation", "breastfeeding", "hpv",
+        "tampon", "lingerie"
+    ],
+    "maternal_and_childcare": [
+        "mother", "mothers", "maternal", "mom", "mama", "postpartum", "maternity",
+        "childbirth", "delivery", "perinatal", "neonatal", "prenatal", "abortion", "miscarriage",
+        "childcare", "child care"
+    ],
+    "safety_and_design": [
+        "female-specific", "women-only",
+        "sexual assault", "harassment", "violence", "rape"
+    ]
+}
+

@@ -1,0 +1,329 @@
+		//MAIN CODE START
+        public static RedisResult[] load(HttpContext context, string search_string)
+        {
+            string lastname = "";
+            string firstname = "";
+
+            Get_Lastname_Firstname_From_Name(context, search_string, ref firstname, ref lastname);
+
+            RedisResult r = new RedisResult();
+            bool hasresult = false;
+
+            RedisResult[] r1 = ICONSurnameDiversityRaceByCountry.load2(context, lastname, 70, search_string);
+            if (r1.Length > 0 && r1[0].htmls.Count > 0)
+            {
+                hasresult = true;
+                r.htmls.Add($"<h2>{r1[0].h2}</h2>");
+                foreach (string html in r1[0].htmls) r.htmls.Add(html);
+            }
+
+            if (hasresult)
+            {
+                r.htmls.Insert(0, "<script>$('#Prior_Probability_Distributions_Header').show();</script>");
+            }
+
+            return new RedisResult[] { r };
+        }
+		//MAIN CODE END
+
+        public static void Get_Lastname_Firstname_From_Name(HttpContext context, string name, ref string firstname, ref string lastname)
+        {
+            string filename = Common.GetEngineDirectory() + "name_suffix.csv";
+            List<string> suffix_list = File.ReadAllLines(filename).ToList();
+
+            name = name.Replace("%20", "_");
+            List<string> name_array = null;
+            if (name.Contains("_"))
+                name_array = name.Split('_').ToList();
+            else if (name.Contains(","))
+                name_array = name.Split(',').ToList();
+            else if (name.Contains(" "))
+                name_array = name.Split(' ').ToList();
+            else if (name.Contains("+"))
+                name_array = name.Split('+').ToList();
+
+            if (name_array != null)
+            {
+                name_array.RemoveAll(x => name_array.Any(d => x.EndsWith(".") && x.Length == 2));
+                foreach (string suffix in suffix_list)
+                {
+                    name_array.RemoveAll(x => name_array.Any(d => x.ToUpper() == suffix));
+                }
+            }
+
+            
+            if (name_array.Count > 1)
+            {
+                firstname = name_array[0].Trim(',', ' ');
+                lastname = name_array[1].Trim(',', ' ');
+                return;
+            }
+
+
+            if (name_array != null && name_array.Count > 1)
+            {
+                string name_part1 = name_array[0].Trim(',', ' ');
+                string name_part2 = name_array[1].Trim(',', ' ');
+
+                GetLastName_Count_From_Solr(context, name_part1, out int lastname1, out int firstname1);
+                GetLastName_Count_From_Solr(context, name_part2, out int lastname2, out int firstname2);
+
+                if (firstname1 == 0 && firstname2 > 0 && lastname1 > lastname2)
+                {
+                    lastname = name_part1;
+                    firstname = name_part2;
+                }
+                else if (firstname1 == 0 && firstname2 > 0)   //example: Obetz Sean
+                {
+                    lastname = name_part1;
+                    firstname = name_part2;
+                }
+                else if (firstname2 == 0 && firstname1 > 0)
+                {
+                    lastname = name_part2;
+                    firstname = name_part1;
+                }
+                else if (lastname1 > 0 && lastname2 == 0)
+                {
+                    lastname = name_part1;
+                    firstname = name_part2;
+                }
+                else if (lastname2 > 0 && lastname1 == 0)
+                {
+                    lastname = name_part2;
+                    firstname = name_part1;
+                }
+                else if (lastname1 > lastname2 && firstname1 < firstname2)
+                {
+                    lastname = name_part1;
+                    firstname = name_part2;
+                }
+                else if (lastname2 > lastname1 && firstname2 < firstname1)
+                {
+                    lastname = name_part2;
+                    firstname = name_part1;
+                }
+                else if (lastname1 > 0 && lastname2 > 0 && firstname1 > 0 && firstname2 > 0)
+                {
+                    if ((lastname1 - lastname2) > (firstname1 - firstname2))
+                    {
+                        lastname = name_part1;
+                        firstname = name_part2;
+                    }
+                    else
+                    {
+                        lastname = name_part2;
+                        firstname = name_part1;
+                    }
+                }
+                else
+                {
+                    firstname = name_part1;
+                    lastname = name_part2;
+                }
+            }
+            else if (name_array != null && name_array.Count == 1)
+            {
+                firstname = name_array[0];
+                lastname = name_array[0];
+            }
+            else
+            {
+                firstname = name;
+                lastname = name;
+            }
+        }
+
+
+        public static void GetLastName_Count_From_Solr(HttpContext context, string lastname, out int lastname_count, out int firstname_count)
+        {
+            string solr_query = $"https://solr-facebooknames.totosearch.org/solr/facebook_lastname/select?fl=lastname_count,%20firstname_count&q=lastname:{lastname.ToLower()}&sort=lastname_count%20desc";
+            string solr_json = Common.DownloadHtml2(solr_query, credentials: SOLR.CREDENTIAL);
+            dynamic jsondata = JObject.Parse(solr_json);
+            lastname_count = 0;
+            firstname_count = 0;
+            if (jsondata.response.numFound > 0 && jsondata.response.docs[0].lastname_count != null && jsondata.response.docs[0].firstname_count != null)
+            {
+                lastname_count = jsondata.response.docs[0].lastname_count;
+                firstname_count = jsondata.response.docs[0].firstname_count;
+            }
+        }
+        public static void GetFirstName_Count_From_Solr(HttpContext context, string firstname, out int lastname_count, out int firstname_count)
+        {
+            string solr_query = $"https://solr-facebooknames.totosearch.org/solr/facebook_firstname/select?fl=lastname_count,%20firstname_count&q=firstname:{firstname.ToLower()}&sort=lastname_count%20desc";
+            string solr_json = Common.DownloadHtml2(solr_query, credentials: SOLR.CREDENTIAL);
+            dynamic jsondata = JObject.Parse(solr_json);
+            lastname_count = 0;
+            firstname_count = 0;
+            if (jsondata.response.numFound > 0 && jsondata.response.docs[0].lastname_count != null && jsondata.response.docs[0].firstname_count != null)
+            {
+                lastname_count = jsondata.response.docs[0].lastname_count;
+                firstname_count = jsondata.response.docs[0].firstname_count;
+            }
+        }
+		
+		
+		
+		
+        public static RedisResult[] load2(HttpContext context, string search_string, int rank, string full_name = "")
+        {
+            ICONSurnamePriorProbabilityDistribution.stats.Add($"ICONSurnameDiversityRaceByCountry = Started @ {DateTime.Now.ToString("hh:mm:ss.fff")}");
+            Speed s = new Speed();
+            List<RedisResult> rr = new List<RedisResult>();
+
+            Race race = CalculatePercentages(context, search_string);
+            if (race == null)
+            {
+                ICONSurnamePriorProbabilityDistribution.stats.Add($"ICONSurnameDiversityRaceByCountry = {s.Stop()}");
+                return rr.ToArray();
+            }
+
+            #region Pie
+            List<ICONGivenNameGenderDiversity.Pie> data = new List<ICONGivenNameGenderDiversity.Pie>();
+            data.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "White"), y = race.percent_white });
+            data.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Black"), y = race.percent_black });
+            data.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Asian"), y = race.percent_asian });
+            data.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Hispanic / Latino"), y = race.percent_hispanic });
+            data.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Native American"), y = race.percent_americans });
+            //data_racial.Add(new ICONGivenNameGenderDiversity.Pie() { name = "Native Hawaiian", y = percent_pacific });
+            data.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Mixed"), y = race.percent_mixed });
+            data.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Other"), y = race.percent_other });
+            data = data.OrderByDescending(i => i.y).ToList();
+            #endregion
+
+            #region Output
+            string name = Common.ToTitleCase(search_string);
+            full_name = Common.ToTitleCase(full_name);
+            string div_id = Common.GetRandomString(6);
+            
+            StringBuilder html = new StringBuilder();
+            RedisResult r = new RedisResult();
+            r.htmls.Add($"<h2>{Translate.Phrase(context, $"Racial Diversity")} ({Translate.Phrase(context, "World")})</h2>");
+            r.rank = rank;
+
+            // Heterosexual Homosexual
+            r.htmls.Add($"<div style='padding-bottom:25px'><div id='{div_id}' style='max-width:700px'></div>{ICONGivenNameGenderDiversity.ConstructDataTable(context, data, "Race", 3).ConstructHTML()}{ICONGivenNameGenderDiversity.ConstructMetricTable(context, data).ConstructHTML()}</div>");
+
+            // JavaScripts
+            html.Append("<script type='text/javascript'>");
+            html.Append("addJS('text/javascript','/on-demand/highcharts-5.0.11.js');");
+            html.Append("addJS('text/javascript','/on-demand/highcharts-5.0.11-exporting.js');");
+            html.Append("addJS('text/javascript','/on-demand/tinysort.min.js');");
+            html.Append("addJS('text/javascript','/on-demand/statistics_sort.js');");
+
+            // Pie Charts
+            if (full_name != "")
+                html.Append($"highcharts_plotpie('{div_id}', \"{full_name} {Translate.Phrase(context, "(name): Racial diversity - world (estimate*)")}\", \"{full_name}\", {JsonConvert.SerializeObject(data)}, {rank});");
+            else
+                html.Append($"highcharts_plotpie('{div_id}', \"{name} {Translate.Phrase(context, "(surname): Racial diversity - world (estimate*)")}\", \"{name}\", {JsonConvert.SerializeObject(data)}, {rank});");
+            html.Append("</script>");
+
+            // get correct casing country name
+            //string c = Countries.list.Where(i => i.Value.name.Equals(top_country, StringComparison.OrdinalIgnoreCase)).Select(i => i.Value.display).FirstOrDefault();
+                
+            r.htmls.Add(html.ToString());
+
+            rr.Add(r);
+            #endregion
+
+            ICONSurnamePriorProbabilityDistribution.stats.Add($"ICONSurnameDiversityRaceByCountry = {s.Stop()}");
+
+            return rr.ToArray();
+        }
+		
+		public class Race
+        {
+            public string top_country = "";
+            public double percent_white = 0;
+            public double percent_black = 0;
+            public double percent_asian = 0;
+            public double percent_hispanic = 0;
+            public double percent_americans = 0;
+            public double percent_mixed = 0;
+            public double percent_other = 0;
+        }
+		
+		public static Race CalculatePercentages(HttpContext context, string search_string)
+        {
+            List<Dictionary<string, object>> rows = Common.SQLiteQuery("forebears-surnames.sqlite", "SELECT * FROM surnames WHERE name_lookup = @str ORDER BY incidence DESC;", new Dictionary<string, string> { { "@str", search_string.ToLower() } });
+            if (rows.Count == 0)
+                return null;
+
+            Dictionary<string, double> frequencies = new Dictionary<string, double>();
+            foreach (var row in rows)
+            {
+                if (!frequencies.ContainsKey(row["country"].ToString()))
+                    frequencies.Add(row["country"].ToString(), Convert.ToDouble(row["incidence"].ToString()));
+                else
+                    frequencies[row["country"].ToString()] += Convert.ToDouble(row["incidence"].ToString());
+            }
+
+            string[] countries = frequencies.Select(i => i.Key).ToArray();
+
+            rows = Common.SQLiteQuery("race-by-country.sqlite", $"SELECT * FROM races WHERE country IN (\"{string.Join("\",\"", countries)}\");");
+
+            if (rows.Count == 0)
+                return null;
+
+            Dictionary<string, WeightAverage> averages = new Dictionary<string, WeightAverage>();
+
+            foreach (var row in rows)
+            {
+                bool skip = false;
+                string country = row["country"].ToString();
+                if (country == "UNITED STATES")
+                {
+                    List<Dictionary<string, object>> rows_usa = Common.SQLiteQuery("surnames_stats.sqlite", "SELECT * FROM data WHERE surname = @str;", new Dictionary<string, string> { { "@str", search_string.ToUpper() } });
+                    if (rows_usa.Count > 0)
+                    {
+                        Add(ref averages, Ethnicity.WHITE, frequencies[country], Convert.ToDouble(rows_usa[0]["white"].ToString()));
+                        Add(ref averages, Ethnicity.BLACK, frequencies[country], Convert.ToDouble(rows_usa[0]["black"].ToString()));
+                        Add(ref averages, Ethnicity.ASIAN, frequencies[country], Convert.ToDouble(rows_usa[0]["asian"].ToString()));
+                        Add(ref averages, Ethnicity.HISPANIC, frequencies[country], Convert.ToDouble(rows_usa[0]["hispanic_latino"].ToString()));
+                        //Add(ref averages, "hawaiian", frequencies[country], Convert.ToDouble(row["native_hawaiian_or_other_pacific_islander"].ToString()));
+                        Add(ref averages, Ethnicity.NATIVE_AMERICAN, frequencies[country], Convert.ToDouble(rows_usa[0]["native_american"].ToString()));
+                        Add(ref averages, Ethnicity.MIXED, frequencies[country], Convert.ToDouble(rows_usa[0]["mixed"].ToString()));
+                        Add(ref averages, Ethnicity.OTHER, frequencies[country], Convert.ToDouble(rows_usa[0]["other"].ToString()));
+                        skip = true;
+                    }
+                }
+                if (!skip)
+                {
+                    Add(ref averages, Ethnicity.WHITE, frequencies[country], Convert.ToDouble(row["white"].ToString()));
+                    Add(ref averages, Ethnicity.BLACK, frequencies[country], Convert.ToDouble(row["black"].ToString()));
+                    Add(ref averages, Ethnicity.ASIAN, frequencies[country], Convert.ToDouble(row["asian"].ToString()));
+                    Add(ref averages, Ethnicity.HISPANIC, frequencies[country], Convert.ToDouble(row["hispanic"].ToString()));
+                    //Add(ref averages, "hawaiian", frequencies[country], Convert.ToDouble(row["native_hawaiian_or_other_pacific_islander"].ToString()));
+                    Add(ref averages, Ethnicity.NATIVE_AMERICAN, frequencies[country], Convert.ToDouble(row["native_americans"].ToString()));
+                    Add(ref averages, Ethnicity.MIXED, frequencies[country], Convert.ToDouble(row["mixed"].ToString()));
+                    Add(ref averages, Ethnicity.OTHER, frequencies[country], Convert.ToDouble(row["other"].ToString()));
+                }
+            }
+
+            averages[Ethnicity.WHITE].weight_average = averages[Ethnicity.WHITE].weighted_sum / averages[Ethnicity.WHITE].sum;
+            averages[Ethnicity.BLACK].weight_average = averages[Ethnicity.BLACK].weighted_sum / averages[Ethnicity.BLACK].sum;
+            averages[Ethnicity.ASIAN].weight_average = averages[Ethnicity.ASIAN].weighted_sum / averages[Ethnicity.ASIAN].sum;
+            averages[Ethnicity.HISPANIC].weight_average = averages[Ethnicity.HISPANIC].weighted_sum / averages[Ethnicity.HISPANIC].sum;
+            //averages["hawaiian"].weight_average = averages["hawaiian"].weighted_sum / averages["hawaiian"].sum;
+            averages[Ethnicity.NATIVE_AMERICAN].weight_average = averages[Ethnicity.NATIVE_AMERICAN].weighted_sum / averages[Ethnicity.NATIVE_AMERICAN].sum;
+            averages[Ethnicity.MIXED].weight_average = averages[Ethnicity.MIXED].weighted_sum / averages[Ethnicity.MIXED].sum;
+            averages[Ethnicity.OTHER].weight_average = averages[Ethnicity.OTHER].weighted_sum / averages[Ethnicity.OTHER].sum;
+            double total = averages.Sum(i => i.Value.weight_average);
+
+            Race race = new Race();
+            race.top_country = countries[0];
+            race.percent_white = Math.Round((averages[Ethnicity.WHITE].weight_average / total) * 100, 3);
+            race.percent_black = Math.Round((averages[Ethnicity.BLACK].weight_average / total) * 100, 3);
+            race.percent_asian = Math.Round((averages[Ethnicity.ASIAN].weight_average / total) * 100, 3);
+            race.percent_hispanic = Math.Round((averages[Ethnicity.HISPANIC].weight_average / total) * 100, 3);
+            //double percent_pacific = Math.Round((averages["hawaiian"].weight_average / total) * 100, 3);
+            race.percent_americans = Math.Round((averages[Ethnicity.NATIVE_AMERICAN].weight_average / total) * 100, 3);
+            race.percent_mixed = Math.Round((averages[Ethnicity.MIXED].weight_average / total) * 100, 3);
+
+            //double percent_other = Math.Round(100 - percent_white - percent_black - percent_asian - percent_hispanic - percent_pacific - percent_americans - percent_mixed, 3);
+            race.percent_other = Math.Round(100 - race.percent_white - race.percent_black - race.percent_asian - race.percent_hispanic - race.percent_americans - race.percent_mixed, 3);
+
+            return race;
+        }		
+		
+		

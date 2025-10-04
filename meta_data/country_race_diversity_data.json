@@ -1,0 +1,1502 @@
+{
+    "AFGHANISTAN": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "ALBANIA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": 0.056001534354847345,
+        "simpson_index": 0.01980000000000004,
+        "inverse_dominance": 1.0101010101010102
+    },
+    "ALGERIA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "AMERICAN SAMOA": {
+        "highest_ratio_race": "native_hawaiian_or_other_pacific_islander",
+        "shannon_entropy": 0.3423829148191509,
+        "simpson_index": 0.14220599999999994,
+        "inverse_dominance": 1.081081081081081
+    },
+    "ANDORRA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "ANGOLA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.6731618174858301,
+        "simpson_index": 0.38860000000000006,
+        "inverse_dominance": 1.3333333333333333
+    },
+    "ANGUILLA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.6361798248330488,
+        "simpson_index": 0.26709800000000006,
+        "inverse_dominance": 1.1723329425556859
+    },
+    "ANTARCTICA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "ANTIGUA AND BARBUDA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.5479456237480019,
+        "simpson_index": 0.23330800000000007,
+        "inverse_dominance": 1.145475372279496
+    },
+    "ARGENTINA": {
+        "highest_ratio_race": "hispanic",
+        "shannon_entropy": 0.13920296767376003,
+        "simpson_index": 0.054624000000000006,
+        "inverse_dominance": 1.02880658436214
+    },
+    "ARMENIA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "ARUBA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.8289181991587545,
+        "simpson_index": 0.402706,
+        "inverse_dominance": 1.3175230566534915
+    },
+    "AUSTRALIA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": 0.5468788982287012,
+        "simpson_index": 0.3419420000000001,
+        "inverse_dominance": 1.277139208173691
+    },
+    "AUSTRIA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": 0.3250829733914482,
+        "simpson_index": 0.17999999999999994,
+        "inverse_dominance": 1.1111111111111112
+    },
+    "AZERBAIJAN": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "BAHAMAS": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.4091632492460747,
+        "simpson_index": 0.17583800000000005,
+        "inverse_dominance": 1.1037527593818985
+    },
+    "BAHRAIN": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": 0.8186014878853043,
+        "simpson_index": 0.525286,
+        "inverse_dominance": 1.9342359767891681
+    },
+    "BANGLADESH": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "BARBADOS": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.3611925948548939,
+        "simpson_index": 0.1443399999999999,
+        "inverse_dominance": 1.0822510822510822
+    },
+    "BELARUS": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "BELGIUM": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "BELIZE": {
+        "highest_ratio_race": "mixed",
+        "shannon_entropy": 1.2785196253024298,
+        "simpson_index": 0.664618,
+        "inverse_dominance": 2.066115702479339
+    },
+    "BENIN": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "BERMUDA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 1.0882653353985905,
+        "simpson_index": 0.602902,
+        "inverse_dominance": 1.8587360594795541
+    },
+    "BHUTAN": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "BOLIVIA, PLURINATIONAL STATE OF": {
+        "highest_ratio_race": "hispanic",
+        "shannon_entropy": 0.9199519366630087,
+        "simpson_index": 0.4849999999999999,
+        "inverse_dominance": 1.4705882352941175
+    },
+    "BONAIRE, SINT EUSTATIUS AND SABA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.5927447472831617,
+        "simpson_index": 0.28454999999999986,
+        "inverse_dominance": 1.1918951132300357
+    },
+    "BOSNIA AND HERZEGOVINA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "BOTSWANA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.25363894692169137,
+        "simpson_index": 0.13019999999999987,
+        "inverse_dominance": 1.075268817204301
+    },
+    "BOUVET ISLAND": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "BRAZIL": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": 0.9902995666866602,
+        "simpson_index": 0.5807960000000001,
+        "inverse_dominance": 2.0964360587002093
+    },
+    "BRITISH INDIAN OCEAN TERRITORY": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "BRUNEI DARUSSALAM": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "BULGARIA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": 0.04170835854189348,
+        "simpson_index": 0.013902000000000081,
+        "inverse_dominance": 1.0070493454179255
+    },
+    "BURKINA FASO": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "BURUNDI": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "CAMBODIA": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "CAMEROON": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "CANADA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": 0.48100169650062463,
+        "simpson_index": 0.24155799999999994,
+        "inverse_dominance": 1.1560693641618498
+    },
+    "CAPE VERDE": {
+        "highest_ratio_race": "mixed",
+        "shannon_entropy": 0.6456502104397004,
+        "simpson_index": 0.4174,
+        "inverse_dominance": 1.4084507042253522
+    },
+    "CAYMAN ISLANDS": {
+        "highest_ratio_race": "mixed",
+        "shannon_entropy": 1.3321790402101223,
+        "simpson_index": 0.72,
+        "inverse_dominance": 2.5
+    },
+    "CENTRAL AFRICAN REPUBLIC": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "CHAD": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "CHANNEL ISLANDS": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "CHILE": {
+        "highest_ratio_race": "hispanic",
+        "shannon_entropy": 0.3486009842646068,
+        "simpson_index": 0.19735799999999992,
+        "inverse_dominance": 1.124859392575928
+    },
+    "CHINA": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "CHRISTMAS ISLAND": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": 0.5004024235381879,
+        "simpson_index": 0.31999999999999984,
+        "inverse_dominance": 1.25
+    },
+    "COCOS (KEELING) ISLANDS": {
+        "highest_ratio_race": "native_hawaiian_or_other_pacific_islander",
+        "shannon_entropy": 0.23783467566409197,
+        "simpson_index": 0.11980800000000014,
+        "inverse_dominance": 1.0683760683760684
+    },
+    "COLOMBIA": {
+        "highest_ratio_race": "hispanic",
+        "shannon_entropy": 0.49053211274805986,
+        "simpson_index": 0.22598200000000024,
+        "inverse_dominance": 1.1415525114155252
+    },
+    "COMOROS": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "CONGO": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "CONGO, THE DEMOCRATIC REPUBLIC OF THE": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "COOK ISLANDS": {
+        "highest_ratio_race": "native_hawaiian_or_other_pacific_islander",
+        "shannon_entropy": 0.364927814852091,
+        "simpson_index": 0.20967800000000025,
+        "inverse_dominance": 1.135073779795687
+    },
+    "COSTA RICA": {
+        "highest_ratio_race": "hispanic",
+        "shannon_entropy": 0.4026771105167801,
+        "simpson_index": 0.1799719999999999,
+        "inverse_dominance": 1.1074197120708749
+    },
+    "COTE D'IVOIRE": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "CROATIA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "CUBA": {
+        "highest_ratio_race": "hispanic",
+        "shannon_entropy": 0.8582116260968029,
+        "simpson_index": 0.5097140000000001,
+        "inverse_dominance": 1.5600624024961
+    },
+    "CURACAO": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.7401256540510972,
+        "simpson_index": 0.3605379999999999,
+        "inverse_dominance": 1.2658227848101264
+    },
+    "CYPRUS": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "CZECH REPUBLIC": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "DENMARK": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "DJIBOUTI": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.1985152433458726,
+        "simpson_index": 0.09500000000000008,
+        "inverse_dominance": 1.0526315789473684
+    },
+    "DOMINICA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.5051443513898135,
+        "simpson_index": 0.2407260000000001,
+        "inverse_dominance": 1.1547344110854503
+    },
+    "DOMINICAN REPUBLIC": {
+        "highest_ratio_race": "hispanic",
+        "shannon_entropy": 0.8263853690734221,
+        "simpson_index": 0.4611859999999999,
+        "inverse_dominance": 1.4204545454545454
+    },
+    "ECUADOR": {
+        "highest_ratio_race": "hispanic",
+        "shannon_entropy": 1.0234750580160454,
+        "simpson_index": 0.4650979999999999,
+        "inverse_dominance": 1.3908205841446453
+    },
+    "EGYPT": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": 0.020422924464179912,
+        "simpson_index": 0.005981999999999932,
+        "inverse_dominance": 1.0030090270812437
+    },
+    "EL SALVADOR": {
+        "highest_ratio_race": "hispanic",
+        "shannon_entropy": 0.44329797519239056,
+        "simpson_index": 0.23904800000000004,
+        "inverse_dominance": 1.1587485515643106
+    },
+    "EQUATORIAL GUINEA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "ERITREA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "ESTONIA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "ETHIOPIA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "FALKLAND ISLANDS (MALVINAS)": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "FAROE ISLANDS": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "FIJI": {
+        "highest_ratio_race": "native_hawaiian_or_other_pacific_islander",
+        "shannon_entropy": 0.1835211367833753,
+        "simpson_index": 0.08594999999999997,
+        "inverse_dominance": 1.0471204188481675
+    },
+    "FINLAND": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "FRANCE": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": 0.2790213162094921,
+        "simpson_index": 0.11460000000000004,
+        "inverse_dominance": 1.0638297872340425
+    },
+    "FRENCH GUIANA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.6225752839491666,
+        "simpson_index": 0.3367999999999999,
+        "inverse_dominance": 1.25
+    },
+    "FRENCH POLYNESIA": {
+        "highest_ratio_race": "native_hawaiian_or_other_pacific_islander",
+        "shannon_entropy": 0.6784899938962452,
+        "simpson_index": 0.36719999999999997,
+        "inverse_dominance": 1.282051282051282
+    },
+    "GABON": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "GAMBIA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "GEORGIA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "GERMANY": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "GHANA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "GIBRALTAR": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "GREECE": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "GREENLAND": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "GRENADA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.5929244231171643,
+        "simpson_index": 0.30240999999999985,
+        "inverse_dominance": 1.2135922330097086
+    },
+    "GUADELOUPE": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.6730116670092565,
+        "simpson_index": 0.48,
+        "inverse_dominance": 1.6666666666666667
+    },
+    "GUAM": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": 0.8362007253767167,
+        "simpson_index": 0.40510599999999997,
+        "inverse_dominance": 1.3175230566534915
+    },
+    "GUATEMALA": {
+        "highest_ratio_race": "hispanic",
+        "shannon_entropy": 0.7610917459284599,
+        "simpson_index": 0.5079919999999999,
+        "inverse_dominance": 1.7857142857142856
+    },
+    "GUERNSEY": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "GUINEA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "GUINEA-BISSAU": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.167944147734173,
+        "simpson_index": 0.07679999999999998,
+        "inverse_dominance": 1.0416666666666667
+    },
+    "GUYANA": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": 1.3107761199880457,
+        "simpson_index": 0.7050960000000001,
+        "inverse_dominance": 2.512562814070352
+    },
+    "HAITI": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.1985152433458726,
+        "simpson_index": 0.09500000000000008,
+        "inverse_dominance": 1.0526315789473684
+    },
+    "HEARD ISLAND AND MCDONALD ISLANDS": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "HOLY SEE (VATICAN CITY STATE)": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "HONDURAS": {
+        "highest_ratio_race": "hispanic",
+        "shannon_entropy": 0.40526482864578195,
+        "simpson_index": 0.1846,
+        "inverse_dominance": 1.1111111111111112
+    },
+    "HONG KONG": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": 0.14838275729589523,
+        "simpson_index": 0.06568799999999997,
+        "inverse_dominance": 1.0351966873706004
+    },
+    "HUNGARY": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "ICELAND": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "INDIA": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "INDONESIA": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "IRAN, ISLAMIC REPUBLIC OF": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "IRAQ": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "IRELAND": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": 0.34488709624353875,
+        "simpson_index": 0.14390599999999987,
+        "inverse_dominance": 1.0822510822510822
+    },
+    "ISLE OF MAN": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": 0.1758459010300168,
+        "simpson_index": 0.06815800000000005,
+        "inverse_dominance": 1.0362694300518136
+    },
+    "ISRAEL": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": 0.18958533851930973,
+        "simpson_index": 0.08958200000000005,
+        "inverse_dominance": 1.0493179433368311
+    },
+    "ITALY": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "JAMAICA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.3310818966130484,
+        "simpson_index": 0.14787400000000017,
+        "inverse_dominance": 1.0857763300760044
+    },
+    "JAPAN": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "JERSEY": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": 0.11322250271460811,
+        "simpson_index": 0.046848,
+        "inverse_dominance": 1.0245901639344261
+    },
+    "JORDAN": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "KAZAKHSTAN": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "KENYA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "KIRIBATI": {
+        "highest_ratio_race": "native_hawaiian_or_other_pacific_islander",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "KOREA, DEMOCRATIC PEOPLE'S REPUBLIC OF": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "KOREA, REPUBLIC OF": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "KOSOVO": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "KUWAIT": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": 0.7715492762990231,
+        "simpson_index": 0.5033260000000002,
+        "inverse_dominance": 1.7301038062283738
+    },
+    "KYRGYZSTAN": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "LAO PEOPLE'S DEMOCRATIC REPUBLIC": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "LATVIA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "LEBANON": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "LESOTHO": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.020422924464179912,
+        "simpson_index": 0.005981999999999932,
+        "inverse_dominance": 1.0030090270812437
+    },
+    "LIBERIA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "LIBYA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": 0.13474216817976675,
+        "simpson_index": 0.05820000000000003,
+        "inverse_dominance": 1.0309278350515465
+    },
+    "LIECHTENSTEIN": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "LITHUANIA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "LUXEMBOURG": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "MACAO": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": 0.4259658156559596,
+        "simpson_index": 0.2062980000000001,
+        "inverse_dominance": 1.1286681715575622
+    },
+    "MACEDONIA, THE FORMER YUGOSLAV REPUBLIC OF": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "MADAGASCAR": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "MALAWI": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "MALAYSIA": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": 0.35067649762003944,
+        "simpson_index": 0.19891199999999998,
+        "inverse_dominance": 1.1261261261261262
+    },
+    "MALDIVES": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "MALI": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "MALTA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "MARSHALL ISLANDS": {
+        "highest_ratio_race": "native_hawaiian_or_other_pacific_islander",
+        "shannon_entropy": 0.098039113279732,
+        "simpson_index": 0.039200000000000124,
+        "inverse_dominance": 1.0204081632653061
+    },
+    "MARTINIQUE": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.6730116670092565,
+        "simpson_index": 0.48,
+        "inverse_dominance": 1.6666666666666667
+    },
+    "MAURITANIA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.6108643020548935,
+        "simpson_index": 0.42000000000000004,
+        "inverse_dominance": 1.4285714285714286
+    },
+    "MAURITIUS": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "MAYOTTE": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "MEXICO": {
+        "highest_ratio_race": "hispanic",
+        "shannon_entropy": 0.6251881834981274,
+        "simpson_index": 0.3126000000000001,
+        "inverse_dominance": 1.2195121951219512
+    },
+    "MICRONESIA, FEDERATED STATES OF": {
+        "highest_ratio_race": "native_hawaiian_or_other_pacific_islander",
+        "shannon_entropy": 0.07366331072932493,
+        "simpson_index": 0.027608000000000077,
+        "inverse_dominance": 1.0141987829614605
+    },
+    "MOLDOVA, REPUBLIC OF": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "MONACO": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "MONGOLIA": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "MONTENEGRO": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "MONTSERRAT": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.5314256319507221,
+        "simpson_index": 0.21527200000000002,
+        "inverse_dominance": 1.1312217194570136
+    },
+    "MOROCCO": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "MOZAMBIQUE": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.06100555859022923,
+        "simpson_index": 0.019832000000000072,
+        "inverse_dominance": 1.0101010101010102
+    },
+    "MYANMAR": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "NAMIBIA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.463313532142682,
+        "simpson_index": 0.22654999999999992,
+        "inverse_dominance": 1.1428571428571428
+    },
+    "NAURU": {
+        "highest_ratio_race": "native_hawaiian_or_other_pacific_islander",
+        "shannon_entropy": 0.11690684913753106,
+        "simpson_index": 0.04875000000000007,
+        "inverse_dominance": 1.0256410256410258
+    },
+    "NEPAL": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": 0.4862229646617922,
+        "simpson_index": 0.30779999999999985,
+        "inverse_dominance": 1.2345679012345678
+    },
+    "NETHERLANDS": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": 0.2896288017005074,
+        "simpson_index": 0.128672,
+        "inverse_dominance": 1.0729613733905579
+    },
+    "NEW CALEDONIA": {
+        "highest_ratio_race": "native_hawaiian_or_other_pacific_islander",
+        "shannon_entropy": 1.1090161975743544,
+        "simpson_index": 0.63121,
+        "inverse_dominance": 1.9841269841269842
+    },
+    "NEW ZEALAND": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": 1.0054116014131889,
+        "simpson_index": 0.5263340000000001,
+        "inverse_dominance": 1.5243902439024393
+    },
+    "NICARAGUA": {
+        "highest_ratio_race": "hispanic",
+        "shannon_entropy": 0.923768321744461,
+        "simpson_index": 0.48440000000000016,
+        "inverse_dominance": 1.4492753623188408
+    },
+    "NIGER": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "NIGERIA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "NIUE": {
+        "highest_ratio_race": "native_hawaiian_or_other_pacific_islander",
+        "shannon_entropy": 0.4501026529399031,
+        "simpson_index": 0.21840000000000004,
+        "inverse_dominance": 1.1363636363636365
+    },
+    "NORFOLK ISLAND": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": 0.9856569018415806,
+        "simpson_index": 0.5862080000000001,
+        "inverse_dominance": 1.773049645390071
+    },
+    "NORTHERN MARIANA ISLANDS": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": 1.065546077013802,
+        "simpson_index": 0.611494,
+        "inverse_dominance": 2.0
+    },
+    "NORWAY": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "OMAN": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "PAKISTAN": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "PALAU": {
+        "highest_ratio_race": "native_hawaiian_or_other_pacific_islander",
+        "shannon_entropy": 0.6815087973764424,
+        "simpson_index": 0.389826,
+        "inverse_dominance": 1.3333333333333333
+    },
+    "PALESTINE, STATE OF": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "PANAMA": {
+        "highest_ratio_race": "hispanic",
+        "shannon_entropy": 1.1211790888533544,
+        "simpson_index": 0.544794,
+        "inverse_dominance": 1.5384615384615383
+    },
+    "PAPUA NEW GUINEA": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "PARAGUAY": {
+        "highest_ratio_race": "hispanic",
+        "shannon_entropy": 0.1985152433458726,
+        "simpson_index": 0.09500000000000008,
+        "inverse_dominance": 1.0526315789473684
+    },
+    "PERU": {
+        "highest_ratio_race": "hispanic",
+        "shannon_entropy": 1.1073517036957423,
+        "simpson_index": 0.565022,
+        "inverse_dominance": 1.6611295681063123
+    },
+    "PHILIPPINES": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "PITCAIRN": {
+        "highest_ratio_race": "native_hawaiian_or_other_pacific_islander",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "POLAND": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "PORTUGAL": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "PUERTO RICO": {
+        "highest_ratio_race": "hispanic",
+        "shannon_entropy": 0.7909722522001241,
+        "simpson_index": 0.40174600000000005,
+        "inverse_dominance": 1.3192612137203166
+    },
+    "QATAR": {
+        "highest_ratio_race": "other",
+        "shannon_entropy": 0.35887877344212193,
+        "simpson_index": 0.20508799999999994,
+        "inverse_dominance": 1.1312217194570136
+    },
+    "REUNION": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "ROMANIA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "RUSSIAN FEDERATION": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "RWANDA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "SAINT BARTHELEMY": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.7579234431794379,
+        "simpson_index": 0.43372599999999983,
+        "inverse_dominance": 1.4044943820224718
+    },
+    "SAINT HELENA, ASCENSION AND TRISTAN DA CUNHA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "SAINT KITTS AND NEVIS": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.36382940492852806,
+        "simpson_index": 0.14272799999999985,
+        "inverse_dominance": 1.081081081081081
+    },
+    "SAINT LUCIA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.5273421122790387,
+        "simpson_index": 0.25976999999999995,
+        "inverse_dominance": 1.1723329425556859
+    },
+    "SAINT MARTIN (FRENCH PART)": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.6730116670092565,
+        "simpson_index": 0.48,
+        "inverse_dominance": 1.6666666666666667
+    },
+    "SAINT PIERRE AND MIQUELON": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "SAINT VINCENT AND THE GRENADINES": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.8101057481761756,
+        "simpson_index": 0.4389059999999999,
+        "inverse_dominance": 1.4044943820224718
+    },
+    "SAMOA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 1.0397207708399179,
+        "simpson_index": 0.625,
+        "inverse_dominance": 2.0
+    },
+    "SAN MARINO": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "SAO TOME AND PRINCIPE": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "SAUDI ARABIA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": 0.3250829733914482,
+        "simpson_index": 0.17999999999999994,
+        "inverse_dominance": 1.1111111111111112
+    },
+    "SENEGAL": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "SERBIA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "SEYCHELLES": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "SIERRA LEONE": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "SINGAPORE": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": 0.14162706960881927,
+        "simpson_index": 0.06195200000000001,
+        "inverse_dominance": 1.0330578512396695
+    },
+    "SINT MAARTEN (DUTCH PART)": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.5927447472831617,
+        "simpson_index": 0.28454999999999986,
+        "inverse_dominance": 1.1918951132300357
+    },
+    "SLOVAKIA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "SLOVENIA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "SOLOMON ISLANDS": {
+        "highest_ratio_race": "native_hawaiian_or_other_pacific_islander",
+        "shannon_entropy": 0.020422924464179912,
+        "simpson_index": 0.005981999999999932,
+        "inverse_dominance": 1.0030090270812437
+    },
+    "SOMALIA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "SOUTH AFRICA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.6765531313042419,
+        "simpson_index": 0.33106599999999997,
+        "inverse_dominance": 1.2360939431396785
+    },
+    "SOUTH GEORGIA AND THE SOUTH SANDWICH ISLANDS": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "SOUTH OSSETIA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "SOUTH SUDAN": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "SPAIN": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": 0.3359322143596015,
+        "simpson_index": 0.18795000000000006,
+        "inverse_dominance": 1.1173184357541899
+    },
+    "SRI LANKA": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "SUDAN": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "SURINAME": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": 1.20618088486926,
+        "simpson_index": 0.666686,
+        "inverse_dominance": 2.4330900243309
+    },
+    "SVALBARD AND JAN MAYEN": {
+        "highest_ratio_race": "native_hawaiian_or_other_pacific_islander",
+        "shannon_entropy": 0.09412135554435352,
+        "simpson_index": 0.03727800000000003,
+        "inverse_dominance": 1.019367991845056
+    },
+    "SWAZILAND": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "SWEDEN": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": 0.41393713039022373,
+        "simpson_index": 0.24795000000000011,
+        "inverse_dominance": 1.1695906432748537
+    },
+    "SWITZERLAND": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "SYRIAN ARAB REPUBLIC": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "TAIWAN, PROVINCE OF CHINA": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "TAJIKISTAN": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "TANZANIA, UNITED REPUBLIC OF": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.056001534354847345,
+        "simpson_index": 0.01980000000000004,
+        "inverse_dominance": 1.0101010101010102
+    },
+    "THAILAND": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "TIMOR-LESTE": {
+        "highest_ratio_race": "native_hawaiian_or_other_pacific_islander",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "TOGO": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "TOKELAU": {
+        "highest_ratio_race": "native_hawaiian_or_other_pacific_islander",
+        "shannon_entropy": 0.23783467566409197,
+        "simpson_index": 0.11980800000000014,
+        "inverse_dominance": 1.0683760683760684
+    },
+    "TONGA": {
+        "highest_ratio_race": "native_hawaiian_or_other_pacific_islander",
+        "shannon_entropy": 0.1521396233223098,
+        "simpson_index": 0.05855200000000005,
+        "inverse_dominance": 1.0309278350515465
+    },
+    "TRINIDAD AND TOBAGO": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 1.2119984374152541,
+        "simpson_index": 0.6702380000000001,
+        "inverse_dominance": 2.3866348448687353
+    },
+    "TUNISIA": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "TURKEY": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "TURKMENISTAN": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": 0.5236608378573794,
+        "simpson_index": 0.26580000000000004,
+        "inverse_dominance": 1.1764705882352942
+    },
+    "TURKS AND CAICOS ISLANDS": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.4999105946648713,
+        "simpson_index": 0.22554000000000018,
+        "inverse_dominance": 1.1415525114155252
+    },
+    "TUVALU": {
+        "highest_ratio_race": "native_hawaiian_or_other_pacific_islander",
+        "shannon_entropy": 0.29653589809000014,
+        "simpson_index": 0.14165399999999995,
+        "inverse_dominance": 1.0822510822510822
+    },
+    "UGANDA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "UKRAINE": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "UNITED ARAB EMIRATES": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": 0.8712875159727844,
+        "simpson_index": 0.5073219999999999,
+        "inverse_dominance": 1.5267175572519083
+    },
+    "UNITED KINGDOM": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": 0.5556875286602408,
+        "simpson_index": 0.23525600000000013,
+        "inverse_dominance": 1.146788990825688
+    },
+    "UNITED STATES": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": 1.3566161729533879,
+        "simpson_index": 0.6357599999999999,
+        "inverse_dominance": 1.7825311942959
+    },
+    "UNITED STATES MINOR OUTLYING ISLANDS": {
+        "highest_ratio_race": "native_hawaiian_or_other_pacific_islander",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "URUGUAY": {
+        "highest_ratio_race": "hispanic",
+        "shannon_entropy": 0.5019423790866211,
+        "simpson_index": 0.22537000000000007,
+        "inverse_dominance": 1.1402508551881414
+    },
+    "UZBEKISTAN": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "VANUATU": {
+        "highest_ratio_race": "native_hawaiian_or_other_pacific_islander",
+        "shannon_entropy": 0.046594424222104566,
+        "simpson_index": 0.015872000000000108,
+        "inverse_dominance": 1.0080645161290323
+    },
+    "VENEZUELA, BOLIVARIAN REPUBLIC OF": {
+        "highest_ratio_race": "hispanic",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "VIET NAM": {
+        "highest_ratio_race": "asian",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "VIRGIN ISLANDS, BRITISH": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.9254612291541382,
+        "simpson_index": 0.40626799999999996,
+        "inverse_dominance": 1.310615989515072
+    },
+    "VIRGIN ISLANDS, U.S.": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": 0.7870747641438969,
+        "simpson_index": 0.395026,
+        "inverse_dominance": 1.3157894736842106
+    },
+    "WALLIS AND FUTUNA": {
+        "highest_ratio_race": "native_hawaiian_or_other_pacific_islander",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "WESTERN SAHARA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "YEMEN": {
+        "highest_ratio_race": "white",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "ZAMBIA": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    },
+    "ZIMBABWE": {
+        "highest_ratio_race": "black",
+        "shannon_entropy": -0.0,
+        "simpson_index": 0.0,
+        "inverse_dominance": 1.0
+    }
+}

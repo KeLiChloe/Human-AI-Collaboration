@@ -1,0 +1,9 @@
+archive/
+*.png
+models
+df_cleaned*
+code/semantic_scholar_ML/data/
+code/patent/*.csv
+code/semantic_scholar_ML/samples/
+forebears-surnames.sqlite
+.DS_Store

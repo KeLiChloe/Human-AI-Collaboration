@@ -1,0 +1,540 @@
+		//MAIN CODE START
+		public static RedisResult[] load(HttpContext context, string search_string)
+        {
+            string lastname = "";
+            string firstname = "";
+
+            Get_Lastname_Firstname_From_Name(context, search_string, ref firstname, ref lastname);
+
+            RedisResult r = new RedisResult();
+            bool hasresult = false;
+
+            RedisResult[] r1 = load_from_Solr_Firstname(context, firstname, 30, search_string);
+            if (r1[0].htmls.Count == 0)
+                r1 = load_from_Solr_Firstname(context, Common.RemoveDiacritics(firstname), 30, search_string);
+            if (r1[0].htmls.Count == 0)
+                r1 = Load_From_Sqlite(context, firstname, 30, search_string);
+            if (r1.Length == 0 || r1[0].htmls.Count == 0)
+                r1 = Load_From_Sqlite(context, Common.RemoveDiacritics(firstname), 10, search_string);
+            if (r1.Length == 0 || r1[0].htmls.Count == 0)
+                r1 = Load_From_Sqlite(context, lastname, 10, search_string);
+            if (r1.Length == 0)
+                r1 = load_from_Solr_Lastname(context, lastname, 30, search_string);
+            if (r1.Length > 0 && r1[0].htmls.Count > 0)
+            {
+                hasresult = true;
+                r.htmls.Add($"<h2>{r1[0].h2}</h2>");
+                foreach (string html in r1[0].htmls) r.htmls.Add(html);
+            }
+
+            if (hasresult)
+            {
+                r.htmls.Add("<script>$('#Prior_Probability_Distributions_Header').show();</script>");
+            }
+
+            return new RedisResult[] { r };
+        }
+		//MAIN CODE END
+		
+		
+		public static void Get_Lastname_Firstname_From_Name(HttpContext context, string name, ref string firstname, ref string lastname)
+        {
+            string filename = Common.GetEngineDirectory() + "name_suffix.csv";
+            List<string> suffix_list = File.ReadAllLines(filename).ToList();
+
+            name = name.Replace("%20", "_");
+            List<string> name_array = null;
+            if (name.Contains("_"))
+                name_array = name.Split('_').ToList();
+            else if (name.Contains(","))
+                name_array = name.Split(',').ToList();
+            else if (name.Contains(" "))
+                name_array = name.Split(' ').ToList();
+            else if (name.Contains("+"))
+                name_array = name.Split('+').ToList();
+
+            if (name_array != null)
+            {
+                name_array.RemoveAll(x => name_array.Any(d => x.EndsWith(".") && x.Length == 2));
+                foreach (string suffix in suffix_list)
+                {
+                    name_array.RemoveAll(x => name_array.Any(d => x.ToUpper() == suffix));
+                }
+            }
+
+            
+            if (name_array.Count > 1)
+            {
+                firstname = name_array[0].Trim(',', ' ');
+                lastname = name_array[1].Trim(',', ' ');
+                return;
+            }
+
+
+            if (name_array != null && name_array.Count > 1)
+            {
+                string name_part1 = name_array[0].Trim(',', ' ');
+                string name_part2 = name_array[1].Trim(',', ' ');
+
+                GetLastName_Count_From_Solr(context, name_part1, out int lastname1, out int firstname1);
+                GetLastName_Count_From_Solr(context, name_part2, out int lastname2, out int firstname2);
+
+                if (firstname1 == 0 && firstname2 > 0 && lastname1 > lastname2)
+                {
+                    lastname = name_part1;
+                    firstname = name_part2;
+                }
+                else if (firstname1 == 0 && firstname2 > 0)   //example: Obetz Sean
+                {
+                    lastname = name_part1;
+                    firstname = name_part2;
+                }
+                else if (firstname2 == 0 && firstname1 > 0)
+                {
+                    lastname = name_part2;
+                    firstname = name_part1;
+                }
+                else if (lastname1 > 0 && lastname2 == 0)
+                {
+                    lastname = name_part1;
+                    firstname = name_part2;
+                }
+                else if (lastname2 > 0 && lastname1 == 0)
+                {
+                    lastname = name_part2;
+                    firstname = name_part1;
+                }
+                else if (lastname1 > lastname2 && firstname1 < firstname2)
+                {
+                    lastname = name_part1;
+                    firstname = name_part2;
+                }
+                else if (lastname2 > lastname1 && firstname2 < firstname1)
+                {
+                    lastname = name_part2;
+                    firstname = name_part1;
+                }
+                else if (lastname1 > 0 && lastname2 > 0 && firstname1 > 0 && firstname2 > 0)
+                {
+                    if ((lastname1 - lastname2) > (firstname1 - firstname2))
+                    {
+                        lastname = name_part1;
+                        firstname = name_part2;
+                    }
+                    else
+                    {
+                        lastname = name_part2;
+                        firstname = name_part1;
+                    }
+                }
+                else
+                {
+                    firstname = name_part1;
+                    lastname = name_part2;
+                }
+            }
+            else if (name_array != null && name_array.Count == 1)
+            {
+                firstname = name_array[0];
+                lastname = name_array[0];
+            }
+            else
+            {
+                firstname = name;
+                lastname = name;
+            }
+        }
+
+
+        public static void GetLastName_Count_From_Solr(HttpContext context, string lastname, out int lastname_count, out int firstname_count)
+        {
+            string solr_query = $"https://solr-facebooknames.totosearch.org/solr/facebook_lastname/select?fl=lastname_count,%20firstname_count&q=lastname:{lastname.ToLower()}&sort=lastname_count%20desc";
+            string solr_json = Common.DownloadHtml2(solr_query, credentials: SOLR.CREDENTIAL);
+            dynamic jsondata = JObject.Parse(solr_json);
+            lastname_count = 0;
+            firstname_count = 0;
+            if (jsondata.response.numFound > 0 && jsondata.response.docs[0].lastname_count != null && jsondata.response.docs[0].firstname_count != null)
+            {
+                lastname_count = jsondata.response.docs[0].lastname_count;
+                firstname_count = jsondata.response.docs[0].firstname_count;
+            }
+        }
+        public static void GetFirstName_Count_From_Solr(HttpContext context, string firstname, out int lastname_count, out int firstname_count)
+        {
+            string solr_query = $"https://solr-facebooknames.totosearch.org/solr/facebook_firstname/select?fl=lastname_count,%20firstname_count&q=firstname:{firstname.ToLower()}&sort=lastname_count%20desc";
+            string solr_json = Common.DownloadHtml2(solr_query, credentials: SOLR.CREDENTIAL);
+            dynamic jsondata = JObject.Parse(solr_json);
+            lastname_count = 0;
+            firstname_count = 0;
+            if (jsondata.response.numFound > 0 && jsondata.response.docs[0].lastname_count != null && jsondata.response.docs[0].firstname_count != null)
+            {
+                lastname_count = jsondata.response.docs[0].lastname_count;
+                firstname_count = jsondata.response.docs[0].firstname_count;
+            }
+        }
+		
+		
+		
+		public static RedisResult[] load_from_Solr_Firstname(HttpContext context, string search_string, int rank, string full_name = "")
+        {
+            RedisResult r = new RedisResult();
+            string templatex = Session.Read(context, Constants.SESSION_TEMPLATE_X);
+            if (templatex == "professionals")
+            {
+                if (search_string.Contains(","))
+                    search_string = search_string.Split(',')[1].Trim();
+            }
+
+            string solr_query = $"https://solr-facebooknames.totosearch.org/solr/facebook_firstname/select?fl=male_percent,%20female_percent&q=firstname:{search_string.ToLower()}&sort=firstname_count%20desc";
+            string solr_json = Common.DownloadHtml2(solr_query, credentials: SOLR.CREDENTIAL);
+            dynamic jsondata = JObject.Parse(solr_json);
+            double percent_female = 0.0;
+            double percent_male = 0.0;
+            if (jsondata.response.numFound > 0 && jsondata.response.docs[0].female_percent != null && jsondata.response.docs[0].male_percent != null)
+            {
+
+                r.rank = rank;
+                r.h2 = $"{Translate.Phrase(context, "Sexual Orientation Diversity (United States)")}";
+
+                string name = Common.ToTitleCase(search_string);
+                full_name = Common.ToTitleCase(full_name);
+
+                percent_female = jsondata.response.docs[0].female_percent;
+                percent_male = jsondata.response.docs[0].male_percent;
+
+
+                double percent_heterosexual_male_always = percent_male * 0.925;
+                double percent_heterosexual_male_mostly = percent_male * 0.04;
+                double percent_homosexual_male_always = percent_male * 0.005;
+                double percent_homosexual_male_mostly = percent_male * 0.02;
+                double percent_bisexual_male = percent_male * 0.005;
+                double percent_asexual_male = percent_male * 0.005;
+
+                double percent_heterosexual_female_always = percent_female * 0.87;
+                double percent_heterosexual_female_mostly = percent_female * 0.1;
+                double percent_bisexual_female = percent_female * 0.01;
+                double percent_homosexual_female_always = percent_female * 0.005;
+                double percent_homosexual_female_mostly = percent_female * 0.005;
+                double percent_asexual_female = percent_female * 0.01;
+
+                double percent_heterosexual_always = percent_heterosexual_male_always + percent_heterosexual_female_always;
+                double percent_heterosexual_mostly = percent_heterosexual_male_mostly + percent_heterosexual_female_mostly;
+                double percent_bisexual = percent_bisexual_male + percent_bisexual_female;
+                double percent_homosexual_always = percent_homosexual_male_always + percent_homosexual_female_always;
+                double percent_homosexual_mostly = percent_homosexual_male_mostly + percent_homosexual_female_mostly;
+                double percent_asexual = 100 - percent_heterosexual_always - percent_heterosexual_mostly - percent_bisexual - percent_homosexual_always - percent_homosexual_mostly;
+
+                double percent_gay = percent_homosexual_male_always + percent_homosexual_male_mostly;
+                double percent_lesbian = percent_homosexual_female_always + percent_homosexual_female_mostly;
+                double percent_straight_male = percent_heterosexual_male_always + percent_heterosexual_male_mostly;
+                double percent_straight_female = percent_heterosexual_female_always + percent_heterosexual_female_mostly;
+
+                #region Heterosexual Homosexual
+                List<ICONGivenNameGenderDiversity.Pie> data_hete_homo = new List<ICONGivenNameGenderDiversity.Pie>();
+                data_hete_homo.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Heterosexual always"), y = percent_heterosexual_always, color = Colors.Gender.heterosexual_always });
+                data_hete_homo.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Heterosexual mostly"), y = percent_heterosexual_mostly, color = Colors.Gender.heterosexual_mostly });
+                data_hete_homo.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Homosexual always"), y = percent_homosexual_always, color = Colors.Gender.homosexual_always });
+                data_hete_homo.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Homosexual mostly"), y = percent_homosexual_mostly, color = Colors.Gender.homosexual_mostly });
+                data_hete_homo.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Bisexual"), y = percent_bisexual, color = Colors.Gender.bisexual });
+                data_hete_homo.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Asexual / other"), y = percent_asexual, color = Colors.Gender.asexual });
+                data_hete_homo = data_hete_homo.OrderByDescending(i => i.y).ToList();
+                #endregion
+
+                #region Gay Lesbian
+                List<ICONGivenNameGenderDiversity.Pie> data_gay_lesb = new List<ICONGivenNameGenderDiversity.Pie>();
+                data_gay_lesb.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Gay - male"), y = percent_gay, color = Colors.Gender.gay });
+                data_gay_lesb.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Lesbian - female"), y = percent_lesbian, color = Colors.Gender.lesbian });
+                data_gay_lesb.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Straight - male"), y = percent_straight_male, color = Colors.Gender.male });
+                data_gay_lesb.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Straight - female"), y = percent_straight_female, color = Colors.Gender.female });
+                data_gay_lesb.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Bisexual - male"), y = percent_bisexual_male, color = Colors.Gender.bisexual_male });
+                data_gay_lesb.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Bisexual - female"), y = percent_bisexual_female, color = Colors.Gender.bisexual_female });
+                data_gay_lesb.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Asexual / other"), y = percent_asexual, color = Colors.Gender.asexual });
+                data_gay_lesb = data_gay_lesb.OrderByDescending(i => i.y).ToList();
+                #endregion
+
+                #region Output
+                string div_hete_mono = Common.GetRandomString(6), div_gay_lesb = Common.GetRandomString(5);
+
+                StringBuilder html = new StringBuilder();
+                // Heterosexual Homosexual
+                r.htmls.Add($"<div style='padding-bottom:25px'><div id='{div_hete_mono}' style='max-width:700px'></div>{ICONGivenNameGenderDiversity.ConstructDataTable(context, data_hete_homo).ConstructHTML()}{ICONGivenNameGenderDiversity.ConstructMetricTable(context, data_hete_homo).ConstructHTML()}</div>");
+
+                // Intersex Low
+                r.htmls.Add($"<div style='padding-bottom:25px'><div id='{div_gay_lesb}' style='max-width:700px'></div>{ICONGivenNameGenderDiversity.ConstructDataTable(context, data_gay_lesb).ConstructHTML()}{ICONGivenNameGenderDiversity.ConstructMetricTable(context, data_gay_lesb).ConstructHTML()}</div>");
+
+                // JavaScripts
+                html.Append("<script type='text/javascript'>");
+                html.Append("addJS('text/javascript','/on-demand/highcharts-5.0.11.js');");
+                html.Append("addJS('text/javascript','/on-demand/highcharts-5.0.11-exporting.js');");
+                //html.Append("addJS('text/javascript','/on-demand/tinysort.min.js');");
+                //html.Append("addJS('text/javascript','/on-demand/statistics_sort.js');");
+
+                // Pie Charts
+                if (full_name != "")
+                {
+                    html.Append($"highcharts_plotpie('{div_hete_mono}', \"{full_name} {Translate.Phrase(context, "(name): recorded on birth certificate (estimate*)")}\", \"{full_name}\", {JsonConvert.SerializeObject(data_hete_homo)}, {rank});");
+                    html.Append($"highcharts_plotpie('{div_gay_lesb}', \"{full_name} {Translate.Phrase(context, "(name): recorded on birth certificate (estimate*), by gender identified from birth")}\", \"{full_name}\", {JsonConvert.SerializeObject(data_gay_lesb)}, {rank + 10});");
+                }
+                else
+                {
+                    html.Append($"highcharts_plotpie('{div_hete_mono}', \"{name} {Translate.Phrase(context, "(given name): recorded on birth certificate (estimate*)")}\", \"{name}\", {JsonConvert.SerializeObject(data_hete_homo)}, {rank});");
+                    html.Append($"highcharts_plotpie('{div_gay_lesb}', \"{name} {Translate.Phrase(context, "(given name): recorded on birth certificate (estimate*), by gender identified from birth")}\", \"{name}\", {JsonConvert.SerializeObject(data_gay_lesb)}, {rank + 10});");
+                }
+                html.Append("</script>");
+
+                r.htmls.Add(html.ToString());
+                #endregion
+
+            }
+			
+			
+			
+			
+        public static RedisResult[] Load_From_Sqlite(HttpContext context, string search_string, int rank, string full_name = "")
+        {
+            string templatex = Session.Read(context, Constants.SESSION_TEMPLATE_X);
+            if (templatex == "professionals")
+            {
+                if (search_string.Contains(","))
+                    search_string = search_string.Split(',')[1].Trim();
+            }
+
+            string dbname = "firstname_stats.sqlite";
+            string query = "SELECT * FROM data WHERE firstname = @str;";
+            Dictionary<string, string> param = new Dictionary<string, string> { { "@str", Common.ToFirstTitleCase(search_string) } };
+            List<Dictionary<string, object>> rows = Common.SQLiteQuery(dbname, query, param);
+
+            if (rows.Count == 0)
+                return new RedisResult[] { };
+
+            RedisResult r = new RedisResult();
+            r.rank = rank;
+            r.h2 = $"{Translate.Phrase(context, "Sexual Orientation Diversity (United States)")}";
+            //r.htmls.Add($"{Translate.Phrase(context, "Sexual Orientation Diversity (United States)")}");
+
+            string name = Common.ToTitleCase(search_string);
+            full_name = Common.ToTitleCase(full_name);
+            double male_sum = 0;
+            double female_sum = 0;
+
+            for (int x = 0; x < rows.Count; x++)
+            {
+                for (int y = 1880; y <= 2018; y++)
+                {
+                    string fieldname = $"{y}m";
+                    int male = Convert.ToInt32(rows[x][fieldname].ToString());
+                    male_sum += male;
+
+                    fieldname = $"{y}f";
+                    int female = Convert.ToInt32(rows[x][fieldname].ToString());
+                    female_sum += female;
+                }
+            }
+
+            double total = male_sum + female_sum;
+            double percent_male = (male_sum / total) * 100;
+            double percent_female = 100 - percent_male;
+
+            double percent_heterosexual_male_always = percent_male * 0.925;
+            double percent_heterosexual_male_mostly = percent_male * 0.04;
+            double percent_homosexual_male_always = percent_male * 0.005;
+            double percent_homosexual_male_mostly = percent_male * 0.02;
+            double percent_bisexual_male = percent_male * 0.005;
+            double percent_asexual_male = percent_male * 0.005;
+
+            double percent_heterosexual_female_always = percent_female * 0.87;
+            double percent_heterosexual_female_mostly = percent_female * 0.1;
+            double percent_bisexual_female = percent_female * 0.01;
+            double percent_homosexual_female_always = percent_female * 0.005;
+            double percent_homosexual_female_mostly = percent_female * 0.005;
+            double percent_asexual_female = percent_female * 0.01;
+
+            double percent_heterosexual_always = percent_heterosexual_male_always + percent_heterosexual_female_always;
+            double percent_heterosexual_mostly = percent_heterosexual_male_mostly + percent_heterosexual_female_mostly;
+            double percent_bisexual = percent_bisexual_male + percent_bisexual_female;
+            double percent_homosexual_always = percent_homosexual_male_always + percent_homosexual_female_always;
+            double percent_homosexual_mostly = percent_homosexual_male_mostly + percent_homosexual_female_mostly;
+            double percent_asexual = 100 - percent_heterosexual_always - percent_heterosexual_mostly - percent_bisexual - percent_homosexual_always - percent_homosexual_mostly;
+
+            double percent_gay = percent_homosexual_male_always + percent_homosexual_male_mostly;
+            double percent_lesbian = percent_homosexual_female_always + percent_homosexual_female_mostly;
+            double percent_straight_male = percent_heterosexual_male_always + percent_heterosexual_male_mostly;
+            double percent_straight_female = percent_heterosexual_female_always + percent_heterosexual_female_mostly;
+
+            #region Heterosexual Homosexual
+            List<ICONGivenNameGenderDiversity.Pie> data_hete_homo = new List<ICONGivenNameGenderDiversity.Pie>();
+            data_hete_homo.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Heterosexual always"), y = percent_heterosexual_always, color = Colors.Gender.heterosexual_always });
+            data_hete_homo.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Heterosexual mostly"), y = percent_heterosexual_mostly, color = Colors.Gender.heterosexual_mostly });
+            data_hete_homo.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Homosexual always"), y = percent_homosexual_always, color = Colors.Gender.homosexual_always });
+            data_hete_homo.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Homosexual mostly"), y = percent_homosexual_mostly, color = Colors.Gender.homosexual_mostly });
+            data_hete_homo.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Bisexual"), y = percent_bisexual, color = Colors.Gender.bisexual });
+            data_hete_homo.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Asexual / other"), y = percent_asexual, color = Colors.Gender.asexual });
+            data_hete_homo = data_hete_homo.OrderByDescending(i => i.y).ToList();
+            #endregion
+
+            #region Gay Lesbian
+            List<ICONGivenNameGenderDiversity.Pie> data_gay_lesb = new List<ICONGivenNameGenderDiversity.Pie>();
+            data_gay_lesb.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Gay - male"), y = percent_gay, color = Colors.Gender.gay });
+            data_gay_lesb.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Lesbian - female"), y = percent_lesbian, color = Colors.Gender.lesbian });
+            data_gay_lesb.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Straight - male"), y = percent_straight_male, color = Colors.Gender.male });
+            data_gay_lesb.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Straight - female"), y = percent_straight_female, color = Colors.Gender.female });
+            data_gay_lesb.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Bisexual - male"), y = percent_bisexual_male, color = Colors.Gender.bisexual_male });
+            data_gay_lesb.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Bisexual - female"), y = percent_bisexual_female, color = Colors.Gender.bisexual_female });
+            data_gay_lesb.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Asexual / other"), y = percent_asexual, color = Colors.Gender.asexual });
+            data_gay_lesb = data_gay_lesb.OrderByDescending(i => i.y).ToList();
+            #endregion
+
+            #region Output
+            string div_hete_mono = Common.GetRandomString(6), div_gay_lesb = Common.GetRandomString(5);
+
+            StringBuilder html = new StringBuilder();
+            // Heterosexual Homosexual
+            r.htmls.Add($"<div style='padding-bottom:25px'><div id='{div_hete_mono}' style='max-width:700px'></div>{ICONGivenNameGenderDiversity.ConstructDataTable(context, data_hete_homo).ConstructHTML()}{ICONGivenNameGenderDiversity.ConstructMetricTable(context, data_hete_homo).ConstructHTML()}</div>");
+
+            // Intersex Low
+            r.htmls.Add($"<div style='padding-bottom:25px'><div id='{div_gay_lesb}' style='max-width:700px'></div>{ICONGivenNameGenderDiversity.ConstructDataTable(context, data_gay_lesb).ConstructHTML()}{ICONGivenNameGenderDiversity.ConstructMetricTable(context, data_gay_lesb).ConstructHTML()}</div>");
+
+            // JavaScripts
+            html.Append("<script type='text/javascript'>");
+            html.Append("addJS('text/javascript','/on-demand/highcharts-5.0.11.js');");
+            html.Append("addJS('text/javascript','/on-demand/highcharts-5.0.11-exporting.js');");
+            //html.Append("addJS('text/javascript','/on-demand/tinysort.min.js');");
+            //html.Append("addJS('text/javascript','/on-demand/statistics_sort.js');");
+
+            // Pie Charts
+            if (full_name != "")
+            {
+                html.Append($"highcharts_plotpie('{div_hete_mono}', \"{full_name} {Translate.Phrase(context, "(name): recorded on birth certificate (estimate*)")}\", \"{full_name}\", {JsonConvert.SerializeObject(data_hete_homo)}, {rank});");
+                html.Append($"highcharts_plotpie('{div_gay_lesb}', \"{full_name} {Translate.Phrase(context, "(name): recorded on birth certificate (estimate*), by gender identified from birth")}\", \"{full_name}\", {JsonConvert.SerializeObject(data_gay_lesb)}, {rank + 10});");
+            }
+            else
+            {
+                html.Append($"highcharts_plotpie('{div_hete_mono}', \"{name} {Translate.Phrase(context, "(given name): recorded on birth certificate (estimate*)")}\", \"{name}\", {JsonConvert.SerializeObject(data_hete_homo)}, {rank});");
+                html.Append($"highcharts_plotpie('{div_gay_lesb}', \"{name} {Translate.Phrase(context, "(given name): recorded on birth certificate (rough estimate*), by gender identified from birth")}\", \"{name}\", {JsonConvert.SerializeObject(data_gay_lesb)}, {rank + 10});");
+            }
+            html.Append("</script>");
+
+            r.htmls.Add(html.ToString());
+            #endregion
+
+            return new RedisResult[] { r };
+        }
+
+			
+		public static RedisResult[] load_from_Solr_Lastname(HttpContext context, string search_string, int rank, string full_name = "")
+        {
+            RedisResult r = new RedisResult();
+            string templatex = Session.Read(context, Constants.SESSION_TEMPLATE_X);
+            if (templatex == "professionals")
+            {
+                if (search_string.Contains(","))
+                    search_string = search_string.Split(',')[1].Trim();
+            }
+
+            string solr_query = $"https://solr-facebooknames.totosearch.org/solr/facebook_lastname/select?fl=male_percent,%20female_percent&q=lastname:{search_string.ToLower()}&sort=lastname_count%20desc";
+            string solr_json = Common.DownloadHtml2(solr_query, credentials: SOLR.CREDENTIAL);
+            dynamic jsondata = JObject.Parse(solr_json);
+            double percent_female = 0.0;
+            double percent_male = 0.0;
+            if (jsondata.response.numFound > 0 && jsondata.response.docs[0].female_percent != null && jsondata.response.docs[0].male_percent != null)
+            {
+                
+                r.rank = rank;
+                r.h2 = $"{Translate.Phrase(context, "Sexual Orientation Diversity (United States)")}";
+
+                string name = Common.ToTitleCase(search_string);
+                full_name = Common.ToTitleCase(full_name);
+
+                percent_female = jsondata.response.docs[0].female_percent;
+                percent_male = jsondata.response.docs[0].male_percent;
+                if (percent_female == 0 && percent_male == 0)
+                {
+                    percent_female = 50;
+                    percent_male = 50;
+                }
+
+                double percent_heterosexual_male_always = percent_male * 0.925;
+                double percent_heterosexual_male_mostly = percent_male * 0.04;
+                double percent_homosexual_male_always = percent_male * 0.005;
+                double percent_homosexual_male_mostly = percent_male * 0.02;
+                double percent_bisexual_male = percent_male * 0.005;
+                double percent_asexual_male = percent_male * 0.005;
+
+                double percent_heterosexual_female_always = percent_female * 0.87;
+                double percent_heterosexual_female_mostly = percent_female * 0.1;
+                double percent_bisexual_female = percent_female * 0.01;
+                double percent_homosexual_female_always = percent_female * 0.005;
+                double percent_homosexual_female_mostly = percent_female * 0.005;
+                double percent_asexual_female = percent_female * 0.01;
+
+                double percent_heterosexual_always = percent_heterosexual_male_always + percent_heterosexual_female_always;
+                double percent_heterosexual_mostly = percent_heterosexual_male_mostly + percent_heterosexual_female_mostly;
+                double percent_bisexual = percent_bisexual_male + percent_bisexual_female;
+                double percent_homosexual_always = percent_homosexual_male_always + percent_homosexual_female_always;
+                double percent_homosexual_mostly = percent_homosexual_male_mostly + percent_homosexual_female_mostly;
+                double percent_asexual = 100 - percent_heterosexual_always - percent_heterosexual_mostly - percent_bisexual - percent_homosexual_always - percent_homosexual_mostly;
+
+                double percent_gay = percent_homosexual_male_always + percent_homosexual_male_mostly;
+                double percent_lesbian = percent_homosexual_female_always + percent_homosexual_female_mostly;
+                double percent_straight_male = percent_heterosexual_male_always + percent_heterosexual_male_mostly;
+                double percent_straight_female = percent_heterosexual_female_always + percent_heterosexual_female_mostly;
+
+                #region Heterosexual Homosexual
+                List<ICONGivenNameGenderDiversity.Pie> data_hete_homo = new List<ICONGivenNameGenderDiversity.Pie>();
+                data_hete_homo.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Heterosexual always"), y = percent_heterosexual_always, color = Colors.Gender.heterosexual_always });
+                data_hete_homo.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Heterosexual mostly"), y = percent_heterosexual_mostly, color = Colors.Gender.heterosexual_mostly });
+                data_hete_homo.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Homosexual always"), y = percent_homosexual_always, color = Colors.Gender.homosexual_always });
+                data_hete_homo.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Homosexual mostly"), y = percent_homosexual_mostly, color = Colors.Gender.homosexual_mostly });
+                data_hete_homo.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Bisexual"), y = percent_bisexual, color = Colors.Gender.bisexual });
+                data_hete_homo.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Asexual / other"), y = percent_asexual, color = Colors.Gender.asexual });
+                data_hete_homo = data_hete_homo.OrderByDescending(i => i.y).ToList();
+                #endregion
+
+                #region Gay Lesbian
+                List<ICONGivenNameGenderDiversity.Pie> data_gay_lesb = new List<ICONGivenNameGenderDiversity.Pie>();
+                data_gay_lesb.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Gay - male"), y = percent_gay, color = Colors.Gender.gay });
+                data_gay_lesb.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Lesbian - female"), y = percent_lesbian, color = Colors.Gender.lesbian });
+                data_gay_lesb.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Straight - male"), y = percent_straight_male, color = Colors.Gender.male });
+                data_gay_lesb.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Straight - female"), y = percent_straight_female, color = Colors.Gender.female });
+                data_gay_lesb.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Bisexual - male"), y = percent_bisexual_male, color = Colors.Gender.bisexual_male });
+                data_gay_lesb.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Bisexual - female"), y = percent_bisexual_female, color = Colors.Gender.bisexual_female });
+                data_gay_lesb.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Asexual / other"), y = percent_asexual, color = Colors.Gender.asexual });
+                data_gay_lesb = data_gay_lesb.OrderByDescending(i => i.y).ToList();
+                #endregion
+
+                #region Output
+                string div_hete_mono = Common.GetRandomString(6), div_gay_lesb = Common.GetRandomString(5);
+
+                StringBuilder html = new StringBuilder();
+                // Heterosexual Homosexual
+                r.htmls.Add($"<div style='padding-bottom:25px'><div id='{div_hete_mono}' style='max-width:700px'></div>{ICONGivenNameGenderDiversity.ConstructDataTable(context, data_hete_homo).ConstructHTML()}{ICONGivenNameGenderDiversity.ConstructMetricTable(context, data_hete_homo).ConstructHTML()}</div>");
+
+                // Intersex Low
+                r.htmls.Add($"<div style='padding-bottom:25px'><div id='{div_gay_lesb}' style='max-width:700px'></div>{ICONGivenNameGenderDiversity.ConstructDataTable(context, data_gay_lesb).ConstructHTML()}{ICONGivenNameGenderDiversity.ConstructMetricTable(context, data_gay_lesb).ConstructHTML()}</div>");
+
+                // JavaScripts
+                html.Append("<script type='text/javascript'>");
+                html.Append("addJS('text/javascript','/on-demand/highcharts-5.0.11.js');");
+                html.Append("addJS('text/javascript','/on-demand/highcharts-5.0.11-exporting.js');");
+
+                // Pie Charts
+                if (full_name != "")
+                {
+                    html.Append($"highcharts_plotpie('{div_hete_mono}', \"{full_name} {Translate.Phrase(context, "(name): recorded on birth certificate (estimate*)")}\", \"{full_name}\", {JsonConvert.SerializeObject(data_hete_homo)}, {rank});");
+                    html.Append($"highcharts_plotpie('{div_gay_lesb}', \"{full_name} {Translate.Phrase(context, "(name): recorded on birth certificate (estimate*), by gender identified from birth")}\", \"{full_name}\", {JsonConvert.SerializeObject(data_gay_lesb)}, {rank + 10});");
+                }
+                else
+                {
+                    html.Append($"highcharts_plotpie('{div_hete_mono}', \"{name} {Translate.Phrase(context, "(given name): recorded on birth certificate (estimate*)")}\", \"{name}\", {JsonConvert.SerializeObject(data_hete_homo)}, {rank});");
+                    html.Append($"highcharts_plotpie('{div_gay_lesb}', \"{name} {Translate.Phrase(context, "(given name): recorded on birth certificate (estimate*), by gender identified from birth")}\", \"{name}\", {JsonConvert.SerializeObject(data_gay_lesb)}, {rank + 10});");
+                }
+                html.Append("</script>");
+
+                r.htmls.Add(html.ToString());
+                #endregion
+
+            }
+           
+
+            return new RedisResult[] { r };
+        }

@@ -1,0 +1,835 @@
+		//MAIN CODE START
+        public static RedisResult[] load(HttpContext context, string search_string)
+        {
+            string lastname = "";
+            string firstname = "";
+
+            Get_Lastname_Firstname_From_Name(context, search_string, ref firstname, ref lastname);
+
+            RedisResult r = new RedisResult();
+            bool hasresult = false;
+
+            RedisResult[] r1 = load2(context, lastname, 50, search_string);
+            if (r1.Length == 0 || r1[0].htmls.Count == 0)
+                r1 = load2(context, firstname, 50, search_string);
+
+            if (r1.Length > 0 && r1[0].htmls.Count > 0)
+            {
+                hasresult = true;
+                r.htmls.Add($"<h2>{r1[0].h2}</h2>");
+                foreach (string html in r1[0].htmls) r.htmls.Add(html);
+            }
+
+            if (hasresult)
+            {
+                r.htmls.Insert(0, "<script>$('#Prior_Probability_Distributions_Header').show();</script>");
+            }
+
+            return new RedisResult[] { r };
+        }
+		//MAIN CODE END
+
+        public static void Get_Lastname_Firstname_From_Name(HttpContext context, string name, ref string firstname, ref string lastname)
+        {
+            string filename = Common.GetEngineDirectory() + "name_suffix.csv";
+            List<string> suffix_list = File.ReadAllLines(filename).ToList();
+
+            name = name.Replace("%20", "_");
+            List<string> name_array = null;
+            if (name.Contains("_"))
+                name_array = name.Split('_').ToList();
+            else if (name.Contains(","))
+                name_array = name.Split(',').ToList();
+            else if (name.Contains(" "))
+                name_array = name.Split(' ').ToList();
+            else if (name.Contains("+"))
+                name_array = name.Split('+').ToList();
+
+            if (name_array != null)
+            {
+                name_array.RemoveAll(x => name_array.Any(d => x.EndsWith(".") && x.Length == 2));
+                foreach (string suffix in suffix_list)
+                {
+                    name_array.RemoveAll(x => name_array.Any(d => x.ToUpper() == suffix));
+                }
+            }
+
+            
+            if (name_array.Count > 1)
+            {
+                firstname = name_array[0].Trim(',', ' ');
+                lastname = name_array[1].Trim(',', ' ');
+                return;
+            }
+
+
+            if (name_array != null && name_array.Count > 1)
+            {
+                string name_part1 = name_array[0].Trim(',', ' ');
+                string name_part2 = name_array[1].Trim(',', ' ');
+
+                GetLastName_Count_From_Solr(context, name_part1, out int lastname1, out int firstname1);
+                GetLastName_Count_From_Solr(context, name_part2, out int lastname2, out int firstname2);
+
+                if (firstname1 == 0 && firstname2 > 0 && lastname1 > lastname2)
+                {
+                    lastname = name_part1;
+                    firstname = name_part2;
+                }
+                else if (firstname1 == 0 && firstname2 > 0)   //example: Obetz Sean
+                {
+                    lastname = name_part1;
+                    firstname = name_part2;
+                }
+                else if (firstname2 == 0 && firstname1 > 0)
+                {
+                    lastname = name_part2;
+                    firstname = name_part1;
+                }
+                else if (lastname1 > 0 && lastname2 == 0)
+                {
+                    lastname = name_part1;
+                    firstname = name_part2;
+                }
+                else if (lastname2 > 0 && lastname1 == 0)
+                {
+                    lastname = name_part2;
+                    firstname = name_part1;
+                }
+                else if (lastname1 > lastname2 && firstname1 < firstname2)
+                {
+                    lastname = name_part1;
+                    firstname = name_part2;
+                }
+                else if (lastname2 > lastname1 && firstname2 < firstname1)
+                {
+                    lastname = name_part2;
+                    firstname = name_part1;
+                }
+                else if (lastname1 > 0 && lastname2 > 0 && firstname1 > 0 && firstname2 > 0)
+                {
+                    if ((lastname1 - lastname2) > (firstname1 - firstname2))
+                    {
+                        lastname = name_part1;
+                        firstname = name_part2;
+                    }
+                    else
+                    {
+                        lastname = name_part2;
+                        firstname = name_part1;
+                    }
+                }
+                else
+                {
+                    firstname = name_part1;
+                    lastname = name_part2;
+                }
+            }
+            else if (name_array != null && name_array.Count == 1)
+            {
+                firstname = name_array[0];
+                lastname = name_array[0];
+            }
+            else
+            {
+                firstname = name;
+                lastname = name;
+            }
+        }
+
+
+        public static void GetLastName_Count_From_Solr(HttpContext context, string lastname, out int lastname_count, out int firstname_count)
+        {
+            string solr_query = $"https://solr-facebooknames.totosearch.org/solr/facebook_lastname/select?fl=lastname_count,%20firstname_count&q=lastname:{lastname.ToLower()}&sort=lastname_count%20desc";
+            string solr_json = Common.DownloadHtml2(solr_query, credentials: SOLR.CREDENTIAL);
+            dynamic jsondata = JObject.Parse(solr_json);
+            lastname_count = 0;
+            firstname_count = 0;
+            if (jsondata.response.numFound > 0 && jsondata.response.docs[0].lastname_count != null && jsondata.response.docs[0].firstname_count != null)
+            {
+                lastname_count = jsondata.response.docs[0].lastname_count;
+                firstname_count = jsondata.response.docs[0].firstname_count;
+            }
+        }
+        public static void GetFirstName_Count_From_Solr(HttpContext context, string firstname, out int lastname_count, out int firstname_count)
+        {
+            string solr_query = $"https://solr-facebooknames.totosearch.org/solr/facebook_firstname/select?fl=lastname_count,%20firstname_count&q=firstname:{firstname.ToLower()}&sort=lastname_count%20desc";
+            string solr_json = Common.DownloadHtml2(solr_query, credentials: SOLR.CREDENTIAL);
+            dynamic jsondata = JObject.Parse(solr_json);
+            lastname_count = 0;
+            firstname_count = 0;
+            if (jsondata.response.numFound > 0 && jsondata.response.docs[0].lastname_count != null && jsondata.response.docs[0].firstname_count != null)
+            {
+                lastname_count = jsondata.response.docs[0].lastname_count;
+                firstname_count = jsondata.response.docs[0].firstname_count;
+            }
+        }
+		
+		
+		
+		
+		public static RedisResult[] load2(HttpContext context, string search_string, int rank, string full_name = "")
+        {
+            ICONSurnamePriorProbabilityDistribution.stats.Add($"ICONSurnameGeographicDistribution = Started @ {DateTime.Now}");
+            Speed s = new Speed();
+
+            Dictionary<string, double> frequencies = new Dictionary<string, double>();
+            
+            frequencies = GetFrequencies(search_string);
+
+            GetFrequencies_Facebook_Names(ref frequencies, search_string);
+
+            if (frequencies.Count == 0)
+            {
+                ICONSurnamePriorProbabilityDistribution.stats.Add($"ICONSurnameGeographicDistribution = {s.Stop()}");
+                return new RedisResult[] { };
+            }
+
+            frequencies = frequencies.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+
+            double sum = frequencies.Sum(i => i.Value);
+
+            Construct.Table table = new Construct.Table();
+            Construct.Table.Row header = new Construct.Table.Row();
+            header.columns.Add(new Construct.Table.Cell(Translate.Phrase(context, "Country"), is_header: true));
+            header.columns.Add(new Construct.Table.Cell("%", is_header: true));
+            table.rows.Add(header);
+
+            #region Pie
+            int show_how_many = 10, count = 0;
+
+            Dictionary<string, double> frequencie_observations = new Dictionary<string, double>();
+            if (frequencies.Count > 0)
+            {
+                foreach (var data_element in frequencies)
+                {
+                    string c = Countries.list.Where(i => i.Value.name.Equals(data_element.Key, StringComparison.OrdinalIgnoreCase)).Select(i => i.Value.display).FirstOrDefault();
+                    frequencie_observations.Add(c, data_element.Value);
+                    count++;
+                    if (count >= show_how_many)
+                        break;
+                }
+                double observation_others = 0.0;
+                foreach (var data_element in frequencies)
+                {
+                    string c = Countries.list.Where(i => i.Value.name.Equals(data_element.Key, StringComparison.OrdinalIgnoreCase)).Select(i => i.Value.display).FirstOrDefault();
+                    if (!frequencie_observations.ContainsKey(c))
+                        observation_others += frequencies[data_element.Key];
+                }
+                if (observation_others > 0)
+                    frequencie_observations.Add(Translate.Phrase(context, "Other"), observation_others);
+            }
+
+            count = 0;
+            string[] keys = frequencies.Select(i => i.Key).ToArray();
+            List<ICONGivenNameGenderDiversity.Pie> data = new List<ICONGivenNameGenderDiversity.Pie>();
+            foreach (string key in keys)
+            {
+                string c = Countries.list.Where(i => i.Value.name.Equals(key, StringComparison.OrdinalIgnoreCase)).Select(i => i.Value.display).FirstOrDefault();
+                double percent = Math.Round(100 * frequencies[key] / sum, 3);
+                data.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, c), y = percent });
+
+                frequencies.Remove(key);
+                count++;
+                if (count >= show_how_many)
+                    break;
+            }
+            data = data.OrderByDescending(i => i.y).ToList();
+            // Other
+            if (frequencies.Count > 0)
+            {
+                double percent = Math.Round(100 * frequencies.Sum(i => i.Value) / sum, 3);
+                data.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Other"), y = percent, color = Colors.Gender.cisgender });
+            }
+            #endregion
+
+            #region Output
+            string name = Common.ToTitleCase(search_string);
+            full_name = Common.ToTitleCase(full_name);
+            string div_id = Common.GetRandomString(6);
+
+            StringBuilder html = new StringBuilder();
+            RedisResult r = new RedisResult();
+            r.htmls.Add($"<h2>{Translate.Phrase(context, "Geographic Distribution")}</h2>");
+
+            r.htmls.Add($"<div style='padding-bottom:25px'><div id='{div_id}' style='max-width:700px'></div>{ICONGivenNameGenderDiversity.ConstructDataTable(context, data, "Country", 3, frequencie_observations).ConstructHTML()}{ICONGivenNameGenderDiversity.ConstructMetricTable(context, data).ConstructHTML()}</div>");
+
+            // JavaScripts
+            html.Append("<script type='text/javascript'>");
+            html.Append("addJS('text/javascript','/on-demand/highcharts-5.0.11.js');");
+            html.Append("addJS('text/javascript','/on-demand/highcharts-5.0.11-exporting.js');");
+            html.Append("addJS('text/javascript','/on-demand/tinysort.min.js');");
+            html.Append("addJS('text/javascript','/on-demand/statistics_sort.js');");
+
+            // Pie Charts
+            if (full_name != "")
+                html.Append($"highcharts_plotpie('{div_id}', \"{full_name} {Translate.Phrase(context, "(name): Geographic diversity (estimate*)")}\", \"{full_name}\", {JsonConvert.SerializeObject(data)}, {rank});");
+            else
+                html.Append($"highcharts_plotpie('{div_id}', \"{name} {Translate.Phrase(context, "(surname): Geographic diversity (estimate*)")}\", \"{name}\", {JsonConvert.SerializeObject(data)}, {rank});");
+
+            html.Append("</script>");
+            #endregion
+
+            r.rank = rank;
+            r.htmls.Add(html.ToString());
+
+            ICONSurnamePriorProbabilityDistribution.stats.Add($"ICONSurnameGeographicDistribution = {s.Stop()}");
+
+            return new RedisResult[] { r };
+        }
+		
+		
+		public static Dictionary<string, double> GetFrequencies(string search_string)
+        {
+            List<Dictionary<string, object>> rows = Common.SQLiteQuery("forebears-surnames.sqlite", "SELECT * FROM surnames WHERE name_lookup = @str ORDER BY incidence DESC;", new Dictionary<string, string> { { "@str", search_string.ToLower() } });
+
+            Dictionary<string, double> frequencies = new Dictionary<string, double>();
+            foreach (var row in rows)
+            {
+                if (!frequencies.ContainsKey(row["country"].ToString()))
+                    frequencies.Add(row["country"].ToString(), Convert.ToDouble(row["incidence"].ToString()));
+                else
+                    frequencies[row["country"].ToString()] += Convert.ToDouble(row["incidence"].ToString());
+            }
+            return frequencies;
+        }
+		
+		
+		public static void GetFrequencies_Facebook_Names(ref Dictionary<string, double> frequencies, string lastname)
+        {
+            string solr_query = $"https://solr-facebooknames.totosearch.org/solr/facebook_lastname/select?q=lastname:{lastname.ToLower()}&sort=lastname_count%20desc";
+            string solr_json = Common.DownloadHtml2(solr_query, credentials: SOLR.CREDENTIAL);
+            dynamic jsondata = JObject.Parse(solr_json);
+            if (jsondata.response.numFound > 0 && jsondata.response.docs[0].female_percent != null && jsondata.response.docs[0].male_percent != null)
+            {
+                if ((double)jsondata.response.docs[0].country1_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("AFGHANISTAN")) frequencies["AFGHANISTAN"] += (double)jsondata.response.docs[0].country1_lastname_count;
+                    else frequencies.Add("AFGHANISTAN", (double)jsondata.response.docs[0].country1_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country2_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("ALBANIA")) frequencies["ALBANIA"] += (double)jsondata.response.docs[0].country2_lastname_count;
+                    else frequencies.Add("ALBANIA", (double)jsondata.response.docs[0].country2_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country3_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("ALGERIA")) frequencies["ALGERIA"] += (double)jsondata.response.docs[0].country3_lastname_count;
+                    else frequencies.Add("ALGERIA", (double)jsondata.response.docs[0].country3_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country4_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("ANGOLA")) frequencies["ANGOLA"] += (double)jsondata.response.docs[0].country4_lastname_count;
+                    else frequencies.Add("ANGOLA", (double)jsondata.response.docs[0].country4_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country5_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("ARGENTINA")) frequencies["ARGENTINA"] += (double)jsondata.response.docs[0].country5_lastname_count;
+                    else frequencies.Add("ARGENTINA", (double)jsondata.response.docs[0].country5_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country6_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("AUSTRIA")) frequencies["AUSTRIA"] += (double)jsondata.response.docs[0].country6_lastname_count;
+                    else frequencies.Add("AUSTRIA", (double)jsondata.response.docs[0].country6_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country7_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("AZERBAIJAN")) frequencies["AZERBAIJAN"] += (double)jsondata.response.docs[0].country7_lastname_count;
+                    else frequencies.Add("AZERBAIJAN", (double)jsondata.response.docs[0].country7_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country8_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("BAHRAIN")) frequencies["BAHRAIN"] += (double)jsondata.response.docs[0].country8_lastname_count;
+                    else frequencies.Add("BAHRAIN", (double)jsondata.response.docs[0].country8_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country9_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("BANGLADESH")) frequencies["BANGLADESH"] += (double)jsondata.response.docs[0].country9_lastname_count;
+                    else frequencies.Add("BANGLADESH", (double)jsondata.response.docs[0].country9_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country10_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("BELGIUM")) frequencies["BELGIUM"] += (double)jsondata.response.docs[0].country10_lastname_count;
+                    else frequencies.Add("BELGIUM", (double)jsondata.response.docs[0].country10_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country11_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("BOLIVIA, PLURINATIONAL STATE OF")) frequencies["BOLIVIA, PLURINATIONAL STATE OF"] += (double)jsondata.response.docs[0].country11_lastname_count;
+                    else frequencies.Add("BOLIVIA, PLURINATIONAL STATE OF", (double)jsondata.response.docs[0].country11_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country12_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("BOTSWANA")) frequencies["BOTSWANA"] += (double)jsondata.response.docs[0].country12_lastname_count;
+                    else frequencies.Add("BOTSWANA", (double)jsondata.response.docs[0].country12_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country13_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("BRAZIL")) frequencies["BRAZIL"] += (double)jsondata.response.docs[0].country13_lastname_count;
+                    else frequencies.Add("BRAZIL", (double)jsondata.response.docs[0].country13_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country14_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("BRUNEI DARUSSALAM")) frequencies["BRUNEI DARUSSALAM"] += (double)jsondata.response.docs[0].country14_lastname_count;
+                    else frequencies.Add("BRUNEI DARUSSALAM", (double)jsondata.response.docs[0].country14_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country15_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("BULGARIA")) frequencies["BULGARIA"] += (double)jsondata.response.docs[0].country15_lastname_count;
+                    else frequencies.Add("BULGARIA", (double)jsondata.response.docs[0].country15_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country16_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("BURKINA FASO")) frequencies["BURKINA FASO"] += (double)jsondata.response.docs[0].country16_lastname_count;
+                    else frequencies.Add("BURKINA FASO", (double)jsondata.response.docs[0].country16_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country17_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("BURUNDI")) frequencies["BURUNDI"] += (double)jsondata.response.docs[0].country17_lastname_count;
+                    else frequencies.Add("BURUNDI", (double)jsondata.response.docs[0].country17_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country18_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("CAMBODIA")) frequencies["CAMBODIA"] += (double)jsondata.response.docs[0].country18_lastname_count;
+                    else frequencies.Add("CAMBODIA", (double)jsondata.response.docs[0].country18_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country19_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("CAMEROON")) frequencies["CAMEROON"] += (double)jsondata.response.docs[0].country19_lastname_count;
+                    else frequencies.Add("CAMEROON", (double)jsondata.response.docs[0].country19_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country20_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("CANADA")) frequencies["CANADA"] += (double)jsondata.response.docs[0].country20_lastname_count;
+                    else frequencies.Add("CANADA", (double)jsondata.response.docs[0].country20_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country21_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("CHILE")) frequencies["CHILE"] += (double)jsondata.response.docs[0].country21_lastname_count;
+                    else frequencies.Add("CHILE", (double)jsondata.response.docs[0].country21_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country22_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("CHINA")) frequencies["CHINA"] += (double)jsondata.response.docs[0].country22_lastname_count;
+                    else frequencies.Add("CHINA", (double)jsondata.response.docs[0].country22_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country23_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("COLOMBIA")) frequencies["COLOMBIA"] += (double)jsondata.response.docs[0].country23_lastname_count;
+                    else frequencies.Add("COLOMBIA", (double)jsondata.response.docs[0].country23_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country24_lastname_count > 0)
+                    if ((double)jsondata.response.docs[0].country1_lastname_count > 0)
+                    {
+                        if (frequencies != null && frequencies.ContainsKey("COSTA RICA")) frequencies["COSTA RICA"] += (double)jsondata.response.docs[0].country24_lastname_count;
+                        else frequencies.Add("COSTA RICA", (double)jsondata.response.docs[0].country24_lastname_count);
+                    }
+                if ((double)jsondata.response.docs[0].country25_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("CROATIA")) frequencies["CROATIA"] += (double)jsondata.response.docs[0].country25_lastname_count;
+                    else frequencies.Add("CROATIA", (double)jsondata.response.docs[0].country25_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country26_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("CYPRUS")) frequencies["CYPRUS"] += (double)jsondata.response.docs[0].country26_lastname_count;
+                    else frequencies.Add("CYPRUS", (double)jsondata.response.docs[0].country26_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country27_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("CZECH REPUBLIC")) frequencies["CZECH REPUBLIC"] += (double)jsondata.response.docs[0].country27_lastname_count;
+                    else frequencies.Add("CZECH REPUBLIC", (double)jsondata.response.docs[0].country27_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country28_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("DENMARK")) frequencies["DENMARK"] += (double)jsondata.response.docs[0].country28_lastname_count;
+                    else frequencies.Add("DENMARK", (double)jsondata.response.docs[0].country28_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country29_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("DJIBOUTI")) frequencies["DJIBOUTI"] += (double)jsondata.response.docs[0].country29_lastname_count;
+                    else frequencies.Add("DJIBOUTI", (double)jsondata.response.docs[0].country29_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country30_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("ECUADOR")) frequencies["ECUADOR"] += (double)jsondata.response.docs[0].country30_lastname_count;
+                    else frequencies.Add("ECUADOR", (double)jsondata.response.docs[0].country30_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country31_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("EGYPT")) frequencies["EGYPT"] += (double)jsondata.response.docs[0].country31_lastname_count;
+                    else frequencies.Add("EGYPT", (double)jsondata.response.docs[0].country31_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country32_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("EL SALVADOR")) frequencies["EL SALVADOR"] += (double)jsondata.response.docs[0].country32_lastname_count;
+                    else frequencies.Add("EL SALVADOR", (double)jsondata.response.docs[0].country32_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country33_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("ESTONIA")) frequencies["ESTONIA"] += (double)jsondata.response.docs[0].country33_lastname_count;
+                    else frequencies.Add("ESTONIA", (double)jsondata.response.docs[0].country33_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country34_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("ETHIOPIA")) frequencies["ETHIOPIA"] += (double)jsondata.response.docs[0].country34_lastname_count;
+                    else frequencies.Add("ETHIOPIA", (double)jsondata.response.docs[0].country34_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country35_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("FIJI")) frequencies["FIJI"] += (double)jsondata.response.docs[0].country35_lastname_count;
+                    else frequencies.Add("FIJI", (double)jsondata.response.docs[0].country35_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country36_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("FINLAND")) frequencies["FINLAND"] += (double)jsondata.response.docs[0].country36_lastname_count;
+                    else frequencies.Add("FINLAND", (double)jsondata.response.docs[0].country36_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country37_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("FRANCE")) frequencies["FRANCE"] += (double)jsondata.response.docs[0].country37_lastname_count;
+                    else frequencies.Add("FRANCE", (double)jsondata.response.docs[0].country37_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country38_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("GEORGIA")) frequencies["GEORGIA"] += (double)jsondata.response.docs[0].country38_lastname_count;
+                    else frequencies.Add("GEORGIA", (double)jsondata.response.docs[0].country38_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country39_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("GERMANY")) frequencies["GERMANY"] += (double)jsondata.response.docs[0].country39_lastname_count;
+                    else frequencies.Add("GERMANY", (double)jsondata.response.docs[0].country39_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country40_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("GHANA")) frequencies["GHANA"] += (double)jsondata.response.docs[0].country40_lastname_count;
+                    else frequencies.Add("GHANA", (double)jsondata.response.docs[0].country40_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country41_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("GREECE")) frequencies["GREECE"] += (double)jsondata.response.docs[0].country41_lastname_count;
+                    else frequencies.Add("GREECE", (double)jsondata.response.docs[0].country41_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country42_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("GUATEMALA")) frequencies["GUATEMALA"] += (double)jsondata.response.docs[0].country42_lastname_count;
+                    else frequencies.Add("GUATEMALA", (double)jsondata.response.docs[0].country42_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country43_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("HAITI")) frequencies["HAITI"] += (double)jsondata.response.docs[0].country43_lastname_count;
+                    else frequencies.Add("HAITI", (double)jsondata.response.docs[0].country43_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country44_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("HONDURAS")) frequencies["HONDURAS"] += (double)jsondata.response.docs[0].country44_lastname_count;
+                    else frequencies.Add("HONDURAS", (double)jsondata.response.docs[0].country44_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country45_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("HONG KONG")) frequencies["HONG KONG"] += (double)jsondata.response.docs[0].country45_lastname_count;
+                    else frequencies.Add("HONG KONG", (double)jsondata.response.docs[0].country45_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country46_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("HUNGARY")) frequencies["HUNGARY"] += (double)jsondata.response.docs[0].country46_lastname_count;
+                    else frequencies.Add("HUNGARY", (double)jsondata.response.docs[0].country46_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country47_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("ICELAND")) frequencies["ICELAND"] += (double)jsondata.response.docs[0].country47_lastname_count;
+                    else frequencies.Add("ICELAND", (double)jsondata.response.docs[0].country47_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country48_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("INDIA")) frequencies["INDIA"] += (double)jsondata.response.docs[0].country48_lastname_count;
+                    else frequencies.Add("INDIA", (double)jsondata.response.docs[0].country48_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country49_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("INDONESIA")) frequencies["INDONESIA"] += (double)jsondata.response.docs[0].country49_lastname_count;
+                    else frequencies.Add("INDONESIA", (double)jsondata.response.docs[0].country49_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country50_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("IRAN, ISLAMIC REPUBLIC OF")) frequencies["IRAN, ISLAMIC REPUBLIC OF"] += (double)jsondata.response.docs[0].country50_lastname_count;
+                    else frequencies.Add("IRAN, ISLAMIC REPUBLIC OF", (double)jsondata.response.docs[0].country50_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country51_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("IRAQ")) frequencies["IRAQ"] += (double)jsondata.response.docs[0].country51_lastname_count;
+                    else frequencies.Add("IRAQ", (double)jsondata.response.docs[0].country51_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country52_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("IRELAND")) frequencies["IRELAND"] += (double)jsondata.response.docs[0].country52_lastname_count;
+                    else frequencies.Add("IRELAND", (double)jsondata.response.docs[0].country52_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country53_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("ISRAEL")) frequencies["ISRAEL"] += (double)jsondata.response.docs[0].country53_lastname_count;
+                    else frequencies.Add("ISRAEL", (double)jsondata.response.docs[0].country53_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country54_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("ITALY")) frequencies["ITALY"] += (double)jsondata.response.docs[0].country54_lastname_count;
+                    else frequencies.Add("ITALY", (double)jsondata.response.docs[0].country54_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country55_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("JAMAICA")) frequencies["JAMAICA"] += (double)jsondata.response.docs[0].country55_lastname_count;
+                    else frequencies.Add("JAMAICA", (double)jsondata.response.docs[0].country55_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country56_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("JAPAN")) frequencies["JAPAN"] += (double)jsondata.response.docs[0].country56_lastname_count;
+                    else frequencies.Add("JAPAN", (double)jsondata.response.docs[0].country56_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country57_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("JORDAN")) frequencies["JORDAN"] += (double)jsondata.response.docs[0].country57_lastname_count;
+                    else frequencies.Add("JORDAN", (double)jsondata.response.docs[0].country57_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country58_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("KAZAKHSTAN")) frequencies["KAZAKHSTAN"] += (double)jsondata.response.docs[0].country58_lastname_count;
+                    else frequencies.Add("KAZAKHSTAN", (double)jsondata.response.docs[0].country58_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country59_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("KOREA, REPUBLIC OF")) frequencies["KOREA, REPUBLIC OF"] += (double)jsondata.response.docs[0].country59_lastname_count;
+                    else frequencies.Add("KOREA, REPUBLIC OF", (double)jsondata.response.docs[0].country59_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country60_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("KUWAIT")) frequencies["KUWAIT"] += (double)jsondata.response.docs[0].country60_lastname_count;
+                    else frequencies.Add("KUWAIT", (double)jsondata.response.docs[0].country60_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country61_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("LEBANON")) frequencies["LEBANON"] += (double)jsondata.response.docs[0].country61_lastname_count;
+                    else frequencies.Add("LEBANON", (double)jsondata.response.docs[0].country61_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country62_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("LIBYA")) frequencies["LIBYA"] += (double)jsondata.response.docs[0].country62_lastname_count;
+                    else frequencies.Add("LIBYA", (double)jsondata.response.docs[0].country62_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country63_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("LITHUANIA")) frequencies["LITHUANIA"] += (double)jsondata.response.docs[0].country63_lastname_count;
+                    else frequencies.Add("LITHUANIA", (double)jsondata.response.docs[0].country63_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country64_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("LUXEMBOURG")) frequencies["LUXEMBOURG"] += (double)jsondata.response.docs[0].country64_lastname_count;
+                    else frequencies.Add("LUXEMBOURG", (double)jsondata.response.docs[0].country64_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country65_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("MACAO")) frequencies["MACAO"] += (double)jsondata.response.docs[0].country65_lastname_count;
+                    else frequencies.Add("MACAO", (double)jsondata.response.docs[0].country65_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country66_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("MALAYSIA")) frequencies["MALAYSIA"] += (double)jsondata.response.docs[0].country66_lastname_count;
+                    else frequencies.Add("MALAYSIA", (double)jsondata.response.docs[0].country66_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country67_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("MALDIVES")) frequencies["MALDIVES"] += (double)jsondata.response.docs[0].country67_lastname_count;
+                    else frequencies.Add("MALDIVES", (double)jsondata.response.docs[0].country67_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country68_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("MALTA")) frequencies["MALTA"] += (double)jsondata.response.docs[0].country68_lastname_count;
+                    else frequencies.Add("MALTA", (double)jsondata.response.docs[0].country68_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country69_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("MAURITIUS")) frequencies["MAURITIUS"] += (double)jsondata.response.docs[0].country69_lastname_count;
+                    else frequencies.Add("MAURITIUS", (double)jsondata.response.docs[0].country69_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country70_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("MEXICO")) frequencies["MEXICO"] += (double)jsondata.response.docs[0].country70_lastname_count;
+                    else frequencies.Add("MEXICO", (double)jsondata.response.docs[0].country70_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country71_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("MOLDOVA, REPUBLIC OF")) frequencies["MOLDOVA, REPUBLIC OF"] += (double)jsondata.response.docs[0].country71_lastname_count;
+                    else frequencies.Add("MOLDOVA, REPUBLIC OF", (double)jsondata.response.docs[0].country71_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country72_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("MOROCCO")) frequencies["MOROCCO"] += (double)jsondata.response.docs[0].country72_lastname_count;
+                    else frequencies.Add("MOROCCO", (double)jsondata.response.docs[0].country72_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country73_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("NAMIBIA")) frequencies["NAMIBIA"] += (double)jsondata.response.docs[0].country73_lastname_count;
+                    else frequencies.Add("NAMIBIA", (double)jsondata.response.docs[0].country73_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country74_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("NETHERLANDS")) frequencies["NETHERLANDS"] += (double)jsondata.response.docs[0].country74_lastname_count;
+                    else frequencies.Add("NETHERLANDS", (double)jsondata.response.docs[0].country74_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country75_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("NIGERIA")) frequencies["NIGERIA"] += (double)jsondata.response.docs[0].country75_lastname_count;
+                    else frequencies.Add("NIGERIA", (double)jsondata.response.docs[0].country75_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country76_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("NORWAY")) frequencies["NORWAY"] += (double)jsondata.response.docs[0].country76_lastname_count;
+                    else frequencies.Add("NORWAY", (double)jsondata.response.docs[0].country76_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country77_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("OMAN")) frequencies["OMAN"] += (double)jsondata.response.docs[0].country77_lastname_count;
+                    else frequencies.Add("OMAN", (double)jsondata.response.docs[0].country77_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country78_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("PALESTINE, STATE OF")) frequencies["PALESTINE, STATE OF"] += (double)jsondata.response.docs[0].country78_lastname_count;
+                    else frequencies.Add("PALESTINE, STATE OF", (double)jsondata.response.docs[0].country78_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country79_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("PANAMA")) frequencies["PANAMA"] += (double)jsondata.response.docs[0].country79_lastname_count;
+                    else frequencies.Add("PANAMA", (double)jsondata.response.docs[0].country79_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country80_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("PAPUA NEW GUINEA")) frequencies["PAPUA NEW GUINEA"] += (double)jsondata.response.docs[0].country80_lastname_count;
+                    else frequencies.Add("PAPUA NEW GUINEA", (double)jsondata.response.docs[0].country80_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country81_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("PHILIPPINES")) frequencies["PHILIPPINES"] += (double)jsondata.response.docs[0].country81_lastname_count;
+                    else frequencies.Add("PHILIPPINES", (double)jsondata.response.docs[0].country81_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country82_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("POLAND")) frequencies["POLAND"] += (double)jsondata.response.docs[0].country82_lastname_count;
+                    else frequencies.Add("POLAND", (double)jsondata.response.docs[0].country82_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country83_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("PORTUGAL")) frequencies["PORTUGAL"] += (double)jsondata.response.docs[0].country83_lastname_count;
+                    else frequencies.Add("PORTUGAL", (double)jsondata.response.docs[0].country83_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country84_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("PUERTO RICO")) frequencies["PUERTO RICO"] += (double)jsondata.response.docs[0].country84_lastname_count;
+                    else frequencies.Add("PUERTO RICO", (double)jsondata.response.docs[0].country84_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country85_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("QATAR")) frequencies["QATAR"] += (double)jsondata.response.docs[0].country85_lastname_count;
+                    else frequencies.Add("QATAR", (double)jsondata.response.docs[0].country85_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country86_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("RUSSIAN FEDERATION")) frequencies["RUSSIAN FEDERATION"] += (double)jsondata.response.docs[0].country86_lastname_count;
+                    else frequencies.Add("RUSSIAN FEDERATION", (double)jsondata.response.docs[0].country86_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country87_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("SAUDI ARABIA")) frequencies["SAUDI ARABIA"] += (double)jsondata.response.docs[0].country87_lastname_count;
+                    else frequencies.Add("SAUDI ARABIA", (double)jsondata.response.docs[0].country87_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country88_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("SERBIA")) frequencies["SERBIA"] += (double)jsondata.response.docs[0].country88_lastname_count;
+                    else frequencies.Add("SERBIA", (double)jsondata.response.docs[0].country88_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country89_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("SINGAPORE")) frequencies["SINGAPORE"] += (double)jsondata.response.docs[0].country89_lastname_count;
+                    else frequencies.Add("SINGAPORE", (double)jsondata.response.docs[0].country89_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country90_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("SLOVENIA")) frequencies["SLOVENIA"] += (double)jsondata.response.docs[0].country90_lastname_count;
+                    else frequencies.Add("SLOVENIA", (double)jsondata.response.docs[0].country90_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country91_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("SOUTH AFRICA")) frequencies["SOUTH AFRICA"] += (double)jsondata.response.docs[0].country91_lastname_count;
+                    else frequencies.Add("SOUTH AFRICA", (double)jsondata.response.docs[0].country91_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country92_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("SPAIN")) frequencies["SPAIN"] += (double)jsondata.response.docs[0].country92_lastname_count;
+                    else frequencies.Add("SPAIN", (double)jsondata.response.docs[0].country92_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country93_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("SUDAN")) frequencies["SUDAN"] += (double)jsondata.response.docs[0].country93_lastname_count;
+                    else frequencies.Add("SUDAN", (double)jsondata.response.docs[0].country93_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country94_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("SWEDEN")) frequencies["SWEDEN"] += (double)jsondata.response.docs[0].country94_lastname_count;
+                    else frequencies.Add("SWEDEN", (double)jsondata.response.docs[0].country94_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country95_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("SWITZERLAND")) frequencies["SWITZERLAND"] += (double)jsondata.response.docs[0].country95_lastname_count;
+                    else frequencies.Add("SWITZERLAND", (double)jsondata.response.docs[0].country95_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country96_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("SYRIAN ARAB REPUBLIC")) frequencies["SYRIAN ARAB REPUBLIC"] += (double)jsondata.response.docs[0].country96_lastname_count;
+                    else frequencies.Add("SYRIAN ARAB REPUBLIC", (double)jsondata.response.docs[0].country96_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country97_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("TAIWAN, PROVINCE OF CHINA")) frequencies["TAIWAN, PROVINCE OF CHINA"] += (double)jsondata.response.docs[0].country97_lastname_count;
+                    else frequencies.Add("TAIWAN, PROVINCE OF CHINA", (double)jsondata.response.docs[0].country97_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country98_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("TUNISIA")) frequencies["TUNISIA"] += (double)jsondata.response.docs[0].country98_lastname_count;
+                    else frequencies.Add("TUNISIA", (double)jsondata.response.docs[0].country98_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country99_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("TURKEY")) frequencies["TURKEY"] += (double)jsondata.response.docs[0].country99_lastname_count;
+                    else frequencies.Add("TURKEY", (double)jsondata.response.docs[0].country99_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country100_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("TURKMENISTAN")) frequencies["TURKMENISTAN"] += (double)jsondata.response.docs[0].country100_lastname_count;
+                    else frequencies.Add("TURKMENISTAN", (double)jsondata.response.docs[0].country100_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country101_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("UNITED ARAB EMIRATES")) frequencies["UNITED ARAB EMIRATES"] += (double)jsondata.response.docs[0].country101_lastname_count;
+                    else frequencies.Add("UNITED ARAB EMIRATES", (double)jsondata.response.docs[0].country101_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country102_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("UNITED KINGDOM")) frequencies["UNITED KINGDOM"] += (double)jsondata.response.docs[0].country102_lastname_count;
+                    else frequencies.Add("UNITED KINGDOM", (double)jsondata.response.docs[0].country102_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country103_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("UNITED STATES")) frequencies["UNITED STATES"] += (double)jsondata.response.docs[0].country103_lastname_count;
+                    else frequencies.Add("UNITED STATES", (double)jsondata.response.docs[0].country103_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country104_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("URUGUAY")) frequencies["URUGUAY"] += (double)jsondata.response.docs[0].country104_lastname_count;
+                    else frequencies.Add("URUGUAY", (double)jsondata.response.docs[0].country104_lastname_count);
+                }
+                if ((double)jsondata.response.docs[0].country105_lastname_count > 0)
+                {
+                    if (frequencies != null && frequencies.ContainsKey("YEMEN")) frequencies["YEMEN"] += (double)jsondata.response.docs[0].country105_lastname_count;
+                    else frequencies.Add("YEMEN", (double)jsondata.response.docs[0].country105_lastname_count);
+                }
+            }
+
+        }
+		
+		

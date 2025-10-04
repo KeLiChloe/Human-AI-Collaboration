@@ -1,0 +1,308 @@
+		//MAIN CODE START
+        public static RedisResult[] load(HttpContext context, string search_string)
+        {
+            string lastname = "";
+            string firstname = "";
+
+            Get_Lastname_Firstname_From_Name(context, search_string, ref firstname, ref lastname);
+
+            RedisResult r = new RedisResult();
+            bool hasresult = false;
+
+            RedisResult[] r1 = ICONSurnameDiversityReligionByCountry.load2(context, lastname, 100, search_string);
+            if (r1.Length > 0 && r1[0].htmls.Count > 0)
+            {
+                hasresult = true;
+                r.htmls.Add($"<h2>{r1[0].h2}</h2>");
+                foreach (string html in r1[0].htmls) r.htmls.Add(html);
+            }
+
+            if (hasresult)
+            {
+                r.htmls.Insert(0, "<script>$('#Prior_Probability_Distributions_Header').show();</script>");
+            }
+
+            return new RedisResult[] { r };
+        }
+		//MAIN CODE END
+
+        public static void Get_Lastname_Firstname_From_Name(HttpContext context, string name, ref string firstname, ref string lastname)
+        {
+            string filename = Common.GetEngineDirectory() + "name_suffix.csv";
+            List<string> suffix_list = File.ReadAllLines(filename).ToList();
+
+            name = name.Replace("%20", "_");
+            List<string> name_array = null;
+            if (name.Contains("_"))
+                name_array = name.Split('_').ToList();
+            else if (name.Contains(","))
+                name_array = name.Split(',').ToList();
+            else if (name.Contains(" "))
+                name_array = name.Split(' ').ToList();
+            else if (name.Contains("+"))
+                name_array = name.Split('+').ToList();
+
+            if (name_array != null)
+            {
+                name_array.RemoveAll(x => name_array.Any(d => x.EndsWith(".") && x.Length == 2));
+                foreach (string suffix in suffix_list)
+                {
+                    name_array.RemoveAll(x => name_array.Any(d => x.ToUpper() == suffix));
+                }
+            }
+
+            
+            if (name_array.Count > 1)
+            {
+                firstname = name_array[0].Trim(',', ' ');
+                lastname = name_array[1].Trim(',', ' ');
+                return;
+            }
+
+
+            if (name_array != null && name_array.Count > 1)
+            {
+                string name_part1 = name_array[0].Trim(',', ' ');
+                string name_part2 = name_array[1].Trim(',', ' ');
+
+                GetLastName_Count_From_Solr(context, name_part1, out int lastname1, out int firstname1);
+                GetLastName_Count_From_Solr(context, name_part2, out int lastname2, out int firstname2);
+
+                if (firstname1 == 0 && firstname2 > 0 && lastname1 > lastname2)
+                {
+                    lastname = name_part1;
+                    firstname = name_part2;
+                }
+                else if (firstname1 == 0 && firstname2 > 0)   //example: Obetz Sean
+                {
+                    lastname = name_part1;
+                    firstname = name_part2;
+                }
+                else if (firstname2 == 0 && firstname1 > 0)
+                {
+                    lastname = name_part2;
+                    firstname = name_part1;
+                }
+                else if (lastname1 > 0 && lastname2 == 0)
+                {
+                    lastname = name_part1;
+                    firstname = name_part2;
+                }
+                else if (lastname2 > 0 && lastname1 == 0)
+                {
+                    lastname = name_part2;
+                    firstname = name_part1;
+                }
+                else if (lastname1 > lastname2 && firstname1 < firstname2)
+                {
+                    lastname = name_part1;
+                    firstname = name_part2;
+                }
+                else if (lastname2 > lastname1 && firstname2 < firstname1)
+                {
+                    lastname = name_part2;
+                    firstname = name_part1;
+                }
+                else if (lastname1 > 0 && lastname2 > 0 && firstname1 > 0 && firstname2 > 0)
+                {
+                    if ((lastname1 - lastname2) > (firstname1 - firstname2))
+                    {
+                        lastname = name_part1;
+                        firstname = name_part2;
+                    }
+                    else
+                    {
+                        lastname = name_part2;
+                        firstname = name_part1;
+                    }
+                }
+                else
+                {
+                    firstname = name_part1;
+                    lastname = name_part2;
+                }
+            }
+            else if (name_array != null && name_array.Count == 1)
+            {
+                firstname = name_array[0];
+                lastname = name_array[0];
+            }
+            else
+            {
+                firstname = name;
+                lastname = name;
+            }
+        }
+
+
+        public static void GetLastName_Count_From_Solr(HttpContext context, string lastname, out int lastname_count, out int firstname_count)
+        {
+            string solr_query = $"https://solr-facebooknames.totosearch.org/solr/facebook_lastname/select?fl=lastname_count,%20firstname_count&q=lastname:{lastname.ToLower()}&sort=lastname_count%20desc";
+            string solr_json = Common.DownloadHtml2(solr_query, credentials: SOLR.CREDENTIAL);
+            dynamic jsondata = JObject.Parse(solr_json);
+            lastname_count = 0;
+            firstname_count = 0;
+            if (jsondata.response.numFound > 0 && jsondata.response.docs[0].lastname_count != null && jsondata.response.docs[0].firstname_count != null)
+            {
+                lastname_count = jsondata.response.docs[0].lastname_count;
+                firstname_count = jsondata.response.docs[0].firstname_count;
+            }
+        }
+        public static void GetFirstName_Count_From_Solr(HttpContext context, string firstname, out int lastname_count, out int firstname_count)
+        {
+            string solr_query = $"https://solr-facebooknames.totosearch.org/solr/facebook_firstname/select?fl=lastname_count,%20firstname_count&q=firstname:{firstname.ToLower()}&sort=lastname_count%20desc";
+            string solr_json = Common.DownloadHtml2(solr_query, credentials: SOLR.CREDENTIAL);
+            dynamic jsondata = JObject.Parse(solr_json);
+            lastname_count = 0;
+            firstname_count = 0;
+            if (jsondata.response.numFound > 0 && jsondata.response.docs[0].lastname_count != null && jsondata.response.docs[0].firstname_count != null)
+            {
+                lastname_count = jsondata.response.docs[0].lastname_count;
+                firstname_count = jsondata.response.docs[0].firstname_count;
+            }
+        }
+		
+		public class WeightAverage
+        {
+            public double sum = 0;
+            public double weighted_sum = 0;
+            public double weight_average = 0;
+        }
+		
+		
+        public static RedisResult[] load2(HttpContext context, string search_string, int rank, string full_name = "")
+        {
+            ICONSurnamePriorProbabilityDistribution.stats.Add($"ICONSurnameDiversityReligionByCountry = Started @ {DateTime.Now}");
+            Speed s = new Speed();
+            List<RedisResult> rr = new List<RedisResult>();
+
+            List<Dictionary<string, object>> rows = Common.SQLiteQuery("forebears-surnames.sqlite", "SELECT * FROM surnames WHERE name_lookup = @str ORDER BY incidence DESC;", new Dictionary<string, string> { { "@str", search_string.ToLower() } });
+            if (rows.Count == 0)
+            {
+                ICONSurnamePriorProbabilityDistribution.stats.Add($"ICONSurnameDiversityReligionByCountry = {s.Stop()}");
+                return rr.ToArray();
+            }
+
+            ICONSurnamePriorProbabilityDistribution.stats.Add($"ICONSurnameDiversityReligionByCountry 1 = {s.MillisecondsElapsed().ToString()}");
+
+            string top_country = rows[0]["country"].ToString();
+
+            Dictionary<string, double> frequencies = new Dictionary<string, double>();
+            for (int x = 0; x < rows.Count; x++)
+            {
+                if (!frequencies.ContainsKey(rows[x]["country"].ToString()))
+                    frequencies.Add(rows[x]["country"].ToString(), Convert.ToDouble(rows[x]["incidence"].ToString()));
+                else
+                    frequencies[rows[x]["country"].ToString()] += Convert.ToDouble(rows[x]["incidence"].ToString());
+            }
+
+            string[] countries = frequencies.Select(i => i.Key).ToArray();
+
+            ICONSurnamePriorProbabilityDistribution.stats.Add($"ICONSurnameDiversityReligionByCountry 2 = {s.MillisecondsElapsed().ToString()}");
+
+            //rows = Common.SQLiteQuery("religion-by-country.sqlite", $"SELECT * FROM religions WHERE country_ip2location IN (\"{string.Join("\",\"", countries)}\");");
+            rows = Common.SQLiteQuery("religion-by-country.sqlite", $"SELECT * FROM religions;");
+
+            ICONSurnamePriorProbabilityDistribution.stats.Add($"ICONSurnameDiversityReligionByCountry 3 = {s.MillisecondsElapsed().ToString()}");
+
+            if (rows.Count > 0)
+            {
+                Dictionary<string, WeightAverage> averages = new Dictionary<string, WeightAverage>();
+
+                foreach (var row in rows)
+                {
+                    string country = row["country_ip2location"].ToString();
+                    if (!countries.Contains(country)) continue;
+
+                    Add(ref averages, "atheist", frequencies[country], Convert.ToDouble(row["atheist_agnostic"].ToString()));
+                    Add(ref averages, "buddhism", frequencies[country], Convert.ToDouble(row["buddhism"].ToString()));
+                    Add(ref averages, "christian", frequencies[country], Convert.ToDouble(row["christian"].ToString()));
+                    Add(ref averages, "hindu", frequencies[country], Convert.ToDouble(row["hindu"].ToString()));
+                    Add(ref averages, "jewish", frequencies[country], Convert.ToDouble(row["jewish"].ToString()));
+                    Add(ref averages, "muslim", frequencies[country], Convert.ToDouble(row["muslim"].ToString()));
+                    Add(ref averages, "pagen", frequencies[country], Convert.ToDouble(row["pagen"].ToString()));
+                    Add(ref averages, "shinto", frequencies[country], Convert.ToDouble(row["shinto"].ToString()));
+                    Add(ref averages, "sikh", frequencies[country], Convert.ToDouble(row["sikh"].ToString()));
+                    Add(ref averages, "other", frequencies[country], Convert.ToDouble(row["other"].ToString()));
+                }
+
+                averages["atheist"].weight_average = averages["atheist"].weighted_sum / averages["atheist"].sum;
+                averages["buddhism"].weight_average = averages["buddhism"].weighted_sum / averages["buddhism"].sum;
+                averages["christian"].weight_average = averages["christian"].weighted_sum / averages["christian"].sum;
+                averages["hindu"].weight_average = averages["hindu"].weighted_sum / averages["hindu"].sum;
+                averages["jewish"].weight_average = averages["jewish"].weighted_sum / averages["jewish"].sum;
+                averages["muslim"].weight_average = averages["muslim"].weighted_sum / averages["muslim"].sum;
+                averages["pagen"].weight_average = averages["pagen"].weighted_sum / averages["pagen"].sum;
+                averages["shinto"].weight_average = averages["shinto"].weighted_sum / averages["shinto"].sum;
+                averages["sikh"].weight_average = averages["sikh"].weighted_sum / averages["sikh"].sum;
+                averages["other"].weight_average = averages["other"].weighted_sum / averages["other"].sum;
+                double total = averages.Sum(i => i.Value.weight_average);
+
+                double percent_atheist = Math.Round((averages["atheist"].weight_average / total) * 100, 3);
+                double percent_buddhism = Math.Round((averages["buddhism"].weight_average / total) * 100, 3);
+                double percent_christian = Math.Round((averages["christian"].weight_average / total) * 100, 3);
+                double percent_hindu = Math.Round((averages["hindu"].weight_average / total) * 100, 3);
+                double percent_jewish = Math.Round((averages["jewish"].weight_average / total) * 100, 3);
+                double percent_muslim = Math.Round((averages["muslim"].weight_average / total) * 100, 3);
+                double percent_pagen = Math.Round((averages["pagen"].weight_average / total) * 100, 3);
+                double percent_shinto = Math.Round((averages["shinto"].weight_average / total) * 100, 3);
+                double percent_sikh = Math.Round((averages["sikh"].weight_average / total) * 100, 3);
+                double percent_other = Math.Round(100 - percent_atheist - percent_buddhism - percent_christian - percent_hindu - percent_jewish - percent_muslim - percent_pagen - percent_shinto - percent_sikh, 3);
+
+                #region Pie
+                List<ICONGivenNameGenderDiversity.Pie> data = new List<ICONGivenNameGenderDiversity.Pie>();
+                data.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Atheist / agnostic"), y = percent_atheist });
+                data.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Buddhism"), y = percent_buddhism });
+                data.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Christian"), y = percent_christian });
+                data.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Hindu"), y = percent_hindu });
+                data.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Jewish"), y = percent_jewish });
+                data.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Muslim"), y = percent_muslim });
+                data.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Pagen"), y = percent_pagen });
+                data.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Shinto"), y = percent_shinto });
+                data.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Sikh"), y = percent_sikh });
+                data.Add(new ICONGivenNameGenderDiversity.Pie() { name = Translate.Phrase(context, "Other"), y = percent_other });
+                data = data.OrderByDescending(i => i.y).ToList();
+                #endregion
+
+                #region Output
+                string name = Common.ToTitleCase(search_string);
+                full_name = Common.ToTitleCase(full_name);
+                string div_id = Common.GetRandomString(6);
+
+                StringBuilder html = new StringBuilder();
+                RedisResult r = new RedisResult();
+                r.htmls.Add($"<h2>{Translate.Phrase(context, $"Religion Diversity (World)")}</h2>");
+                r.rank = rank;
+
+                // Heterosexual Homosexual
+                r.htmls.Add($"<div style='padding-bottom:25px'><div id='{div_id}' style='max-width:700px'></div>{ICONGivenNameGenderDiversity.ConstructDataTable(context, data, "Race", 3).ConstructHTML()}{ICONGivenNameGenderDiversity.ConstructMetricTable(context, data).ConstructHTML()}</div>");
+
+                // JavaScripts
+                html.Append("<script type='text/javascript'>");
+                html.Append("addJS('text/javascript','/on-demand/highcharts-5.0.11.js');");
+                html.Append("addJS('text/javascript','/on-demand/highcharts-5.0.11-exporting.js');");
+                html.Append("addJS('text/javascript','/on-demand/tinysort.min.js');");
+                html.Append("addJS('text/javascript','/on-demand/statistics_sort.js');");
+
+                // Pie Charts
+                if (full_name != "")
+                    html.Append($"highcharts_plotpie('{div_id}', \"{full_name} {Translate.Phrase(context, "(name): Religion diversity (estimate*)")}\", \"{full_name}\", {JsonConvert.SerializeObject(data)}, {rank});");
+                else
+                    html.Append($"highcharts_plotpie('{div_id}', \"{name} {Translate.Phrase(context, "(surname): Religion diversity (estimate*)")}\", \"{name}\", {JsonConvert.SerializeObject(data)}, {rank});");
+                html.Append("</script>");
+
+                // get correct casing country name
+                string c = Countries.list.Where(i => i.Value.name.Equals(top_country, StringComparison.OrdinalIgnoreCase)).Select(i => i.Value.display).FirstOrDefault();
+                if (c != null)
+                    top_country = c;
+                
+                r.htmls.Add(html.ToString());
+
+                rr.Add(r);
+                #endregion
+            }
+
+            ICONSurnamePriorProbabilityDistribution.stats.Add($"ICONSurnameDiversityReligionByCountry = {s.Stop()}");
+
+            return rr.ToArray();
+        }

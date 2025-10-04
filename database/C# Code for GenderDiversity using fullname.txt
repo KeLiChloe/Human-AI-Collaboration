@@ -1,0 +1,616 @@
+		//MAIN CODE START
+		public static RedisResult[] load(HttpContext context, string search_string)
+        {
+            string lastname = "";
+            string firstname = "";
+			
+			//Get first name and last name from search_string
+            Get_Lastname_Firstname_From_Name(context, search_string, ref firstname, ref lastname);
+
+            RedisResult r = new RedisResult();
+            bool hasresult = false;
+
+            RedisResult[] r1 = load_from_Solr_Firstname(context, firstname, 20, search_string);
+            if (r1[0].htmls.Count == 0)
+                r1 = load_from_Solr_Firstname(context, RemoveDiacritics(firstname), 20, search_string);
+            if (r1[0].htmls.Count == 0)
+                r1 = ICONGivenNameGenderDiversity.load_From_Sqlite(context, firstname, 20, search_string);
+            if (r1.Length == 0 || r1[0].htmls.Count == 0)
+                r1 = ICONGivenNameGenderDiversity.load_From_Sqlite(context, RemoveDiacritics(firstname), 10, search_string);
+            if (r1.Length == 0 || r1[0].htmls.Count == 0)
+                r1 = ICONGivenNameGenderDiversity.load_From_Sqlite(context, lastname, 10, search_string);
+            if (r1.Length == 0)
+                r1 = ICONGivenNameGenderDiversity.load_from_Solr_Lastname(context, lastname, 20, search_string);
+            if (r1.Length > 0 && r1[0].htmls.Count > 0)
+            {
+                hasresult = true;
+                r.htmls.Add($"<h2>{r1[0].h2}</h2>");
+                foreach (string html in r1[0].htmls) r.htmls.Add(html);
+            }
+
+            if (hasresult)
+            {
+                r.htmls.Insert(0, "<script>$('#Prior_Probability_Distributions_Header').show();</script>");
+            }
+
+            return new RedisResult[] { r };
+        }
+		//MAIN CODE END
+
+        public static void Get_Lastname_Firstname_From_Name(HttpContext context, string name, ref string firstname, ref string lastname)
+        {
+            string filename = Common.GetEngineDirectory() + "name_suffix.csv";
+            List<string> suffix_list = File.ReadAllLines(filename).ToList();
+
+            name = name.Replace("%20", "_");
+            List<string> name_array = null;
+            if (name.Contains("_"))
+                name_array = name.Split('_').ToList();
+            else if (name.Contains(","))
+                name_array = name.Split(',').ToList();
+            else if (name.Contains(" "))
+                name_array = name.Split(' ').ToList();
+            else if (name.Contains("+"))
+                name_array = name.Split('+').ToList();
+
+            if (name_array != null)
+            {
+                name_array.RemoveAll(x => name_array.Any(d => x.EndsWith(".") && x.Length == 2));
+                foreach (string suffix in suffix_list)
+                {
+                    name_array.RemoveAll(x => name_array.Any(d => x.ToUpper() == suffix));
+                }
+            }
+
+            
+            if (name_array.Count > 1)
+            {
+                firstname = name_array[0].Trim(',', ' ');
+                lastname = name_array[1].Trim(',', ' ');
+                return;
+            }
+
+
+            if (name_array != null && name_array.Count > 1)
+            {
+                string name_part1 = name_array[0].Trim(',', ' ');
+                string name_part2 = name_array[1].Trim(',', ' ');
+
+                GetLastName_Count_From_Solr(context, name_part1, out int lastname1, out int firstname1);
+                GetLastName_Count_From_Solr(context, name_part2, out int lastname2, out int firstname2);
+
+                if (firstname1 == 0 && firstname2 > 0 && lastname1 > lastname2)
+                {
+                    lastname = name_part1;
+                    firstname = name_part2;
+                }
+                else if (firstname1 == 0 && firstname2 > 0)   //example: Obetz Sean
+                {
+                    lastname = name_part1;
+                    firstname = name_part2;
+                }
+                else if (firstname2 == 0 && firstname1 > 0)
+                {
+                    lastname = name_part2;
+                    firstname = name_part1;
+                }
+                else if (lastname1 > 0 && lastname2 == 0)
+                {
+                    lastname = name_part1;
+                    firstname = name_part2;
+                }
+                else if (lastname2 > 0 && lastname1 == 0)
+                {
+                    lastname = name_part2;
+                    firstname = name_part1;
+                }
+                else if (lastname1 > lastname2 && firstname1 < firstname2)
+                {
+                    lastname = name_part1;
+                    firstname = name_part2;
+                }
+                else if (lastname2 > lastname1 && firstname2 < firstname1)
+                {
+                    lastname = name_part2;
+                    firstname = name_part1;
+                }
+                else if (lastname1 > 0 && lastname2 > 0 && firstname1 > 0 && firstname2 > 0)
+                {
+                    if ((lastname1 - lastname2) > (firstname1 - firstname2))
+                    {
+                        lastname = name_part1;
+                        firstname = name_part2;
+                    }
+                    else
+                    {
+                        lastname = name_part2;
+                        firstname = name_part1;
+                    }
+                }
+                else
+                {
+                    firstname = name_part1;
+                    lastname = name_part2;
+                }
+            }
+            else if (name_array != null && name_array.Count == 1)
+            {
+                firstname = name_array[0];
+                lastname = name_array[0];
+            }
+            else
+            {
+                firstname = name;
+                lastname = name;
+            }
+        }
+
+
+        public static void GetLastName_Count_From_Solr(HttpContext context, string lastname, out int lastname_count, out int firstname_count)
+        {
+            string solr_query = $"https://solr-facebooknames.totosearch.org/solr/facebook_lastname/select?fl=lastname_count,%20firstname_count&q=lastname:{lastname.ToLower()}&sort=lastname_count%20desc";
+            string solr_json = Common.DownloadHtml2(solr_query, credentials: SOLR.CREDENTIAL);
+            dynamic jsondata = JObject.Parse(solr_json);
+            lastname_count = 0;
+            firstname_count = 0;
+            if (jsondata.response.numFound > 0 && jsondata.response.docs[0].lastname_count != null && jsondata.response.docs[0].firstname_count != null)
+            {
+                lastname_count = jsondata.response.docs[0].lastname_count;
+                firstname_count = jsondata.response.docs[0].firstname_count;
+            }
+        }
+        public static void GetFirstName_Count_From_Solr(HttpContext context, string firstname, out int lastname_count, out int firstname_count)
+        {
+            string solr_query = $"https://solr-facebooknames.totosearch.org/solr/facebook_firstname/select?fl=lastname_count,%20firstname_count&q=firstname:{firstname.ToLower()}&sort=lastname_count%20desc";
+            string solr_json = Common.DownloadHtml2(solr_query, credentials: SOLR.CREDENTIAL);
+            dynamic jsondata = JObject.Parse(solr_json);
+            lastname_count = 0;
+            firstname_count = 0;
+            if (jsondata.response.numFound > 0 && jsondata.response.docs[0].lastname_count != null && jsondata.response.docs[0].firstname_count != null)
+            {
+                lastname_count = jsondata.response.docs[0].lastname_count;
+                firstname_count = jsondata.response.docs[0].firstname_count;
+            }
+        }
+		
+		
+		
+		
+		public static RedisResult[] load_from_Solr_Firstname(HttpContext context, string search_string, int rank, string full_name = "")
+        {
+            RedisResult r = new RedisResult();
+            r.rank = rank;
+
+            string templatex = Session.Read(context, Constants.SESSION_TEMPLATE_X);
+            if (templatex == "professionals")
+            {
+                if (search_string.Contains(","))
+                    search_string = search_string.Split(',')[1].Trim();
+            }
+
+            string solr_query = $"https://solr-facebooknames.totosearch.org/solr/facebook_firstname/select?fl=male_percent,%20female_percent,%20count_male,%20count_female&q=firstname:{search_string.ToLower()}&sort=firstname_count%20desc";
+            string solr_json = Common.DownloadHtml2(solr_query, credentials: SOLR.CREDENTIAL);
+            dynamic jsondata = JObject.Parse(solr_json);
+            double percent_female = 0.0;
+            double percent_male = 0.0;
+            double male_sum = 0;
+            double female_sum = 0;
+            double total = 0;
+            if (jsondata.response.numFound > 0 && jsondata.response.docs[0].female_percent != null && jsondata.response.docs[0].male_percent != null)
+            {
+                string name = Common.ToTitleCase(search_string);
+                full_name = Common.ToTitleCase(full_name);
+
+                percent_female = jsondata.response.docs[0].female_percent;
+                percent_male = jsondata.response.docs[0].male_percent;
+                male_sum = jsondata.response.docs[0].count_male;
+                female_sum = jsondata.response.docs[0].count_female;
+                total = male_sum + female_sum;
+                
+                #region Intersex High
+                double percent_intersex_high = 1.7;
+                double percent_male_high = percent_male * 0.983;
+                double percent_female_high = 100 - percent_male_high - percent_intersex_high;
+
+                List<Pie> data_high = new List<Pie>();
+                data_high.Add(new Pie() { name = Translate.Phrase(context, "Male"), y = percent_male_high, color = Colors.Gender.male });
+                data_high.Add(new Pie() { name = Translate.Phrase(context, "Female"), y = percent_female_high, color = Colors.Gender.female });
+                data_high.Add(new Pie() { name = Translate.Phrase(context, "Intersex"), y = percent_intersex_high, color = Colors.Gender.intersex });
+                data_high = data_high.OrderByDescending(i => i.y).ToList();
+                #endregion
+
+                #region Intersex Low
+                double percent_intersex_low = 0.2;
+                double percent_male_low = ((male_sum / total) * 100) * 0.998;
+                double percent_female_low = 100 - percent_male_low - percent_intersex_low;
+
+                List<Pie> data_low = new List<Pie>();
+                data_low.Add(new Pie() { name = Translate.Phrase(context, "Male"), y = percent_male_low, color = Colors.Gender.male });
+                data_low.Add(new Pie() { name = Translate.Phrase(context, "Female"), y = percent_female_low, color = Colors.Gender.female });
+                data_low.Add(new Pie() { name = Translate.Phrase(context, "Intersex"), y = percent_intersex_low, color = Colors.Gender.intersex });
+                data_low = data_low.OrderByDescending(i => i.y).ToList();
+                #endregion
+
+                #region Cisgender Aggregated
+                double percent_non_binary = 0.2;
+                double percent_cisgender = (percent_male * 0.9905) + (percent_female * 0.9955);
+                double percent_transgender = 100 - percent_cisgender - percent_non_binary;
+
+                List<Pie> data_cisgender_agg = new List<Pie>();
+                data_cisgender_agg.Add(new Pie() { name = Translate.Phrase(context, "Non-binary"), y = percent_non_binary, color = Colors.Gender.non_binary });
+                data_cisgender_agg.Add(new Pie() { name = Translate.Phrase(context, "Transgender"), y = percent_transgender, color = Colors.Gender.transgender });
+                data_cisgender_agg.Add(new Pie() { name = Translate.Phrase(context, "Cisgender"), y = percent_cisgender, color = Colors.Gender.cisgender });
+                data_cisgender_agg = data_cisgender_agg.OrderByDescending(i => i.y).ToList();
+                #endregion
+
+                #region Cisgender Disaggregated
+                double percent_cisgender_male = percent_male * 0.9905;
+                double percent_cisgender_female = percent_female * 0.9955;
+                double percent_transgender_male = percent_male * 0.0075;
+                double percent_transgender_female = 100 - percent_cisgender_male - percent_cisgender_female - percent_non_binary - percent_transgender_male;
+
+                List<Pie> data_cisgender_disagg = new List<Pie>();
+                data_cisgender_disagg.Add(new Pie() { name = Translate.Phrase(context, "Non-binary"), y = percent_non_binary, color = Colors.Gender.non_binary });
+                data_cisgender_disagg.Add(new Pie() { name = Translate.Phrase(context, "Transgender, female"), y = percent_transgender_female, color = Colors.Gender.transgender_female });
+                data_cisgender_disagg.Add(new Pie() { name = Translate.Phrase(context, "Transgender, male"), y = percent_transgender_male, color = Colors.Gender.transgender_male });
+                data_cisgender_disagg.Add(new Pie() { name = Translate.Phrase(context, "Cisgender, female"), y = percent_cisgender_female, color = Colors.Gender.cisgender_female });
+                data_cisgender_disagg.Add(new Pie() { name = Translate.Phrase(context, "Cisgender, male"), y = percent_cisgender_male, color = Colors.Gender.cisgender_male });
+                data_cisgender_disagg = data_cisgender_disagg.OrderByDescending(i => i.y).ToList();
+                #endregion
+
+                #region Output
+                string div_high = Common.GetRandomString(6),
+                    div_low = Common.GetRandomString(7),
+                    div_cisgender_agg = Common.GetRandomString(6),
+                    div_cisgender_disagg = Common.GetRandomString(5);
+
+                r.htmls.Add($"<h2>{Translate.Phrase(context, "Gender - recorded at birth (United States)")}</h2>");
+
+                StringBuilder html = new StringBuilder();
+                // Intersex High
+                r.htmls.Add($"<div style='padding-bottom:25px'><div id='{div_high}' style='max-width:700px'></div>{ConstructDataTable(context, data_high).ConstructHTML()}{ConstructMetricTable(context, data_high).ConstructHTML()}</div>");
+
+                // Intersex Low
+                r.htmls.Add($"<div style='padding-bottom:25px'><div id='{div_low}' style='max-width:700px'></div>{ConstructDataTable(context, data_low).ConstructHTML()}{ConstructMetricTable(context, data_low).ConstructHTML()}</div>");
+
+                // Cisgender Aggregated
+                r.htmls.Add($"<div style='padding-bottom:25px'><div id='{div_cisgender_agg}' style='max-width:700px'></div>{ConstructDataTable(context, data_cisgender_agg).ConstructHTML()}{ConstructMetricTable(context, data_cisgender_agg).ConstructHTML()}</div>");
+
+                // Cisgender Disaggregated
+                r.htmls.Add($"<div style='padding-bottom:25px'><div id='{div_cisgender_disagg}' style='max-width:700px'></div>{ConstructDataTable(context, data_cisgender_disagg).ConstructHTML()}{ConstructMetricTable(context, data_cisgender_disagg).ConstructHTML()}</div>");
+
+                // JavaScripts
+                html.Append("<script type='text/javascript'>");
+                html.Append("addJS('text/javascript','/on-demand/highcharts-5.0.11.js');");
+                html.Append("addJS('text/javascript','/on-demand/highcharts-5.0.11-exporting.js');");
+
+                // Pie Charts
+                if (full_name != "")
+                {
+                    html.Append($"highcharts_plotpie('{div_high}', \"{full_name} {Translate.Phrase(context, "(name): Gender identity at birth")} ({Translate.Phrase(context, "imputed high intersex estimate")} = 1.7*)\", \"{full_name}\", {JsonConvert.SerializeObject(data_high)}, {rank});");
+                    html.Append($"highcharts_plotpie('{div_low}', \"{full_name} {Translate.Phrase(context, "(name): Gender identity at birth")} ({Translate.Phrase(context, "imputed low intersex estimate")} = 0.2*)\", \"{full_name}\", {JsonConvert.SerializeObject(data_low)}, {rank + 10});");
+                    html.Append($"highcharts_plotpie('{div_cisgender_agg}', \"{full_name} {Translate.Phrase(context, "(name): Aggregated Gender Identity")} (Yale.edu {Translate.Phrase(context, "assumptions")}*)\", \"{full_name}\", {JsonConvert.SerializeObject(data_cisgender_agg)}, {rank + 20});");
+                    html.Append($"highcharts_plotpie('{div_cisgender_disagg}', \"{full_name} {Translate.Phrase(context, "(name): Disaggregated Gender Identity")} ({Translate.Phrase(context, "estimated")}*)\", \"{full_name}\", {JsonConvert.SerializeObject(data_cisgender_disagg)}, {rank + 30});");
+                }
+                else
+                {
+                    html.Append($"highcharts_plotpie('{div_high}', \"{name} {Translate.Phrase(context, "(given name): Gender identity at birth")} ({Translate.Phrase(context, "imputed high intersex estimate")} = 1.7*)\", \"{name}\", {JsonConvert.SerializeObject(data_high)}, {rank});");
+                    html.Append($"highcharts_plotpie('{div_low}', \"{name} {Translate.Phrase(context, "(given name): Gender identity at birth")} ({Translate.Phrase(context, "imputed low intersex estimate")} = 0.2*)\", \"{name}\", {JsonConvert.SerializeObject(data_low)}, {rank + 10});");
+                    html.Append($"highcharts_plotpie('{div_cisgender_agg}', \"{name} {Translate.Phrase(context, "(given name): Aggregated Gender Identity")} (Yale.edu {Translate.Phrase(context, "assumptions")}*)\", \"{name}\", {JsonConvert.SerializeObject(data_cisgender_agg)}, {rank + 20});");
+                    html.Append($"highcharts_plotpie('{div_cisgender_disagg}', \"{name} {Translate.Phrase(context, "(given name): Disaggregated Gender Identity")} ({Translate.Phrase(context, "estimated")}*)\", \"{name}\", {JsonConvert.SerializeObject(data_cisgender_disagg)}, {rank + 30});");
+                }
+
+                html.Append("</script>");
+
+                r.htmls.Add(html.ToString());
+                #endregion
+            }
+
+            return new RedisResult[] { r };
+        }
+		
+		
+		public static RedisResult[] load_from_Solr_Lastname(HttpContext context, string search_string, int rank, string full_name = "")
+        {
+            RedisResult r = new RedisResult();
+            r.rank = rank;
+
+            string templatex = Session.Read(context, Constants.SESSION_TEMPLATE_X);
+            if (templatex == "professionals")
+            {
+                if (search_string.Contains(","))
+                    search_string = search_string.Split(',')[1].Trim();
+            }
+
+            string solr_query = $"https://solr-facebooknames.totosearch.org/solr/facebook_lastname/select?fl=male_percent,%20female_percent,%20count_male,%20count_female&q=lastname:{search_string.ToLower()}&sort=lastname_count%20desc";
+            string solr_json = Common.DownloadHtml2(solr_query, credentials: SOLR.CREDENTIAL);
+            dynamic jsondata = JObject.Parse(solr_json);
+            double percent_female = 0.0;
+            double percent_male = 0.0;
+            double male_sum = 0;
+            double female_sum = 0;
+            double total = 0;
+            if (jsondata.response.numFound > 0 && jsondata.response.docs[0].female_percent != null && jsondata.response.docs[0].male_percent != null)
+            {
+                string name = Common.ToTitleCase(search_string);
+                full_name = Common.ToTitleCase(full_name);
+
+                percent_female = jsondata.response.docs[0].female_percent;
+                percent_male = jsondata.response.docs[0].male_percent;
+                male_sum = jsondata.response.docs[0].count_male;
+                female_sum = jsondata.response.docs[0].count_female;
+                total = male_sum + female_sum;
+
+                if (percent_female == 0 && percent_male == 0)
+                {
+                    percent_female = 50;
+                    percent_male = 50;
+                    male_sum = 10;
+                    female_sum = 10;
+                    total = male_sum + female_sum;
+                }
+
+                #region Intersex High
+                double percent_intersex_high = 1.7;
+                double percent_male_high = percent_male * 0.983;
+                double percent_female_high = 100 - percent_male_high - percent_intersex_high;
+
+                List<Pie> data_high = new List<Pie>();
+                data_high.Add(new Pie() { name = Translate.Phrase(context, "Male"), y = percent_male_high, color = Colors.Gender.male });
+                data_high.Add(new Pie() { name = Translate.Phrase(context, "Female"), y = percent_female_high, color = Colors.Gender.female });
+                data_high.Add(new Pie() { name = Translate.Phrase(context, "Intersex"), y = percent_intersex_high, color = Colors.Gender.intersex });
+                data_high = data_high.OrderByDescending(i => i.y).ToList();
+                #endregion
+
+                #region Intersex Low
+                double percent_intersex_low = 0.2;
+                double percent_male_low = ((male_sum / total) * 100) * 0.998;
+                double percent_female_low = 100 - percent_male_low - percent_intersex_low;
+
+                List<Pie> data_low = new List<Pie>();
+                data_low.Add(new Pie() { name = Translate.Phrase(context, "Male"), y = percent_male_low, color = Colors.Gender.male });
+                data_low.Add(new Pie() { name = Translate.Phrase(context, "Female"), y = percent_female_low, color = Colors.Gender.female });
+                data_low.Add(new Pie() { name = Translate.Phrase(context, "Intersex"), y = percent_intersex_low, color = Colors.Gender.intersex });
+                data_low = data_low.OrderByDescending(i => i.y).ToList();
+                #endregion
+
+                #region Cisgender Aggregated
+                double percent_non_binary = 0.2;
+                double percent_cisgender = (percent_male * 0.9905) + (percent_female * 0.9955);
+                double percent_transgender = 100 - percent_cisgender - percent_non_binary;
+
+                List<Pie> data_cisgender_agg = new List<Pie>();
+                data_cisgender_agg.Add(new Pie() { name = Translate.Phrase(context, "Non-binary"), y = percent_non_binary, color = Colors.Gender.non_binary });
+                data_cisgender_agg.Add(new Pie() { name = Translate.Phrase(context, "Transgender"), y = percent_transgender, color = Colors.Gender.transgender });
+                data_cisgender_agg.Add(new Pie() { name = Translate.Phrase(context, "Cisgender"), y = percent_cisgender, color = Colors.Gender.cisgender });
+                data_cisgender_agg = data_cisgender_agg.OrderByDescending(i => i.y).ToList();
+                #endregion
+
+                #region Cisgender Disaggregated
+                double percent_cisgender_male = percent_male * 0.9905;
+                double percent_cisgender_female = percent_female * 0.9955;
+                double percent_transgender_male = percent_male * 0.0075;
+                double percent_transgender_female = 100 - percent_cisgender_male - percent_cisgender_female - percent_non_binary - percent_transgender_male;
+
+                List<Pie> data_cisgender_disagg = new List<Pie>();
+                data_cisgender_disagg.Add(new Pie() { name = Translate.Phrase(context, "Non-binary"), y = percent_non_binary, color = Colors.Gender.non_binary });
+                data_cisgender_disagg.Add(new Pie() { name = Translate.Phrase(context, "Transgender, female"), y = percent_transgender_female, color = Colors.Gender.transgender_female });
+                data_cisgender_disagg.Add(new Pie() { name = Translate.Phrase(context, "Transgender, male"), y = percent_transgender_male, color = Colors.Gender.transgender_male });
+                data_cisgender_disagg.Add(new Pie() { name = Translate.Phrase(context, "Cisgender, female"), y = percent_cisgender_female, color = Colors.Gender.cisgender_female });
+                data_cisgender_disagg.Add(new Pie() { name = Translate.Phrase(context, "Cisgender, male"), y = percent_cisgender_male, color = Colors.Gender.cisgender_male });
+                data_cisgender_disagg = data_cisgender_disagg.OrderByDescending(i => i.y).ToList();
+                #endregion
+
+                #region Output
+                string div_high = Common.GetRandomString(6),
+                    div_low = Common.GetRandomString(7),
+                    div_cisgender_agg = Common.GetRandomString(6),
+                    div_cisgender_disagg = Common.GetRandomString(5);
+
+                r.htmls.Add($"<h2>{Translate.Phrase(context, "Gender - recorded at birth (United States)")}</h2>");
+
+                StringBuilder html = new StringBuilder();
+                // Intersex High
+                r.htmls.Add($"<div style='padding-bottom:25px'><div id='{div_high}' style='max-width:700px'></div>{ConstructDataTable(context, data_high).ConstructHTML()}{ConstructMetricTable(context, data_high).ConstructHTML()}</div>");
+
+                // Intersex Low
+                r.htmls.Add($"<div style='padding-bottom:25px'><div id='{div_low}' style='max-width:700px'></div>{ConstructDataTable(context, data_low).ConstructHTML()}{ConstructMetricTable(context, data_low).ConstructHTML()}</div>");
+
+                // Cisgender Aggregated
+                r.htmls.Add($"<div style='padding-bottom:25px'><div id='{div_cisgender_agg}' style='max-width:700px'></div>{ConstructDataTable(context, data_cisgender_agg).ConstructHTML()}{ConstructMetricTable(context, data_cisgender_agg).ConstructHTML()}</div>");
+
+                // Cisgender Disaggregated
+                r.htmls.Add($"<div style='padding-bottom:25px'><div id='{div_cisgender_disagg}' style='max-width:700px'></div>{ConstructDataTable(context, data_cisgender_disagg).ConstructHTML()}{ConstructMetricTable(context, data_cisgender_disagg).ConstructHTML()}</div>");
+
+                // JavaScripts
+                html.Append("<script type='text/javascript'>");
+                html.Append("addJS('text/javascript','/on-demand/highcharts-5.0.11.js');");
+                html.Append("addJS('text/javascript','/on-demand/highcharts-5.0.11-exporting.js');");
+
+                // Pie Charts
+                if (full_name != "")
+                {
+                    html.Append($"highcharts_plotpie('{div_high}', \"{full_name} {Translate.Phrase(context, "(name): Gender identity at birth")} ({Translate.Phrase(context, "imputed high intersex estimate")} = 1.7*)\", \"{full_name}\", {JsonConvert.SerializeObject(data_high)}, {rank});");
+                    html.Append($"highcharts_plotpie('{div_low}', \"{full_name} {Translate.Phrase(context, "(name): Gender identity at birth")} ({Translate.Phrase(context, "imputed low intersex estimate")} = 0.2*)\", \"{full_name}\", {JsonConvert.SerializeObject(data_low)}, {rank + 10});");
+                    html.Append($"highcharts_plotpie('{div_cisgender_agg}', \"{full_name} {Translate.Phrase(context, "(name): Aggregated Gender Identity")} (Yale.edu {Translate.Phrase(context, "assumptions")}*)\", \"{full_name}\", {JsonConvert.SerializeObject(data_cisgender_agg)}, {rank + 20});");
+                    html.Append($"highcharts_plotpie('{div_cisgender_disagg}', \"{full_name} {Translate.Phrase(context, "(name): Disaggregated Gender Identity")} ({Translate.Phrase(context, "estimated")}*)\", \"{full_name}\", {JsonConvert.SerializeObject(data_cisgender_disagg)}, {rank + 30});");
+                }
+                else
+                {
+                    html.Append($"highcharts_plotpie('{div_high}', \"{name} {Translate.Phrase(context, "(given name): Gender identity at birth")} ({Translate.Phrase(context, "imputed high intersex estimate")} = 1.7*)\", \"{name}\", {JsonConvert.SerializeObject(data_high)}, {rank});");
+                    html.Append($"highcharts_plotpie('{div_low}', \"{name} {Translate.Phrase(context, "(given name): Gender identity at birth")} ({Translate.Phrase(context, "imputed low intersex estimate")} = 0.2*)\", \"{name}\", {JsonConvert.SerializeObject(data_low)}, {rank + 10});");
+                    html.Append($"highcharts_plotpie('{div_cisgender_agg}', \"{name} {Translate.Phrase(context, "(given name): Aggregated Gender Identity")} (Yale.edu {Translate.Phrase(context, "assumptions")}*)\", \"{name}\", {JsonConvert.SerializeObject(data_cisgender_agg)}, {rank + 20});");
+                    html.Append($"highcharts_plotpie('{div_cisgender_disagg}', \"{name} {Translate.Phrase(context, "(given name): Disaggregated Gender Identity")} ({Translate.Phrase(context, "estimated")}*)\", \"{name}\", {JsonConvert.SerializeObject(data_cisgender_disagg)}, {rank + 30});");
+                }
+
+                html.Append("</script>");
+
+                r.htmls.Add(html.ToString());
+                #endregion
+            }
+
+            return new RedisResult[] { r };
+        }
+		
+		
+		public static RedisResult[] load_From_Sqlite(HttpContext context, string search_string, int rank, string full_name = "")
+        {
+            RedisResult r = new RedisResult();
+            r.rank = rank;
+
+            string templatex = Session.Read(context, Constants.SESSION_TEMPLATE_X);
+            if (templatex == "professionals")
+            {
+                if (search_string.Contains(","))
+                    search_string = search_string.Split(',')[1].Trim();
+            }
+
+            string dbname = "firstname_stats.sqlite";
+            string query = "SELECT * FROM data WHERE firstname = @str;";
+            Dictionary<string, string> param = new Dictionary<string, string> { { "@str", Common.ToFirstTitleCase(search_string) } };
+            List<Dictionary<string, object>> rows = Common.SQLiteQuery(dbname, query, param);
+
+            if (rows.Count == 0)
+                return new RedisResult[] { };
+
+            string name = Common.ToTitleCase(search_string);
+            full_name = Common.ToTitleCase(full_name);
+            double male_sum = 0;
+            double female_sum = 0;
+                
+            for (int x = 0; x < rows.Count; x++)
+            {
+                for (int y = 1880; y <= 2018; y++)
+                {
+                    string fieldname = $"{y}m";
+                    int male = Convert.ToInt32(rows[x][fieldname].ToString());
+                    male_sum += male;
+
+                    fieldname = $"{y}f";
+                    int female = Convert.ToInt32(rows[x][fieldname].ToString());
+                    female_sum += female;
+                }
+            }
+
+            double total = male_sum + female_sum;
+            double percent_male = (male_sum / total) * 100;
+            double percent_female = 100 - percent_male;
+
+            #region Intersex High
+            double percent_intersex_high = 1.7;
+            double percent_male_high = percent_male * 0.983;
+            double percent_female_high = 100 - percent_male_high - percent_intersex_high;
+                
+            List<Pie> data_high = new List<Pie>();
+            data_high.Add(new Pie() { name = Translate.Phrase(context, "Male"), y = percent_male_high, color = Colors.Gender.male });
+            data_high.Add(new Pie() { name = Translate.Phrase(context, "Female"), y = percent_female_high, color = Colors.Gender.female });
+            data_high.Add(new Pie() { name = Translate.Phrase(context, "Intersex"), y = percent_intersex_high, color = Colors.Gender.intersex });
+            data_high = data_high.OrderByDescending(i => i.y).ToList();
+            #endregion
+
+            #region Intersex Low
+            double percent_intersex_low = 0.2;
+            double percent_male_low = ((male_sum / total) * 100) * 0.998;
+            double percent_female_low = 100 - percent_male_low - percent_intersex_low;
+
+            List<Pie> data_low = new List<Pie>();
+            data_low.Add(new Pie() { name = Translate.Phrase(context, "Male"), y = percent_male_low, color = Colors.Gender.male });
+            data_low.Add(new Pie() { name = Translate.Phrase(context, "Female"), y = percent_female_low, color = Colors.Gender.female });
+            data_low.Add(new Pie() { name = Translate.Phrase(context, "Intersex"), y = percent_intersex_low, color = Colors.Gender.intersex });
+            data_low = data_low.OrderByDescending(i => i.y).ToList();
+            #endregion
+
+            #region Cisgender Aggregated
+            double percent_non_binary = 0.2;
+            double percent_cisgender = (percent_male * 0.9905) + (percent_female * 0.9955);
+            double percent_transgender = 100 - percent_cisgender - percent_non_binary;
+
+            List<Pie> data_cisgender_agg = new List<Pie>();
+            data_cisgender_agg.Add(new Pie() { name = Translate.Phrase(context, "Non-binary"), y = percent_non_binary, color = Colors.Gender.non_binary });
+            data_cisgender_agg.Add(new Pie() { name = Translate.Phrase(context, "Transgender"), y = percent_transgender, color = Colors.Gender.transgender });
+            data_cisgender_agg.Add(new Pie() { name = Translate.Phrase(context, "Cisgender"), y = percent_cisgender, color = Colors.Gender.cisgender });
+            data_cisgender_agg = data_cisgender_agg.OrderByDescending(i => i.y).ToList();
+            #endregion
+
+            #region Cisgender Disaggregated
+            double percent_cisgender_male = percent_male * 0.9905;
+            double percent_cisgender_female = percent_female * 0.9955;
+            double percent_transgender_male = percent_male * 0.0075;
+            double percent_transgender_female = 100 - percent_cisgender_male - percent_cisgender_female - percent_non_binary - percent_transgender_male;
+
+            List<Pie> data_cisgender_disagg = new List<Pie>();
+            data_cisgender_disagg.Add(new Pie() { name = Translate.Phrase(context, "Non-binary"), y = percent_non_binary, color = Colors.Gender.non_binary });
+            data_cisgender_disagg.Add(new Pie() { name = Translate.Phrase(context, "Transgender, female"), y = percent_transgender_female, color = Colors.Gender.transgender_female });
+            data_cisgender_disagg.Add(new Pie() { name = Translate.Phrase(context, "Transgender, male"), y = percent_transgender_male, color = Colors.Gender.transgender_male });
+            data_cisgender_disagg.Add(new Pie() { name = Translate.Phrase(context, "Cisgender, female"), y = percent_cisgender_female, color = Colors.Gender.cisgender_female });
+            data_cisgender_disagg.Add(new Pie() { name = Translate.Phrase(context, "Cisgender, male"), y = percent_cisgender_male, color = Colors.Gender.cisgender_male });
+            data_cisgender_disagg = data_cisgender_disagg.OrderByDescending(i => i.y).ToList();
+            #endregion
+
+            #region Output
+            string div_high = Common.GetRandomString(6),
+                div_low = Common.GetRandomString(7),
+                div_cisgender_agg = Common.GetRandomString(6),
+                div_cisgender_disagg = Common.GetRandomString(5);
+
+            r.htmls.Add($"<h2>{Translate.Phrase(context, "Gender - recorded at birth (United States)")}</h2>");
+
+            StringBuilder html = new StringBuilder();
+            // Intersex High
+            r.htmls.Add($"<div style='padding-bottom:25px'><div id='{div_high}' style='max-width:700px'></div>{ConstructDataTable(context, data_high).ConstructHTML()}{ConstructMetricTable(context, data_high).ConstructHTML()}</div>");
+
+            // Intersex Low
+            r.htmls.Add($"<div style='padding-bottom:25px'><div id='{div_low}' style='max-width:700px'></div>{ConstructDataTable(context, data_low).ConstructHTML()}{ConstructMetricTable(context, data_low).ConstructHTML()}</div>");
+
+            // Cisgender Aggregated
+            r.htmls.Add($"<div style='padding-bottom:25px'><div id='{div_cisgender_agg}' style='max-width:700px'></div>{ConstructDataTable(context, data_cisgender_agg).ConstructHTML()}{ConstructMetricTable(context, data_cisgender_agg).ConstructHTML()}</div>");
+
+            // Cisgender Disaggregated
+            r.htmls.Add($"<div style='padding-bottom:25px'><div id='{div_cisgender_disagg}' style='max-width:700px'></div>{ConstructDataTable(context, data_cisgender_disagg).ConstructHTML()}{ConstructMetricTable(context, data_cisgender_disagg).ConstructHTML()}</div>");
+
+            // JavaScripts
+            html.Append("<script type='text/javascript'>");
+            html.Append("addJS('text/javascript','/on-demand/highcharts-5.0.11.js');");
+            html.Append("addJS('text/javascript','/on-demand/highcharts-5.0.11-exporting.js');");
+                
+            // Pie Charts
+            if (full_name != "")
+            {
+                html.Append($"highcharts_plotpie('{div_high}', \"{full_name} {Translate.Phrase(context, "(name): Gender identity at birth")} ({Translate.Phrase(context, "imputed high intersex estimate")} = 1.7*)\", \"{full_name}\", {JsonConvert.SerializeObject(data_high)}, {rank});");
+                html.Append($"highcharts_plotpie('{div_low}', \"{full_name} {Translate.Phrase(context, "(name): Gender identity at birth")} ({Translate.Phrase(context, "imputed low intersex estimate")} = 0.2*)\", \"{full_name}\", {JsonConvert.SerializeObject(data_low)}, {rank + 10});");
+                html.Append($"highcharts_plotpie('{div_cisgender_agg}', \"{full_name} {Translate.Phrase(context, "(name): Aggregated Gender Identity")} (Yale.edu {Translate.Phrase(context, "assumptions")}*)\", \"{full_name}\", {JsonConvert.SerializeObject(data_cisgender_agg)}, {rank + 20});");
+                html.Append($"highcharts_plotpie('{div_cisgender_disagg}', \"{full_name} {Translate.Phrase(context, "(name): Disaggregated Gender Identity")} ({Translate.Phrase(context, "estimated")}*)\", \"{full_name}\", {JsonConvert.SerializeObject(data_cisgender_disagg)}, {rank + 30});");
+            }
+            else
+            {
+                html.Append($"highcharts_plotpie('{div_high}', \"{name} {Translate.Phrase(context, "(given name): Gender identity at birth")} ({Translate.Phrase(context, "imputed high intersex estimate")} = 1.7*)\", \"{name}\", {JsonConvert.SerializeObject(data_high)}, {rank});");
+                html.Append($"highcharts_plotpie('{div_low}', \"{name} {Translate.Phrase(context, "(given name): Gender identity at birth")} ({Translate.Phrase(context, "imputed low intersex estimate")} = 0.2*)\", \"{name}\", {JsonConvert.SerializeObject(data_low)}, {rank + 10});");
+                html.Append($"highcharts_plotpie('{div_cisgender_agg}', \"{name} {Translate.Phrase(context, "(given name): Aggregated Gender Identity")} (Yale.edu {Translate.Phrase(context, "assumptions")}*)\", \"{name}\", {JsonConvert.SerializeObject(data_cisgender_agg)}, {rank + 20});");
+                html.Append($"highcharts_plotpie('{div_cisgender_disagg}', \"{name} {Translate.Phrase(context, "(given name): Disaggregated Gender Identity")} ({Translate.Phrase(context, "estimated")}*)\", \"{name}\", {JsonConvert.SerializeObject(data_cisgender_disagg)}, {rank + 30});");
+            }
+            
+            html.Append("</script>");
+
+            r.htmls.Add(html.ToString());
+            #endregion
+
+            return new RedisResult[] { r };
+        }
+		
+		
+		
+		
+		
+		
+		
+		
+		public static string RemoveDiacritics(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return text;
+
+            text = text.Normalize(NormalizationForm.FormD);
+            var chars = text.Where(c => System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c) != System.Globalization.UnicodeCategory.NonSpacingMark).ToArray();
+            return new string(chars).Normalize(NormalizationForm.FormC);
+        }
+		
