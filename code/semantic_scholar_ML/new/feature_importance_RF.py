@@ -2,16 +2,35 @@ import pandas as pd
 from sklearn.linear_model import Lasso
 import numpy as np
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
-from sklearn.linear_model import LogisticRegression
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 import matplotlib.pyplot as plt
 from sklearn.model_selection import GridSearchCV
 import pickle
-import matplotlib.cm as cm
 import shap
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, roc_curve, roc_auc_score, f1_score
+import matplotlib.colors as mcolors
+import matplotlib.cm as cm
+import seaborn as sns
+from matplotlib.ticker import MaxNLocator
+import matplotlib as mpl
+
+mpl.rcParams.update({
+    'font.family': 'serif',                # 使用衬线字体
+    'font.serif': ['Times New Roman'],     # Times 字体
+})
+
+# Function to scale data
+def scale_data(X_train, X_test):
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+
+    # 将 ndarray 转回 DataFrame，并保留列名
+    X_train_scaled = pd.DataFrame(X_train_scaled, columns=X_train.columns, index=X_train.index)
+    X_test_scaled = pd.DataFrame(X_test_scaled, columns=X_test.columns, index=X_test.index)
+
+    return X_train_scaled, X_test_scaled
 
 def initial_screen_features_RF(X, y, threshold=0.01):
     """
@@ -107,7 +126,7 @@ def tune_hyperparameters(X_train, y_train, subset_id, model_save_dir):
     # Initialize models
     models = {
         "random_forest": (RandomForestClassifier(random_state=42), param_grid_rf),
-        # "gradient_boosting": (GradientBoostingClassifier(random_state=42), param_grid_gb),
+        "gradient_boosting": (GradientBoostingClassifier(random_state=42), param_grid_gb),
     }
 
     # Tune models
@@ -126,31 +145,36 @@ def tune_hyperparameters(X_train, y_train, subset_id, model_save_dir):
     return best_params
 
 # load and prepare data with second-order interactions, and do initail feature screening
-def load_and_prepare_data(file_path):
+def load_and_prepare_data(file_path, drop_columns=None, add_SOI=False):
     df = pd.read_csv(file_path)
+    # rename variables 
+    df = df.rename(columns={"country_race_shannon_entropy_mean": "country_race_diversity_score", 
+                            "paper_race_shannon_entropy":"authors_race_diversity_score",
+                            "female_score_mean": "female_score_avg",
+                            "white":"ratio_of_white_authors",
+                            "black":"ratio_of_black_authors",
+                            "asian":"ratio_of_asian_authors",})
+    
     
     # Create the target variable
     # df['target'] = df['count_frequency_inequality_words'].apply(lambda x: 1 if x > 0 else 0)
     df['target'] = df["AI_label"].apply(lambda x: 1 if x == 1 else 0)
     
     y = df['target']
-
-
-    # Select features, dropping non-relevant columns
-    drop_columns = ['count_frequency_inequality_words', 'AI_label', 'label_status', 'target', 'title', 'paper_abstract', # lables
-                    # 'first_author_race_native_americans', 'first_author_race_mixed',
-                    # 'first_author_race_other', # 'first_author_race_native_hawaiian_or_other_pacific_islander',
-                    'mixed', 'other', 'native_americans',
-                    'acad_ineq_t-0', 'acad_ineq_t-1', 'acad_ineq_t-2', 'acad_ineq_3yr_avg',
-                    'news_ineq_t-0', 'news_ineq_t-1', 'news_ineq_t-2', 'news_ineq_3yr_avg',
-                    # 'acad_ineq_t-3', 'news_ineq_t-3',
-                    'year'
-                    ]
-
+    
     # Select features 
     X = df.drop(columns=drop_columns) 
     print(f"Initial number of features: {X.shape[1]}")
     
+    if add_SOI:
+        # Add second-order interaction features
+        X = add_second_order_interactions(X)
+        print(f"Number of features after adding second-order interactions: {X.shape[1]}")
+        
+        # Initial feature screening using Random Forest importance
+        X = initial_screen_features_RF(X, y, threshold=0.02)
+        print(f"Number of features after initial screening: {X.shape[1]}")
+        
     # shuffle the dataset
     random_seed = np.random.randint(100000)
     dataset = pd.concat([X, y], axis=1).sample(frac=1, random_state=random_seed).reset_index(drop=True)
@@ -159,14 +183,80 @@ def load_and_prepare_data(file_path):
 
     return X, y, df
 
-def add_second_order_interactions(X):
+def add_second_order_interactions(X, sep=" * "):
     poly = PolynomialFeatures(degree=2, interaction_only=True, include_bias=False)
     X_interactions = poly.fit_transform(X)
-    interaction_feature_names = poly.get_feature_names_out(input_features=X.columns)
-    X = pd.DataFrame(X_interactions, columns=interaction_feature_names)
-    return X
+    
+    # Modify interaction feature names to use custom separator
+    original_names = X.columns
+    raw_feature_names = poly.get_feature_names_out(original_names)
+    
+    # Replace space with desired separator
+    custom_feature_names = [name.replace(" ", sep) for name in raw_feature_names]
+    
+    return pd.DataFrame(X_interactions, columns=custom_feature_names)
 
-def main(file_path, load_existing_best_params, model_name, model_save_dir):
+
+
+
+def plot_feature_importance(combined_df, model_name, model_save_dir, top_N, split_N):
+    # Normalize color by importance
+    norm = mcolors.Normalize(vmin=combined_df["Feature Importance"].min(), vmax=combined_df["Feature Importance"].max())
+    cmap = sns.color_palette("crest", as_cmap=True)
+    colors = cmap(norm(combined_df["Feature Importance"].values))
+
+    # Sort bottom-up
+    combined_df = combined_df.sort_values(by=["Votes", "Feature Importance"], ascending=[True, True])
+
+    # Plot
+    fig, ax = plt.subplots(figsize=(16, 8))
+    bars = ax.barh(combined_df["Feature"], combined_df["Votes"], color=colors, edgecolor='black', linewidth=0.6)
+
+    # Add value labels and size
+    for bar, importance in zip(bars, combined_df["Feature Importance"]):
+        ax.text(bar.get_width() + 0.2, bar.get_y() + bar.get_height()/2,
+                f"{importance:.3f}", va="center", ha="left", fontsize=20)
+
+
+    # Styling
+    ax.set_xlabel(f"Votes (Top {top_N})", fontsize=30, labelpad=15)
+    if split_N > 1:
+        title = f"Top Voted Features Across {split_N} Subsamples\n{model_name.replace('_', ' ').title()}"
+    else:
+        title = f"Top Voted Features Across All Samples\n{model_name.replace('_', ' ').title()}"
+    
+    ax.set_title(title,
+                 fontsize=30, pad=20, weight='bold')
+    # x and y tick label size
+    ax.tick_params(axis='y', labelsize=30)
+    ax.tick_params(axis='x', labelsize=25)
+    ax.grid(axis='x', linestyle='--', alpha=0.6)
+    # set x limit
+    ax.set_xlim(0, combined_df["Votes"].max() + 2)
+    
+    plt.yticks(rotation=30)
+    
+    # Ensure x-axis has integer ticks
+    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+
+    # Colorbar
+    sm = cm.ScalarMappable(cmap=cmap, norm=norm)
+    sm.set_array([])
+    cbar = fig.colorbar(sm, ax=ax, pad=0.01)
+    cbar.set_label("Averaged Feature Importance", fontsize=20, labelpad=10)
+    cbar.ax.tick_params(labelsize=15)
+
+    # Improve layout and export
+    plt.tight_layout()
+    plt.savefig(f"{model_save_dir}/RF_feature_importance_votes.png", dpi=600, bbox_inches='tight', pad_inches=0.2)
+    plt.savefig(f"{model_save_dir}/RF_feature_importance_votes.pdf", bbox_inches='tight', pad_inches=0.2)
+    # plt.show()
+
+    print(f"✅ Saved improved feature importance plots to:")
+    print(f"   → {model_save_dir}/RF_feature_importance_votes.png")
+    print(f"   → {model_save_dir}/RF_feature_importance_votes.pdf")
+
+def main(file_path, load_existing_best_params, model_name, model_save_dir, drop_columns=None, add_SOI=False, scale=False):
     """
     Find robust feature importance rankings using shuffled and split subsets.
 
@@ -178,7 +268,22 @@ def main(file_path, load_existing_best_params, model_name, model_save_dir):
         DataFrame: Robust feature importance ranking.
     """
     # Step 1: Load and prepare data with second-order interactions
-    X, y, _ = load_and_prepare_data(file_path)
+    X, y, _ = load_and_prepare_data(file_path, drop_columns, add_SOI)
+    
+    # train with whole dataset to get AUC
+    random_seed = np.random.randint(100000)
+    X_train_whole, X_test_whole, y_train_whole, y_test_whole = train_test_split(X, y, test_size=0.2, random_state=random_seed)
+    if model_name == 'random_forest':
+        model_whole = RandomForestClassifier(random_state=random_seed)
+    elif model_name == 'gradient_boosting':
+        model_whole = GradientBoostingClassifier(random_state=random_seed)
+    model_whole.fit(X_train_whole, y_train_whole)
+    y_pred_whole = model_whole.predict(X_test_whole)        
+    y_pred_proba_whole = model_whole.predict_proba(X_test_whole)[:, 1]  
+    accuracy_whole = accuracy_score(y_test_whole, y_pred_whole)
+    auc_score_whole = roc_auc_score(y_test_whole, y_pred_proba_whole)
+    print(f"\nTrained on whole dataset, Accuracy: {accuracy_whole:.2f}, AUC: {auc_score_whole:.2f}")
+    
 
     # Step 2: Split the shuffled dataset into subsets
     Split_N = 10
@@ -197,12 +302,14 @@ def main(file_path, load_existing_best_params, model_name, model_save_dir):
 
         # Step 4: Tune hyperparameters on the training set
         if load_existing_best_params:
-            with open(f"{model_save_dir}/best_params.pkl", "rb") as file:
+            with open(f"{model_save_dir}/best_params_subset_{i}.pkl", "rb") as file:
                 best_params = pickle.load(file)
         else:
             best_params = tune_hyperparameters(X_split, y_split, i, model_save_dir)
         
         X_train, X_test, y_train, y_test = train_test_split(X_split, y_split, test_size=0.2, random_state=random_seed)
+        if scale:
+            X_train, X_test = scale_data(X_train, X_test)
 
         # Step 5: Train a Random Forest model with the best parameters
         if model_name == 'random_forest':
@@ -241,100 +348,16 @@ def main(file_path, load_existing_best_params, model_name, model_save_dir):
     combined_df = votes_df.merge(average_importance, on='Feature', how='left')
 
     # Sort by Votes (descending) and Importance (descending)
-    combined_df = combined_df[combined_df['Votes'] > 1] # filter out features with low votes
+    combined_df = combined_df[combined_df['Votes'] >= 1] # filter out features with low votes
     combined_df = combined_df.sort_values(by=['Votes', 'Feature Importance'], ascending=[False, False])
     print("\nFinal Feature Importance Values Ranking (Combined Votes and Feature Importance):")
     print(combined_df)
 
-    combined_df = combined_df.head(10) # top 5 features
+    combined_df = combined_df.head(5) 
     combined_df = combined_df.sort_values(by=['Votes', 'Feature Importance'], ascending=[True, True])
    
-    
-    colors = cm.viridis(np.linspace(0, 1, len(combined_df)))
-
-    # Visualization
-    fig, ax = plt.subplots(figsize=(10, 8))
-    # Bar plot for Votes with gradient colors
-    bars = ax.barh(combined_df["Feature"], combined_df["Votes"], color=colors, label="Votes")
-
-    # 设置标签
-    ax.set_xlabel("Votes", fontsize=20)
-    # ax.set_ylabel("Features", fontsize=20)
-    ax.set_title(f"{model_save_dir.split('/')[1].upper()} Inequality \n({model_name})", fontsize=16, fontweight='bold')
-
-    # 确保 y 轴标签显示完整
-    ax.set_yticks(np.arange(len(combined_df["Feature"])))  
-    ax.set_yticklabels(combined_df["Feature"], fontsize=25, rotation=0)
-
-    ax.grid(axis='x', linestyle='--', alpha=0.7)
-    plt.tight_layout()
-    plt.savefig(f"{model_save_dir}/feature_importance_votes.png")
-    
-    
-    
-    # part 2: checking directions with/without second order interactions 
-    # X_filtered = X[combined_df['Feature'].tolist()] # select features with high votes (> 1)
-    # X_filtered = add_second_order_interactions(X_filtered)
-    X_filtered = X
-
-    # 'C' is inverse of alpha; lower values increase regularization
-    logistic = LogisticRegression(penalty='l1', solver='liblinear', C=10, random_state=random_seed) 
-    # logistic = LogisticRegression(penalty='elasticnet', solver='saga', l1_ratio=0.5, C=0.05, random_state=42)
- 
-    X_train, X_test, y_train, y_test = train_test_split(X_filtered, y, test_size=0.2, random_state=random_seed)
-    logistic.fit(X_train, y_train)
-
-
-    print("\nLogistic Coefficients:")
-    lasso_coefficients = pd.DataFrame({
-        'Feature': X_filtered.columns,
-        'Coefficient': logistic.coef_[0]
-    }).sort_values(by='Coefficient', key=lambda x: abs(x), ascending=True)
-
-    # Predict on test set
-    y_pred = logistic.predict(X_test)
-    y_pred_prob = logistic.predict_proba(X_test)[:, 1]  # Probabilities for ROC AUC
-    
-    # Evaluate model performance
-    accuracy = accuracy_score(y_test, y_pred)
-    f1 = f1_score(y_test, y_pred)
-    roc_auc = roc_auc_score(y_test, y_pred_prob)
-
-    print(f"Accuracy: {accuracy:.4f}")
-    print(f"F1 Score: {f1:.4f}")
-    print(f"ROC AUC: {roc_auc:.4f}")
-    
-    # Plot feature importance
-    fig, ax = plt.subplots(figsize=(10, 8))
-
-    # Separate positive and negative coefficients
-    # only keep top 15 absolute coefficients
-    lasso_coefficients = lasso_coefficients.reindex(lasso_coefficients['Coefficient'].abs().sort_values(ascending=True).tail(10).index)
-    lasso_coefficients['Sign'] = np.where(lasso_coefficients['Coefficient'] > 0, 1, -1)
-
-    # Bar plot with direction
-    for index, row in lasso_coefficients.iterrows():
-        if row['Coefficient'] != 0:
-            coef = row['Coefficient']
-            feature = row['Feature']
-            color = 'blue' if coef > 0 else 'red'  # Choose colors for positive and negative
-            ax.barh(feature, coef, color=color)
-    
-    ax.tick_params(axis='y', labelsize=20)
-    ax.set_yticklabels(ax.get_yticklabels(), rotation=30)
-
-    # Add a vertical line at 0 to separate positive and negative contributions
-    ax.axvline(x=0, color="black", linestyle="--", linewidth=0.8)
-
-    # Add labels and title
-    ax.set_xlabel('Coefficient Value', fontsize=20)
-    # ax.set_ylabel('Features', fontsize=14)
-    ax.set_title(f"{model_save_dir.split('/')[1].upper()} Logistic Regression", fontsize=16, fontweight='bold')
-
-    # Improve layout and readability
-    plt.tight_layout()
-    plt.savefig(f"{model_save_dir}/logit_lasso_feature_importance.png")
-
+    # --------------------------------- Plotting ---------------------------------
+    plot_feature_importance(combined_df, model_name, model_save_dir, Top_N, Split_N)
 
     
 if __name__ == "__main__":
@@ -347,10 +370,30 @@ if __name__ == "__main__":
     file_path = sys.argv[1]
     model_save_dir = sys.argv[2]
     
-    load_existing_best_params = False
+    
 
     model_name = 'random_forest' # [random_forest, gradient_boosting]
+    
+        # Select features, dropping non-relevant columns
+    drop_columns = ['count_frequency_inequality_words', 'AI_label', 'label_status', 'target', 'title', 'paper_abstract', # lables
+                    'mixed', 'other', 'native_americans',
+                    'acad_ineq_t-0', 'acad_ineq_t-1', 'acad_ineq_t-2', 
+                    'news_ineq_t-0', 'news_ineq_t-1', 'news_ineq_t-2',
+                    # 'acad_ineq_t-3', 'news_ineq_t-3',
+                    'acad_ineq_3yr_avg', 'news_ineq_3yr_avg',
+                    'female_score_min', 'female_score_max', 'first_author_female_score', 
+                    # 'female_score_mean'
+                    'year'
+                    ]
+    
 
-    main(file_path, load_existing_best_params, model_name, model_save_dir)
+    
+    load_existing_best_params = True
+    
+    add_SOI = False # whether to add second-order interaction features
+    
+    scale = True
+
+    main(file_path, load_existing_best_params, model_name, model_save_dir, drop_columns, add_SOI, scale)
     
     

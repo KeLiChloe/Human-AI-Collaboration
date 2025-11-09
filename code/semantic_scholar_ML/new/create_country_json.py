@@ -81,6 +81,9 @@ def create_country_race_json(db_path, output_json):
         
         # Determine the highest ratio race
         highest_ratio_race = get_highest_ratio_race(row_dict)
+        
+        
+        
 
         # Calculate diversity metrics
         diversity_metrics = calculate_diversity_metrics(row_dict)
@@ -88,7 +91,15 @@ def create_country_race_json(db_path, output_json):
         # Populate the dictionary for the country
         country_dict[country] = {
             "highest_ratio_race": highest_ratio_race,
-            **diversity_metrics  # Include all diversity metrics
+            **diversity_metrics,  # Include all diversity metrics
+            "black": row_dict['black']*0.01,
+            "asian": row_dict['asian']*0.01,
+            "white": row_dict['white']*0.01,
+            "hispanic": row_dict['hispanic']*0.01,
+            "native_hawaiian_or_other_pacific_islander": row_dict['native_hawaiian_or_other_pacific_islander']*0.01,
+            "native_americans": row_dict['native_americans']*0.01,
+            "mixed": row_dict['mixed']*0.01,
+            "other": row_dict['other']*0.01
         }
     
     # Save the dictionary as a JSON file

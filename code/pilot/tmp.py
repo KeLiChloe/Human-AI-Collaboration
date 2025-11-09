@@ -3,11 +3,11 @@ import numpy as np
 
 
 # Define prediction and ground truth vectors
-Claude = {
+DeepSeek = {
    "social_science": +1,
-   "female_score_avg": +1,
+   "female_score_avg": 0,
    "authors_race_diversity_score": +1,
-   "country_race_diversity_score": 0,
+   "country_race_diversity_score": +1,
    "black": +1,
    "natural_science": 0,
    "first_author_female_score": 0,
@@ -17,54 +17,18 @@ Claude = {
    "asian": 0,
    "num_authors": 0,
    "native_hawaiian": 0,
-   "engineering_and_technology": -1,
-   "hispanic": 0
+   "engineering_and_technology": 0,
+   "hispanic": +1
 }
 
-GPT = {
-    "social_science": +1,
-    "female_score_avg": +1,
-    "authors_race_diversity_score": +1,
-    "country_race_diversity_score": 0,
-    "black": +1,
-    "natural_science": 0,
-    "first_author_female_score": +1,
-    "white": 0,
-    "female_score_max": 0,
-    "female_score_min": 0,
-    "asian": 0,
-    "num_authors": 0,
-    "native_hawaiian": 0,
-    "engineering_and_technology": 0,
-    "hispanic": 0
-}
-
-Gemini = {
-    "social_science": 1,
-    "female_score_avg": 1,
-    "authors_race_diversity_score": 1,
-    "country_race_diversity_score": 0,
-    "black": 1,
-    "natural_science": 0,
-    "first_author_female_score": 0, # Though related to my #4, I prioritized female_score_avg for the distinct top 5
-    "white": 0,
-    "female_score_max": 0,
-    "female_score_min": 0,
-    "asian": 0,
-    "num_authors": 0,
-    "native_hawaiian": 0,
-    "engineering_and_technology": 0,
-    "hispanic": 1
-}
-
-DeepSeek = {
+GPT_o3 = {
     "social_science": +1,
     "female_score_avg": 0,
     "authors_race_diversity_score": +1,
-    "country_race_diversity_score": 0,
+    "country_race_diversity_score": +1,
     "black": +1,
     "natural_science": 0,
-    "first_author_female_score": +1,
+    "first_author_female_score": 0,
     "white": 0,
     "female_score_max": 0,
     "female_score_min": 0,
@@ -75,21 +39,90 @@ DeepSeek = {
     "hispanic": 0
 }
 
+GPT_5_thinking = {
+    "social_science": +1,
+    "female_score_avg": 0,
+    "authors_race_diversity_score": +1,
+    "country_race_diversity_score": 0,
+    "black": +1,
+    "natural_science": 0,
+    "first_author_female_score": 0,
+    "white": 0,
+    "female_score_max": 0,
+    "female_score_min": 0,
+    "asian": 0,
+    "num_authors": 0,
+    "native_hawaiian": 0,
+    "engineering_and_technology": -1,
+    "hispanic": +1
+}
+
+Gemini = {
+    "social_science": 1,
+    "female_score_avg": 0,
+    "authors_race_diversity_score": 1,
+    "country_race_diversity_score": 1,
+    "black": 1,
+    "natural_science": 0,
+    "first_author_female_score": 0, 
+    "white": 0,
+    "female_score_max": 0,
+    "female_score_min": 0,
+    "asian": 0,
+    "num_authors": 0,
+    "native_hawaiian": 0,
+    "engineering_and_technology": -1,
+    "hispanic": 0
+} # 2.5-pro
+
+Claude = {
+    "social_science": 1,
+    "female_score_avg": 1,
+    "authors_race_diversity_score": 1,
+    "country_race_diversity_score": 1,
+    "black": 1,
+    "natural_science": 0,
+    "first_author_female_score": 0, 
+    "white": 0,
+    "female_score_max": 0,
+    "female_score_min": 0,
+    "asian": 0,
+    "num_authors": 0,
+    "native_hawaiian": 0,
+    "engineering_and_technology": 0,
+    "hispanic": 0
+    }
+
+
+# write a function to compute the aggregate vector the results of GenAI
+GenAI_Aggregate = {}
+for feature in Claude.keys():
+    GenAI_Aggregate[feature] = np.mean([
+        Claude[feature],
+        GPT_o3[feature],
+        GPT_5_thinking[feature],
+        Gemini[feature],
+        DeepSeek[feature],
+    ])
+
+
+
+
 ground_truth = {
     "social_science": 1,
     "female_score_avg": 1,
     "country_race_diversity_score": 1,
-    "female_score_max": 1,
-    "female_score_min": -1,
+    "female_score_max": 0,
+    "female_score_min": 0,
     "authors_race_diversity_score": 0,
     "black": 0,
     "natural_science": 0,
     "first_author_female_score": 0,
     "white": 0,
-    "asian": 0,
+    "asian": -1,
     "num_authors": 0,
     "native_hawaiian": 0,
-    "engineering_and_technology": 0,
+    "engineering_and_technology": -1,
     "hispanic": 0
 }
 
@@ -105,29 +138,28 @@ def to_vector(model_dict):
     return np.array([model_dict.get(key, 0) for key in features]).reshape(1, -1)
 
 vec_claude = to_vector(Claude)
-vec_gpt = to_vector(GPT)
+vec_gpt_5 = to_vector(GPT_5_thinking)
+vec_gpt_o3= to_vector(GPT_o3)
 vec_gemini = to_vector(Gemini)
-vec_deepseek = to_vector(DeepSeek)
+vec_genAI_avg = to_vector(GenAI_Aggregate)
 vec_truth = to_vector(ground_truth)
 
 # Compute cosine similarities
 sim_claude = cosine_similarity(vec_claude, vec_truth)[0][0]
-sim_gpt = cosine_similarity(vec_gpt, vec_truth)[0][0]
 sim_gemini = cosine_similarity(vec_gemini, vec_truth)[0][0]
-sim_deepseek = cosine_similarity(vec_deepseek, vec_truth)[0][0]
+sim_gpt_5 = cosine_similarity(vec_gpt_5, vec_truth)[0][0]
+sim_genai_avg = cosine_similarity(vec_genAI_avg, vec_truth)[0][0]
+
+
 
 #  compute sum squared distances
 ssd_claude = sum_squared_distance(vec_claude, vec_truth)
-ssd_gpt = sum_squared_distance(vec_gpt, vec_truth)
 ssd_gemini = sum_squared_distance(vec_gemini, vec_truth)
-ssd_deepseek = sum_squared_distance(vec_deepseek, vec_truth)
+ssd_gpt_5 = sum_squared_distance(vec_gpt_5, vec_truth)
+ssd_gpt_o3 = sum_squared_distance(vec_gpt_o3, vec_truth)
+ssd_genai_avg = sum_squared_distance(vec_genAI_avg, vec_truth)
 
-print(f"Claude similarity: {sim_claude:.2f}")
-print(f"GPT similarity: {sim_gpt:.2f}")
-print(f"Gemini similarity: {sim_gemini:.2f}")
-print(f"DeepSeek similarity: {sim_deepseek:.2f}")
 
-print(f"Claude sum squared distance: {ssd_claude:.2f}")
-print(f"GPT sum squared distance: {ssd_gpt:.2f}")
-print(f"Gemini sum squared distance: {ssd_gemini:.2f}")
-print(f"DeepSeek sum squared distance: {ssd_deepseek:.2f}")
+print(f"Cosine Similarity - Claude: {sim_claude:.4f}, Gemini: {sim_gemini:.4f}, GPT-5: {sim_gpt_5:.4f}")
+print(f"Sum Squared Distance - Claude: {ssd_claude}, Gemini: {ssd_gemini}, GPT-5: {ssd_gpt_5}, GPT-o3: {ssd_gpt_o3}, GenAI_Average: {ssd_genai_avg}")
+

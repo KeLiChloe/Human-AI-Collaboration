@@ -3,12 +3,12 @@ import numpy as np
 from os.path import dirname
 
 # Load your dataset
-FILE_PATH = "data/pilot/race/Structured_Race_Results.csv"
+FILE_PATH = "code/semantic_scholar_ML/pilot/race/Structured_Race_Results.csv"
 output_dir = dirname(FILE_PATH)
 df = pd.read_csv(FILE_PATH)
 
 if 'race' in FILE_PATH:
-    top_5_model_features = ["social_science", "country_race_diversity_score", "female_score_avg", "female_score_max", "female_score_min"]
+    top_5_model_features = ["social_science", "country_race_diversity_score", "female_score_avg", "asian", "engineering_and_technologys"]
     top_5_model_ranks = {feature: i for i, feature in enumerate(top_5_model_features)}
     top_1_model_feature = "social_science"
 
@@ -118,5 +118,5 @@ df["Combined_Coverage_and_Ranking_Score"] = composite_scores
 
 
 # Save updated file
-df.to_csv(f"{output_dir}/Results_with_accuracy_columns.csv", index=False)
+df.to_csv(f"{output_dir}/updated_Results_with_accuracy_columns.csv", index=False)
 print("✅ Updated CSV saved with new columns.")

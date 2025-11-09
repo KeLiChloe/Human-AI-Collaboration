@@ -6,8 +6,7 @@ from os.path import dirname
 # ------------------------
 # Step 1: Load Data
 # ------------------------
-FILE_PATH = "data/pilot/race/Results_with_accuracy_columns.csv"
-output_dir = dirname(FILE_PATH)
+FILE_PATH = "code/semantic_scholar_ML/pilot/race/Results_with_accuracy_columns.csv"
 
 df = pd.read_csv(FILE_PATH)
 
@@ -176,13 +175,12 @@ plt.figure(figsize=(12, 7))
 
 # Custom color palette (visually distinct and colorblind-friendly)
 colors = {
-    "ML Benchmark": "#1b9e77",
+    "ML Benchmark": "#00C9FB",
     "Human Aggregate": "#d95f02",
-    "Human Average": "#7570b3",
-    "GenAI (GPT-4o, Gemini 2.5, Claude 3.7)": "#e7298a",
-    "GenAI DeepSeek R1": "#63bbf2",
-    "Random Benchmark": "#66a61e",
-    "Participants": "#666666"
+    "Human Average": "#3627ff",
+    "GenAI": "#e7298a",
+    "Random Benchmark": "#00ab22",
+    "Participants": "#4D4D4D"
 }
 
 # Scatter plot for participant scores
@@ -195,10 +193,10 @@ sns.scatterplot(
 )
 
 plt.axhline(1, color=colors["ML Benchmark"], linestyle='--', linewidth=2, label="ML Benchmark")
-plt.axhline(agg_corr, color=colors["Human Aggregate"], linestyle='-', linewidth=2.5, label="Human Aggregate")
+plt.axhline(agg_corr, color=colors["Human Aggregate"], linestyle='-', linewidth=2.5, label="Human Aggregation")
 
-plt.axhline(0.40, color=colors['GenAI (GPT-4o, Gemini 2.5, Claude 3.7)'], linestyle='-.', linewidth=2, 
-            label="GenAI (GPT-4o, Gemini 2.5, Claude 3.7)")
+plt.axhline(0.40, color=colors["GenAI"], linestyle='-.', linewidth=2, 
+            label="GenAI (GPT-o3, Gemini 2.5 Pro, Claude 3, DeepSeek R1)")
 plt.axhline(mean_corr, color=colors["Human Average"], linestyle=':', linewidth=2.5, label="Human Average")
 plt.axhline(avg_random_corr, color=colors["Random Benchmark"], linestyle=(0, (3, 3, 1, 3)), linewidth=2, label="Random Benchmark (1000 trials)")
 
@@ -213,59 +211,50 @@ plt.legend(fontsize=12, loc='best', frameon=True)
 # Remove grid for a clean look
 sns.despine()
 plt.tight_layout()
-plt.show()
-
-
-# # # --- Plot normalized_true_accuracy_score ---
-# sns.set_style("white")
-# plt.figure(figsize=(12, 7))
-
-# # Custom color palette (visually distinct and colorblind-friendly)
-# colors = {
-#     "ML Benchmark": "#1b9e77",
-#     "Human Aggregate": "#d95f02",
-#     "Human Average": "#7570b3",
-#     "GenAI (GPT-o3, Gemini 2.5, Claude 3.7)": "#e7298a",
-#     "GenAI (DeepSeek)": "#63bbf2",
-#     "Random Benchmark": "#66a61e",
-#     "Participants": "#666666"
-# }
-
-# # Scatter plot for participant scores
-# sns.scatterplot(
-#     x=sorted_norm_score.index,
-#     y=sorted_norm_score,
-#     s=100,
-#     color=colors["Participants"],
-#     label="Participants"
-# )
-
-# # Reference lines with unique styles
-# plt.axhline(1, color=colors["ML Benchmark"], linestyle='--', linewidth=2, label="ML Benchmark")
-# plt.axhline(agg_norm_score, color=colors["Human Aggregate"], linestyle='-', linewidth=2.5, label="Human Aggregate")
-# plt.axhline(0.571, color=colors["GenAI (GPT-o3, Gemini 2.5, Claude 3.7)"], linestyle='-.', linewidth=2, label="GenAI (GPT-o3, Gemini 2.5, Claude 3.7)")
-# # plt.axhline(0.428, color=colors["GenAI (DeepSeek)"], linestyle=':', linewidth=2, label="GenAI (DeepSeek)")
-
-# plt.axhline(mean_score, color=colors["Human Average"], linestyle='-.', linewidth=2.5, label="Human Average")
-# plt.axhline(avg_random_norm_score, color=colors["Random Benchmark"], linestyle=(0, (3, 3, 1, 3)), linewidth=2, label="Random Benchmark (1000 trials)")
-
-# # Titles and labels
-# plt.title("Accuracy Score (Combining Magnitude and Sign, Higher = Better)", fontsize=18)
-# plt.xlabel("Sorted Participants", fontsize=16)
-# plt.ylabel("Accuracy Score", fontsize=16)
-
-# # Legend formatting
-# plt.legend(fontsize=12, loc='best', frameon=True)
-
-# # Remove grid for a clean look
-# sns.despine()
-# plt.tight_layout()
 # plt.show()
 
 
-# ------------------------
-# Step 5: Save updated DataFrame
-# ------------------------
+# # --- Plot normalized_true_accuracy_score ---
+sns.set_style("white")
+plt.figure(figsize=(12, 7))
 
-output_path = f"{output_dir}/Results_with_true_accuracy.csv"
-df.to_csv(output_path, index=False)
+# Custom color palette (visually distinct and colorblind-friendly)
+colors = {
+    "ML Benchmark": "#ff33b4c4",
+    "Human Aggregate": "#47D600",
+    "Human Average": "#004bf8",
+    "GenAI": "#ff3636",
+    "Random Benchmark": "#979797",
+    "Participants": "#666666"
+}
+
+# Scatter plot for participant scores
+sns.scatterplot(
+    x=sorted_norm_score.index,
+    y=sorted_norm_score,
+    s=100,
+    color=colors["Participants"],
+    label="Participants"
+)
+
+# Reference lines with unique styles
+plt.axhline(1, color=colors["ML Benchmark"], linestyle='-', linewidth=2, label="ML Benchmark")
+plt.axhline(agg_norm_score, color=colors["Human Aggregate"], linestyle='-', linewidth=2, label="Human Aggregation")
+plt.axhline(0.675, color=colors["GenAI"], linestyle='--', linewidth=2, label="GenAI Average (GPT-o3, GPT-5-thinking, Gemini 2.5 Pro, Claude 3, DeepSeek R1)")
+# plt.axhline(0.428, color=colors["GenAI (DeepSeek)"], linestyle=':', linewidth=2, label="GenAI (DeepSeek)")
+
+plt.axhline(mean_score, color=colors["Human Average"], linestyle=':', linewidth=2.5, label="Human Average")
+plt.axhline(avg_random_norm_score, color=colors["Random Benchmark"], linestyle=(0, (3, 3, 1, 3)), linewidth=2, label="Random Benchmark (1000 trials)")
+
+# Titles and labels
+plt.title("Accuracy Score (Combining Magnitude and Sign, Higher = Better)", fontsize=20, weight='bold', pad=10)
+plt.xlabel("Sorted Participants", fontsize=16)
+plt.ylabel("Accuracy Score", fontsize=16)
+
+# Legend formatting
+plt.legend(fontsize=12, loc='best', frameon=True)
+
+# Remove grid for a clean look
+sns.despine()
+plt.tight_layout()
+plt.show()

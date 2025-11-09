@@ -177,6 +177,11 @@ def scale_data(X_train, X_test):
     scaler = StandardScaler()
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
+
+    # 将 ndarray 转回 DataFrame，并保留列名
+    X_train_scaled = pd.DataFrame(X_train_scaled, columns=X_train.columns, index=X_train.index)
+    X_test_scaled = pd.DataFrame(X_test_scaled, columns=X_test.columns, index=X_test.index)
+
     return X_train_scaled, X_test_scaled
 
 # Function to train and predict models

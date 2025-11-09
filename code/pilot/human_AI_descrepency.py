@@ -4,29 +4,24 @@ import seaborn as sns
 from collections import Counter
 from os.path import dirname
 
+
 # ---------------------
 # Config
 # ---------------------
-FILE_PATH = "data/pilot/gender/Structured_Gender_Results.csv"
+FILE_PATH = "code/semantic_scholar_ML/pilot/race/Structured_Race_Results.csv"
 OUTPUT_DIR = dirname(FILE_PATH)
 
 if 'race' in FILE_PATH:
-    ML_TOP_FEATURES = ["social_science", "country_race_diversity_score", "female_score_avg", "female_score_max", "female_score_min"]
+    ML_TOP_FEATURES = ["social_science", "country_race_diversity_score", "female_score_avg", "engineering_and_technology", "asian"]
     TRUE_SIGNS = {
         "social_science": "+",
         "country_race_diversity_score": "+",
         "female_score_avg": "+",
-        "female_score_max": "+",
-        "female_score_min": "-",
+        "engineering_and_technology": "-",
+        "asian": "-",
     }
 elif 'gender' in FILE_PATH:
-    ML_TOP_FEATURES = ["social_science", "female_score_avg", "first_author_female_score", "female_score_max", "female_score_min"]
-    TRUE_SIGNS = {
-        "social_science": "+",
-        "female_score_avg": "+",
-        "first_author_female_score": "+",
-        "female_score_max": "-",
-        "female_score_min": "-"}
+    pass
 else:
     pass
 
@@ -62,7 +57,7 @@ def get_feature_ranking(df, rank_type="top5", top_n=8):
     df_counts[percent_col] = (df_counts["Frequency"] / TOTAL_PARTICIPANTS) * 100
     return df_counts.sort_values(by=percent_col, ascending=False).head(top_n)
 
-def plot_feature_ranking(ranking_df, percent_col, palette_color, title):
+def plot_feature_ranking_overestimation(ranking_df, percent_col, palette_color, title):
     """
     Plot ranked features with specified color and title.
     """
@@ -78,46 +73,111 @@ def plot_feature_ranking(ranking_df, percent_col, palette_color, title):
     )
     ax.set_yticklabels(ax.get_yticklabels(), fontsize=20)
     
-    plt.xlabel("Percentage of Participants (%)")
+    plt.xlabel("Participants Selecting Features (%)", labelpad=10)
     plt.ylabel("")
     plt.yticks(rotation=30)
-    plt.title(title, fontsize=20, weight='bold')
+    
+    y_labels = [label.get_text() for label in ax.get_yticklabels()]
+    y_labels = ["ratio_of_asian_authors" if label == "asian" else label for label in y_labels]
+    y_labels = ["ratio_of_white_authors" if label == "white" else label for label in y_labels]
+    y_labels = ["ratio_of_black_authors" if label == "black" else label for label in y_labels]
+    y_labels = ["ratio_of_hispanic_authors" if label == "hispanic" else label for label in y_labels]
+    y_labels = ["ratio_of_native_hawaiian_authors" if label == "native_hawaiian" else label for label in y_labels]
+    ax.set_yticklabels(y_labels)
+    
+    plt.title(title, fontsize=18, weight='bold')
     plt.xlim(0, 100)
     plt.tight_layout()
     plt.savefig(f"{OUTPUT_DIR}/most_frequently_selected_top{5 if percent_col == 'Top5_Percentage' else 1}.png", dpi=300)
+    print(f"✅ Figure saved as {OUTPUT_DIR}/most_frequently_selected_top{5 if percent_col == 'Top5_Percentage' else 1}.png")
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
 
 def plot_ml_feature_underestimation(df, ml_top_features, total_participants, output_dir):
     """
-    Plot how frequently participants selected top ML features.
+    Publication-quality barplot: ML feature underestimation.
+    Includes gradient color, sorted descending (top-down), and visible bar edges.
     """
-    # Flatten all selected features
+
+    # ---------------------
+    # Data Prep
+    # ---------------------
     selected = df[[f"feature_{i}" for i in range(1, 6)]].values.flatten()
     selected = pd.Series(selected).dropna()
     counts = selected.value_counts()
 
-    # Calculate selection percentage
     ml_feature_selection = {
         feat: (counts.get(feat, 0) / total_participants) * 100
         for feat in ml_top_features
     }
 
-    ml_df = pd.DataFrame(list(ml_feature_selection.items()), columns=["Feature", "Selected_Percentage"])
-    ml_df = ml_df.sort_values(by="Selected_Percentage", ascending=False)
+    ml_df = (
+        pd.DataFrame(list(ml_feature_selection.items()), columns=["Feature", "Selected_Percentage"])
+        .sort_values(by="Selected_Percentage", ascending=True)
+    )
 
-    # Plotting
-    palette = sns.light_palette("purple", n_colors=len(ml_df), reverse=True)
-    plt.figure(figsize=(10, 6))
-    ax = sns.barplot(data=ml_df, y="Feature", x="Selected_Percentage", palette=palette)
-    ax.set_yticklabels(ax.get_yticklabels(), fontsize=20)
-    plt.xlabel("Percentage of Participants (%)")
-    plt.ylabel("")
+    # ---------------------
+    # Aesthetic Setup
+    # ---------------------
+    sns.set_theme(style="whitegrid")
+    plt.figure(figsize=(8, 4))
+
+    # Gradient palette (from light to dark purple)
+    colors = sns.color_palette("Purples", n_colors=len(ml_df))
+
+    # Sort high → low, display high on top
+    ax = sns.barplot(
+        data=ml_df,
+        y="Feature",
+        x="Selected_Percentage",
+        palette=list(colors),  # lighter top, darker bottom
+    )
+
+    # ---------------------
+    # Style & Typography
+    # ---------------------
+    sns.despine(left=True, bottom=True)
+
+    plt.rcParams.update({
+        "font.family": "serif",
+        "font.serif": ["Times New Roman"],
+        "axes.linewidth": 1,
+        "axes.edgecolor": "black",
+    })
+
+    ax.set_xlabel("Participants Selecting Feature (%)", fontsize=13, labelpad=10)
+    ax.set_ylabel("")
+    ax.set_xlim(0, 100)
+
+    ax.tick_params(axis="x", labelsize=12)
+    ax.tick_params(axis="y", labelsize=16)
+    # rename one of y ticks labels
+    y_labels = [label.get_text() for label in ax.get_yticklabels()]
+    y_labels = ["ratio_of_asian_authors" if label == "asian" else label for label in y_labels]
+    ax.set_yticklabels(y_labels)
+    
     plt.yticks(rotation=30)
-    plt.title("Participant Selection of \nML-Identified Top Features", fontsize=20, weight='bold')
-    plt.xlim(0, 100)
-    plt.tight_layout()
-    plt.savefig(f"{output_dir}/ml_top_features_participant_selection.png", dpi=300)
-    plt.close()
 
+    # Flip y-axis so the highest is on top
+    ax.invert_yaxis()
+
+
+    # ---------------------
+    # Title & Save
+    # ---------------------
+    plt.title(
+        "Humans Perception of ML-Identified Important Features \n(Underestimation)",
+        fontsize=18,
+        weight="bold",
+        pad=15
+    )
+    plt.tight_layout()
+    save_path = f"{output_dir}/ml_top_features_participant_selection_PRO_v2.png"
+    plt.savefig(save_path, dpi=600, bbox_inches="tight", transparent=True)
+    plt.close()
+    print(f"✅ Figure saved as {save_path}")
 
 def plot_sign_accuracy_table(df, true_signs, output_dir):
     """
@@ -182,22 +242,22 @@ sns.set_theme(style="whitegrid", font_scale=1.5)
 # Generate & Plot Top 5 Features
 # ---------------------
 top5_ranking = get_feature_ranking(df, rank_type="top5_mostly_selected", top_n=TOP_N)
-plot_feature_ranking(
+plot_feature_ranking_overestimation(
     top5_ranking,
     percent_col="Top5_Percentage",
-    palette_color="navy",
-    title=f"Features Most Frequently Included in\nParticipants' Top 5 Predictions for {'Racial' if 'race' in FILE_PATH else 'Gender'} Inequality"
+    palette_color="orange",
+    title=f"Features Most Frequently Selected as Top 5 by Humans \nfor {'Racial' if 'race' in FILE_PATH else 'Gender'} Inequality"
 )
 
 # ---------------------
 # Generate & Plot Top 1 Features
 # ---------------------
 top1_ranking = get_feature_ranking(df, rank_type="top1_mostly_selected", top_n=TOP_N)
-plot_feature_ranking(
+plot_feature_ranking_overestimation(
     top1_ranking,
     percent_col="Top1_Percentage",
     palette_color="orange",
-    title=f"Features Most Frequently Selected as \nTop 1 Predictor of  {'Racial' if 'race' in FILE_PATH else 'Gender'} Inequality"
+    title=f"Features Most Frequently Selected as Top 1 by Humans \nfor{'Racial' if 'race' in FILE_PATH else 'Gender'} Inequality"
 )
 
 

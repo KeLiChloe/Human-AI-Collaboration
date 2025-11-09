@@ -4,11 +4,13 @@ from sklearn.model_selection import train_test_split, StratifiedKFold
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.linear_model import LogisticRegression, Lasso
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
 from sklearn.metrics import roc_curve, roc_auc_score, accuracy_score, precision_score, recall_score, f1_score
 import matplotlib.pyplot as plt
 from sklearn.model_selection import GridSearchCV
 import pickle
+from sklearn.neural_network import MLPClassifier
 
 def initial_screen_features_RF(X, y, threshold):
     """
@@ -80,7 +82,7 @@ def initial_screen_features_lasso(X, y, threshold):
 
     return X_filtered
 
-def tune_hyperparameters(X_train, y_train, model_save_dir, add_second_order_interaction):
+def tune_hyperparameters(X_train, y_train, model_save_dir, add_SOI):
     """
     Tune hyperparameters for models using GridSearchCV.
 
@@ -93,29 +95,42 @@ def tune_hyperparameters(X_train, y_train, model_save_dir, add_second_order_inte
     """
     # Define hyperparameter grids
     param_grid_rf = {
-    "n_estimators": [100, 150, 200],
+    "n_estimators": [100,  200],
     "max_depth": [None, 10, 20, 30],
     "min_samples_split": [2, 5, 10],
     "min_samples_leaf": [1, 2, 4],
     "bootstrap": [True, False],
+    "max_features": ["sqrt", 0.8],
 }
 
-    param_grid_gb = {
-    "n_estimators": [100, 150, 200],
-    "learning_rate": [0.01, 0.05, 0.1],
-    "max_depth": [3, 5, 7],
-    "min_samples_split": [2, 5],
-    "min_samples_leaf": [1, 2],
-    "subsample": [0.8, 1.0],
+    param_grid_xgb = {
+        "n_estimators": [300, 600],        # 控制树数，不宜太多以防过拟合
+        "learning_rate": [0.05, 0.1],      # 学习率范围合理
+        "max_depth": [4, 6],               # 深度适中，防止过拟合
+        "subsample": [0.8, 1.0],           # 训练子样本比例
+        "colsample_bytree": [0.8, 1.0],    # 特征采样比例
+    }
+
+    param_grid_mlp = {
+    "hidden_layer_sizes": [(64,), (128,)],
+    "activation": ["relu"],
+    "learning_rate_init": [0.001, 0.01],
+    "alpha": [0.0001, 0.001],   # L2 正则
+    "batch_size": [256],
+    "max_iter": [300],
+    "early_stopping": [True],
+    "solver": ["adam"]
 }
+
+
 
 
     # Initialize models
     random_seed = np.random.randint(10000)
     models = {
         "random_forest": (RandomForestClassifier(random_state=random_seed), param_grid_rf),
-        "gradient_boosting": (GradientBoostingClassifier(random_state=random_seed), param_grid_gb),
-        # "cart": (DecisionTreeClassifier(random_state=random_seed), param_grid_cart),
+        "xgboost": (XGBClassifier(random_state=random_seed, eval_metric="logloss"), param_grid_xgb),
+        "mlp": ( MLPClassifier(random_state=random_seed), param_grid_mlp)
     }
 
     # Tune models
@@ -127,14 +142,14 @@ def tune_hyperparameters(X_train, y_train, model_save_dir, add_second_order_inte
         best_params[model_name] = grid_search.best_params_
     
     # save best_params
-    with open(f"{model_save_dir}/best_params{'_soi' if add_second_order_interaction else ''}.pkl", "wb") as file:
+    with open(f"{model_save_dir}/best_params{'_soi' if add_SOI else ''}.pkl", "wb") as file:
         pickle.dump(best_params, file)
     
 
     return best_params
 
 # Function to load and prepare data
-def load_and_prepare_data(file_path):
+def load_and_prepare_data(file_path, drop_columns):
     df = pd.read_csv(file_path)
     
     # Create the target variable
@@ -143,18 +158,6 @@ def load_and_prepare_data(file_path):
 
     y = df['target']
     print(f"Positive class ratio: {y.sum()}/{len(y)} = {y.mean():.4f}")
-
-
-    # Select features, dropping non-relevant columns
-    drop_columns = ['target', 
-                    'count_frequency_inequality_words', 'AI_label', 'label_status', 'title', 'paper_abstract', 
-                    'mixed', 'other', 'native_hawaiian_or_other_pacific_islander', 'native_americans',
-                    'acad_ineq_t-0', 'acad_ineq_t-1', 'acad_ineq_t-2', 'acad_ineq_3yr_avg',
-                    'news_ineq_t-0', 'news_ineq_t-1', 'news_ineq_t-2', 'news_ineq_3yr_avg',
-                    # 'news_ineq_t-3', 'acad_ineq_t-3',
-                    # 'agency_score', 'syntactic_agency', 'semantic_agency',
-                    'year',
-                    ]
 
     # Select features 
     X = df.drop(columns=drop_columns)  
@@ -175,6 +178,11 @@ def scale_data(X_train, X_test):
     scaler = StandardScaler()
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
+
+    # 将 ndarray 转回 DataFrame，并保留列名
+    X_train_scaled = pd.DataFrame(X_train_scaled, columns=X_train.columns, index=X_train.index)
+    X_test_scaled = pd.DataFrame(X_test_scaled, columns=X_test.columns, index=X_test.index)
+
     return X_train_scaled, X_test_scaled
 
 # Function to train and predict models
@@ -195,7 +203,8 @@ def train_and_predict_models(X_train_scaled, y_train, X_test_scaled, best_params
     models = {
         "logistic_regression": LogisticRegression(max_iter=800),
         "random_forest": RandomForestClassifier(random_state=random_seed),
-        "gradient_boosting": GradientBoostingClassifier(random_state=random_seed),
+        "xgboost": XGBClassifier(random_state=random_seed,  eval_metric="logloss"),
+        "mlp": MLPClassifier(random_state=random_seed),
         # "cart": DecisionTreeClassifier(random_state=random_seed),
     }
 
@@ -238,7 +247,8 @@ def cross_validate_with_metrics(X_train, y_train, n_splits=5):
     cv_results = {
     "logistic_regression": {"accuracy": [], "precision": [], "recall": [], "f1": [], "auc": []},
     "random_forest": {"accuracy": [], "precision": [], "recall": [], "f1": [], "auc": []},
-    "gradient_boosting": {"accuracy": [], "precision": [], "recall": [], "f1": [], "auc": []},
+    "xgboost": {"accuracy": [], "precision": [], "recall": [], "f1": [], "auc": []},
+    "mlp": {"accuracy": [], "precision": [], "recall": [], "f1": [], "auc": []},
     # "cart": {"accuracy": [], "precision": [], "recall": [], "f1": [], "auc": []},  # Add CART here
     }
 
@@ -265,7 +275,7 @@ def cross_validate_with_metrics(X_train, y_train, n_splits=5):
     return cv_results
 
 # Function to plot final metrics and ROC curves
-def plot_metrics_and_roc(predictions, y_test, save_dir, add_second_order_interaction, feature_num):
+def plot_metrics_and_roc(predictions, y_test, save_dir, add_SOI, feature_num):
     fig, axes = plt.subplots(2, 2, figsize=(14, 12))
     axes = axes.flatten()
 
@@ -276,7 +286,7 @@ def plot_metrics_and_roc(predictions, y_test, save_dir, add_second_order_interac
         ax.plot(thresholds, prec, label="Precision")
         ax.plot(thresholds, rec, label="Recall")
         ax.plot(thresholds, f1, label="F1 Score")
-        ax.set_title(f"{model_name} (AUC = {roc_auc_score(y_test, y_pred_proba):.3f}) {'With SOI' if add_second_order_interaction else ''}(feature # = {feature_num})")
+        ax.set_title(f"{model_name} (AUC = {roc_auc_score(y_test, y_pred_proba):.3f}) {'With SOI' if add_SOI else ''}(feature # = {feature_num})")
         ax.set_xlabel("Threshold")
         ax.set_ylabel("Metric Value")
         ax.legend()
@@ -296,39 +306,40 @@ def plot_metrics_and_roc(predictions, y_test, save_dir, add_second_order_interac
     ax_roc.grid()
 
     plt.tight_layout()
-    plt.savefig(f"{save_dir}/metrics_and_roc{'_soi' if add_second_order_interaction else ''}.jpg")
+    plt.savefig(f"{save_dir}/metrics_and_roc{'_soi' if add_SOI else ''}.jpg")
 
     plt.show()
     
 
 # Main function
-def main(file_path, model_save_dir, add_second_order_interaction, use_best_params):
+def main(file_path, model_save_dir, add_SOI, use_best_params, drop_columns, scale):
 
     # Step 1: Load and prepare data
-    X, y, _ = load_and_prepare_data(file_path)
+    X, y, _ = load_and_prepare_data(file_path, drop_columns)
     
-    if add_second_order_interaction:
+    if add_SOI:
         X = add_second_order_interactions(X)
-        # X = initial_screen_features_lasso(X, y, threshold=0.005)
+        X = initial_screen_features_lasso(X, y, threshold=0.005)
 
     # Step 2: Train-Test Split
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y)
-    # X_train, X_test = scale_data(X_train, X_test)
+    if scale:
+        X_train, X_test = scale_data(X_train, X_test)
 
     feature_names = X_train.columns.tolist()
     print(f"Number of features: {len(feature_names)}")
-    print(f"Feature names: {feature_names}")
 
     # Step 4: Train on full train set and predict on test set
     if use_best_params:
-        with open(f"{model_save_dir}/best_params{'_soi' if add_second_order_interaction else ''}.pkl", "rb") as file:
+        with open(f"{model_save_dir}/best_params{'_soi' if add_SOI else ''}.pkl", "rb") as file:
             best_params = pickle.load(file)
     else:
         print("Tuning hyperparameters...")
-        best_params = tune_hyperparameters(X_train, y_train, model_save_dir, add_second_order_interaction)
+        best_params = tune_hyperparameters(X_train, y_train, model_save_dir, add_SOI)
         print("\nBest Hyperparameters:")
     for model_name, params in best_params.items():
         print(f"{model_name}: {params}")
+    
     train_models, predictions = train_and_predict_models(X_train, y_train, X_test, best_params)
     
     print("\nTest Results:")
@@ -341,7 +352,7 @@ def main(file_path, model_save_dir, add_second_order_interaction, use_best_param
         # print(f"F1 Score: {f1_score(y_test, y_pred_proba >= 0.5):.4f}")
 
     # Step 5: Plot results based on test set
-    plot_metrics_and_roc(predictions, y_test, model_save_dir, add_second_order_interaction, X.shape[1])
+    plot_metrics_and_roc(predictions, y_test, model_save_dir, add_SOI, X.shape[1])
 
 
 if __name__ == "__main__":
@@ -354,8 +365,29 @@ if __name__ == "__main__":
     file_path = sys.argv[1]
     model_save_dir = sys.argv[2]
     
-    add_second_order_interaction = False
+    add_SOI = False
+    
     use_best_params = True
-
-    main(file_path, model_save_dir, add_second_order_interaction, use_best_params)
+    
+    scale = True
+    
+    drop_columns = ['target', 
+                    'title', 'paper_abstract', 'count_frequency_inequality_words', 'AI_label', 'label_status', 
+                    'acad_ineq_t-0', 'acad_ineq_t-1', 'acad_ineq_t-2', 
+                    'acad_ineq_3yr_avg', 
+                    # 'acad_ineq_t-3', 
+                    'news_ineq_t-0', 'news_ineq_t-1', 'news_ineq_t-2', 
+                    'news_ineq_3yr_avg', 
+                    # 'news_ineq_t-3', 
+                    
+                    # 'news_gender_ineq_t-0', 'news_gender_ineq_t-1', 'news_gender_ineq_t-2', 'news_gender_ineq_t-3', 
+                    # 'news_gender_ineq_3yr_avg', 
+                    # 'news_econ_ineq_t-0', 'news_econ_ineq_t-1', 'news_econ_ineq_t-2', 'news_econ_ineq_t-3', 
+                    # 'news_econ_ineq_3yr_avg', 
+                    # 'news_race_ineq_t-0', 'news_race_ineq_t-1', 'news_race_ineq_t-2', 'news_race_ineq_t-3', 
+                    # 'news_race_ineq_3yr_avg'
+                    'female_score_min', 'female_score_max', 'first_author_female_score',
+                    ]
+    
+    main(file_path, model_save_dir, add_SOI, use_best_params, drop_columns, scale)
 
