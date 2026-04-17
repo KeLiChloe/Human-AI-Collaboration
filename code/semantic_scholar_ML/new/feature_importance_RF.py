@@ -2,7 +2,9 @@ import pandas as pd
 from sklearn.linear_model import Lasso
 import numpy as np
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier
+
+from xgboost import XGBClassifier
 import matplotlib.pyplot as plt
 from sklearn.model_selection import GridSearchCV
 import pickle
@@ -16,8 +18,7 @@ from matplotlib.ticker import MaxNLocator
 import matplotlib as mpl
 
 mpl.rcParams.update({
-    'font.family': 'serif',                # 使用衬线字体
-    'font.serif': ['Times New Roman'],     # Times 字体
+    # 'font.family': 'Times New Roman',                # 使用衬线字体
 })
 
 # Function to scale data
@@ -112,21 +113,36 @@ def tune_hyperparameters(X_train, y_train, subset_id, model_save_dir):
         dict: Best hyperparameters for each model.
     """
     # Define hyperparameter grids
+    # ================== 1. Random Forest：适中搜索空间 ==================
+    # 针对 100k / 10–15 feat / 4:6，给每个参数 1~3 个合理取值
     param_grid_rf = {
-        "n_estimators": [100, 150],
-        "max_depth": [5, 10, 15, None],
-        "min_samples_split": [2, 5, 10],
+        "n_estimators": [200, 400],      # 树数：中等 & 稍大各一档
+        "criterion": ["gini"],           # 不展开，保持稳定
+        "max_depth": [12, 16, 20],       # 不用特别深，给 3 档
+        "min_samples_split": [5, 10],    # 防过拟合，两档
+        "min_samples_leaf": [3, 5],      # 叶子里 3 或 5 个样本
+        "bootstrap": [True],
+        "max_features": ["sqrt", 0.8],   # 两种常见特征采样方式
+        "n_jobs": [-1],
     }
-    param_grid_gb = {
-        "n_estimators": [100, 150],
-        "learning_rate": [0.01, 0.05, 0.01],
-        "max_depth": [5, 10],
+
+    # ================== 2. XGBoost：小而精的网格 ==================
+    # 控制组合数量，同时覆盖“稳 & 稍激进”两种感觉
+    param_grid_xgb = {
+        "n_estimators": [300, 600],      # 轮数：中等 & 偏多
+        "learning_rate": [0.05, 0.1],    # 小学习率 vs 稍大一点
+        "max_depth": [4, 5],             # 深度适中，避免过拟合
+        "subsample": [0.8],              # 稍微抽样，增加泛化
+        "colsample_bytree": [0.8],       # 特征子采样
+        "min_child_weight": [1, 5],      # 叶子最小权重：更灵活 vs 更保守
+        "reg_lambda": [1.0],             # L2 正则固定住
+        "reg_alpha": [0.0, 0.5],         # 是否加一点 L1
     }
 
     # Initialize models
     models = {
         "random_forest": (RandomForestClassifier(random_state=42), param_grid_rf),
-        "gradient_boosting": (GradientBoostingClassifier(random_state=42), param_grid_gb),
+        # "gradient_boosting": (XGBClassifier(random_state=42), param_grid_xgb),
     }
 
     # Tune models
@@ -145,25 +161,22 @@ def tune_hyperparameters(X_train, y_train, subset_id, model_save_dir):
     return best_params
 
 # load and prepare data with second-order interactions, and do initail feature screening
-def load_and_prepare_data(file_path, drop_columns=None, add_SOI=False):
+def load_and_prepare_data(file_path, columns_to_use=None, add_SOI=False):
     df = pd.read_csv(file_path)
-    # rename variables 
-    df = df.rename(columns={"country_race_shannon_entropy_mean": "country_race_diversity_score", 
-                            "paper_race_shannon_entropy":"authors_race_diversity_score",
-                            "female_score_mean": "female_score_avg",
-                            "white":"ratio_of_white_authors",
-                            "black":"ratio_of_black_authors",
-                            "asian":"ratio_of_asian_authors",})
     
     
     # Create the target variable
-    # df['target'] = df['count_frequency_inequality_words'].apply(lambda x: 1 if x > 0 else 0)
-    df['target'] = df["AI_label"].apply(lambda x: 1 if x == 1 else 0)
+    df['target'] = df['count_inequality_words'].apply(lambda x: 1 if x > 0 else 0)
+    # df['target'] = df["AI_label"].apply(lambda x: 1 if x == 1 else 0)
     
+   
     y = df['target']
+    # check the distribution of target variable
+    print("Target variable distribution:")
+    print(y.value_counts()) 
     
     # Select features 
-    X = df.drop(columns=drop_columns) 
+    X = df[columns_to_use]
     print(f"Initial number of features: {X.shape[1]}")
     
     if add_SOI:
@@ -181,20 +194,31 @@ def load_and_prepare_data(file_path, drop_columns=None, add_SOI=False):
     X = dataset.iloc[:, :-1]  # Features
     y = dataset.iloc[:, -1]   # Target
 
+    df = df.rename(columns={"country_race_shannon_entropy_mean": "country_race_diversity_score", 
+                            "paper_race_shannon_entropy":"authors_race_diversity_score",
+                            "female_score_mean": "female",})
+    
+
     return X, y, df
 
 def add_second_order_interactions(X, sep=" * "):
+    from sklearn.preprocessing import PolynomialFeatures
+    import pandas as pd
+
     poly = PolynomialFeatures(degree=2, interaction_only=True, include_bias=False)
     X_interactions = poly.fit_transform(X)
+    X_interactions = X_interactions[:, X.shape[1]:]  # Remove original features
     
-    # Modify interaction feature names to use custom separator
+    # Get all feature names
     original_names = X.columns
     raw_feature_names = poly.get_feature_names_out(original_names)
-    
-    # Replace space with desired separator
-    custom_feature_names = [name.replace(" ", sep) for name in raw_feature_names]
+
+    # Keep only interaction terms' names
+    raw_interaction_names = raw_feature_names[X.shape[1]:]
+    custom_feature_names = [name.replace(" ", sep) for name in raw_interaction_names]
     
     return pd.DataFrame(X_interactions, columns=custom_feature_names)
+
 
 
 
@@ -256,7 +280,7 @@ def plot_feature_importance(combined_df, model_name, model_save_dir, top_N, spli
     print(f"   → {model_save_dir}/RF_feature_importance_votes.png")
     print(f"   → {model_save_dir}/RF_feature_importance_votes.pdf")
 
-def main(file_path, load_existing_best_params, model_name, model_save_dir, drop_columns=None, add_SOI=False, scale=False):
+def main(file_path, load_existing_best_params, model_name, model_save_dir, columns_to_use=None, add_SOI=False, scale=False):
     """
     Find robust feature importance rankings using shuffled and split subsets.
 
@@ -268,7 +292,7 @@ def main(file_path, load_existing_best_params, model_name, model_save_dir, drop_
         DataFrame: Robust feature importance ranking.
     """
     # Step 1: Load and prepare data with second-order interactions
-    X, y, _ = load_and_prepare_data(file_path, drop_columns, add_SOI)
+    X, y, _ = load_and_prepare_data(file_path, columns_to_use, add_SOI)
     
     # train with whole dataset to get AUC
     random_seed = np.random.randint(100000)
@@ -374,17 +398,22 @@ if __name__ == "__main__":
 
     model_name = 'random_forest' # [random_forest, gradient_boosting]
     
-        # Select features, dropping non-relevant columns
-    drop_columns = ['count_frequency_inequality_words', 'AI_label', 'label_status', 'target', 'title', 'paper_abstract', # lables
-                    'mixed', 'other', 'native_americans',
-                    'acad_ineq_t-0', 'acad_ineq_t-1', 'acad_ineq_t-2', 
-                    'news_ineq_t-0', 'news_ineq_t-1', 'news_ineq_t-2',
-                    # 'acad_ineq_t-3', 'news_ineq_t-3',
-                    'acad_ineq_3yr_avg', 'news_ineq_3yr_avg',
-                    'female_score_min', 'female_score_max', 'first_author_female_score', 
-                    # 'female_score_mean'
-                    'year'
-                    ]
+    columns_to_use = [# 'title', 'paper_abstract', 'count_inequality_words',
+                       'female_mean', # 'female_max', 'female_min','first_author_female_score',
+                       'natural_sciences', 'engineering_and_technology', 'social_sciences',
+                       'country_race_shannon_entropy_mean', # 'country_race_simpson_index_mean', 'country_race_inverse_dominance_mean',
+                       'paper_race_shannon_entropy', # 'paper_race_simpson_index', 'paper_race_inverse_dominance',
+                        'white_composition', 'asian_composition', 'black_composition', 'hispanic_composition',
+                        #'acad_ineq_t-0', 'acad_ineq_t-1', 'acad_ineq_t-2', 'acad_ineq_t-3', 
+                        'acad_ineq_3yr_avg', 
+                        #'news_ineq_t-0', 'news_ineq_t-1', 'news_ineq_t-2', 'news_ineq_t-3', 
+                        'news_ineq_3yr_avg', 
+                        # 'news_gender_ineq_t-0', 'news_gender_ineq_t-1', 'news_gender_ineq_t-2', 'news_gender_ineq_t-3', 
+                        # 'news_gender_ineq_3yr_avg', 
+                        # 'news_econ_ineq_t-0', 'news_econ_ineq_t-1', 'news_econ_ineq_t-2', 'news_econ_ineq_t-3', 'news_econ_ineq_3yr_avg', 
+                        # 'news_race_ineq_t-0', 'news_race_ineq_t-1', 'news_race_ineq_t-2', 'news_race_ineq_t-3', 
+                        # 'news_race_ineq_3yr_avg'
+                        ]
     
 
     
@@ -394,6 +423,6 @@ if __name__ == "__main__":
     
     scale = True
 
-    main(file_path, load_existing_best_params, model_name, model_save_dir, drop_columns, add_SOI, scale)
+    main(file_path, load_existing_best_params, model_name, model_save_dir, columns_to_use, add_SOI, scale)
     
     

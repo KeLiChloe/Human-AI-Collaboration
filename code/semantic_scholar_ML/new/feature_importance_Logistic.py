@@ -161,38 +161,41 @@ def tune_hyperparameters(X_train, y_train, subset_id, model_save_dir):
 
 
 def add_second_order_interactions(X, sep=" * "):
+    from sklearn.preprocessing import PolynomialFeatures
+    import pandas as pd
+
     poly = PolynomialFeatures(degree=2, interaction_only=True, include_bias=False)
     X_interactions = poly.fit_transform(X)
+    X_interactions = X_interactions[:, X.shape[1]:]  # Remove original features
     
-    # Modify interaction feature names to use custom separator
+    # Get all feature names
     original_names = X.columns
     raw_feature_names = poly.get_feature_names_out(original_names)
-    
-    # Replace space with desired separator
-    custom_feature_names = [name.replace(" ", sep) for name in raw_feature_names]
+
+    # Keep only interaction terms' names
+    raw_interaction_names = raw_feature_names[X.shape[1]:]
+    custom_feature_names = [name.replace(" ", sep) for name in raw_interaction_names]
     
     return pd.DataFrame(X_interactions, columns=custom_feature_names)
 
 
 # load and prepare data with second-order interactions, and do initail feature screening
-def load_and_prepare_data(file_path, drop_columns=None, add_SOI=False):
+def load_and_prepare_data(file_path, columns_to_use=None, add_SOI=False):
     df = pd.read_csv(file_path)
-    df = df.rename(columns={"country_race_shannon_entropy_mean": "country_race_diversity_score", 
-                            "paper_race_shannon_entropy":"authors_race_diversity_score",
-                            "female_score_mean": "female_score_avg",
-                            "white":"ratio_of_white_authors",
-                            "black":"ratio_of_black_authors",
-                            "asian":"ratio_of_asian_authors",})
+    
     
     # Create the target variable
-    # df['target'] = df['count_frequency_inequality_words'].apply(lambda x: 1 if x > 0 else 0)
-    df['target'] = df["AI_label"].apply(lambda x: 1 if x == 1 else 0)
+    df['target'] = df['count_inequality_words'].apply(lambda x: 1 if x > 0 else 0)
+    # df['target'] = df["AI_label"].apply(lambda x: 1 if x == 1 else 0)
     
     y = df['target']
+
+    
     
     # Select features 
-    X = df.drop(columns=drop_columns)
+    X = df[columns_to_use]
     print(f"Initial number of features: {X.shape[1]}")
+
     
     if add_SOI:
         # Add second-order interaction features
@@ -200,7 +203,7 @@ def load_and_prepare_data(file_path, drop_columns=None, add_SOI=False):
         print(f"Number of features after adding second-order interactions: {X.shape[1]}")
         
         # Initial feature screening using Random Forest importance
-        X = initial_screen_features_lasso(X, y, 0.05)
+        X = initial_screen_features_RF(X, y, threshold=0.02)
         print(f"Number of features after initial screening: {X.shape[1]}")
         
     # shuffle the dataset
@@ -209,6 +212,11 @@ def load_and_prepare_data(file_path, drop_columns=None, add_SOI=False):
     X = dataset.iloc[:, :-1]  # Features
     y = dataset.iloc[:, -1]   # Target
 
+    
+    df = df.rename(columns={"country_race_shannon_entropy_mean": "country_race_diversity_score", 
+                            "paper_race_shannon_entropy":"authors_race_diversity_score",
+                            "female_score_mean": "female",})
+    
     return X, y, df
 
 
@@ -357,12 +365,12 @@ def plot_coef_summary(all_coefs, all_pvals, X, model_save_dir, split_N):
     return coef_df
 
 
-def main(file_path, load_existing_best_params, model_save_dir, drop_columns=None, add_SOI=False, scale=False):
+def main(file_path, load_existing_best_params, model_save_dir, columns_to_use=None, add_SOI=False, scale=False):
     """
     Find robust feature importance rankings using shuffled and split subsets.
     """
     # Step 1: Load and prepare data with optional second-order interactions
-    X, y, _ = load_and_prepare_data(file_path, drop_columns, add_SOI)
+    X, y, _ = load_and_prepare_data(file_path, columns_to_use, add_SOI)
 
     Split_N = 10
     subsets_X = np.array_split(X.sample(frac=1, random_state=42), Split_N)
@@ -439,23 +447,32 @@ if __name__ == "__main__":
     
     
         # Select features, dropping non-relevant columns
-    drop_columns = ['count_frequency_inequality_words', 'AI_label', 'label_status', 'target', 'title', 'paper_abstract', # lables
-                    'mixed', 'other', 'native_americans', 'native_hawaiian_or_other_pacific_islander',
-                    'acad_ineq_t-0', 'acad_ineq_t-1', 'acad_ineq_t-2', 
-                    'news_ineq_t-0', 'news_ineq_t-1', 'news_ineq_t-2', 
-                    # 'acad_ineq_t-3', 'news_ineq_t-3',
-                    'acad_ineq_3yr_avg', 'news_ineq_3yr_avg',
-                    'female_score_min', 'female_score_max', 'first_author_female_score', 
-                    # 'female_score_mean'
-                    'year',
-                    ]
+    columns_to_use = [# 'title', 'paper_abstract', 'count_inequality_words',
+                       'female_mean', # 'female_max', 'female_min','first_author_female_score',
+                       'natural_sciences', 'engineering_and_technology', 'social_sciences',
+                       'country_race_shannon_entropy_mean', # 'country_race_simpson_index_mean', 'country_race_inverse_dominance_mean',
+                       'paper_race_shannon_entropy', # 'paper_race_simpson_index', 'paper_race_inverse_dominance',
+                        'white_composition', 'asian_composition', 'black_composition', 'hispanic_composition',
+                        #'acad_ineq_t-0', 'acad_ineq_t-1', 'acad_ineq_t-2', 'acad_ineq_t-3', 
+                        'acad_ineq_3yr_avg', 
+                        #'news_ineq_t-0', 'news_ineq_t-1', 'news_ineq_t-2', 'news_ineq_t-3', 
+                        'news_ineq_3yr_avg', 
+                        # 'news_gender_ineq_t-0', 'news_gender_ineq_t-1', 'news_gender_ineq_t-2', 'news_gender_ineq_t-3', 'news_gender_ineq_3yr_avg', 
+                        # 'news_econ_ineq_t-0', 'news_econ_ineq_t-1', 'news_econ_ineq_t-2', 'news_econ_ineq_t-3', 'news_econ_ineq_3yr_avg', 
+                        # 'news_race_ineq_t-0', 'news_race_ineq_t-1', 'news_race_ineq_t-2', 'news_race_ineq_t-3', 
+                        # 'news_race_ineq_3yr_avg'
+                        ]
+    
+
     add_SOI = False # whether to add second-order interaction features
     
-    scale = True
+
     
     load_existing_best_params = True
 
-    main(file_path, load_existing_best_params, model_save_dir, drop_columns, add_SOI, scale)
+    scale = True
+
+    main(file_path, load_existing_best_params, model_save_dir, columns_to_use, add_SOI, scale)
     
     
     

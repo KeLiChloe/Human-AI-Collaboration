@@ -24,8 +24,9 @@ def concat_csv(file1, file2, output_file):
     columns_to_save = ['title', 'paper_abstract', 'count_inequality_words',
                        'female_mean', 'female_max', 'female_min','first_author_female_score',
                        'natural_sciences', 'engineering_and_technology', 'social_sciences',
-                       'country_race_shannon_entropy_mean', 'paper_race_shannon_entropy',
-                        'percentage_of_asian', 'percentage_of_white', 'percentage_of_black', 'percentage_of_hispanic',
+                       'country_race_shannon_entropy_mean', 'country_race_simpson_index_mean', 'country_race_inverse_dominance_mean',
+                       'paper_race_shannon_entropy', 'paper_race_simpson_index', 'paper_race_inverse_dominance',
+                        'white_composition', 'asian_composition', 'black_composition', 'hispanic_composition',
                         'acad_ineq_t-0', 'acad_ineq_t-1', 'acad_ineq_t-2', 'acad_ineq_t-3', 'acad_ineq_3yr_avg', 
                         'news_ineq_t-0', 'news_ineq_t-1', 'news_ineq_t-2', 'news_ineq_t-3', 'news_ineq_3yr_avg', 
                         'news_gender_ineq_t-0', 'news_gender_ineq_t-1', 'news_gender_ineq_t-2', 'news_gender_ineq_t-3', 'news_gender_ineq_3yr_avg', 
@@ -41,7 +42,7 @@ def concat_csv(file1, file2, output_file):
 
 if __name__ == "__main__":
     if len(sys.argv) != 4:
-        print("Usage: python concat_csv.py <file1.csv> <file2.csv> <output.csv>")
+        print("Usage: python code/semantic_scholar_ML/new/step5_merge_pos_neg_for_ml.py <file1.csv> <file2.csv> <output.csv>")
         sys.exit(1)
 
     file1 = sys.argv[1]

@@ -93,74 +93,107 @@ def tune_hyperparameters(X_train, y_train, model_save_dir, add_SOI):
     Returns:
         dict: Best hyperparameters for each model.
     """
-    # Define hyperparameter grids
+    # ================== 1. Random Forest：适中搜索空间 ==================
+    # 针对 100k / 10–15 feat / 4:6，给每个参数 1~3 个合理取值
     param_grid_rf = {
-    "n_estimators": [100,  200],
-    "max_depth": [None, 10, 20, 30],
-    "min_samples_split": [2, 5, 10],
-    "min_samples_leaf": [1, 2, 4],
-    "bootstrap": [True, False],
-    "max_features": ["sqrt", 0.8],
-}
-
-    param_grid_xgb = {
-        "n_estimators": [300, 600],        # 控制树数，不宜太多以防过拟合
-        "learning_rate": [0.05, 0.1],      # 学习率范围合理
-        "max_depth": [4, 6],               # 深度适中，防止过拟合
-        "subsample": [0.8, 1.0],           # 训练子样本比例
-        "colsample_bytree": [0.8, 1.0],    # 特征采样比例
+        "n_estimators": [200, 400],      # 树数：中等 & 稍大各一档
+        "criterion": ["gini"],           # 不展开，保持稳定
+        "max_depth": [12, 16, 24],       # 不用特别深，给 3 档
+        "min_samples_split": [5, 10],    # 防过拟合，两档
+        "min_samples_leaf": [3, 5],      # 叶子里 3 或 5 个样本
+        "bootstrap": [True],
+        "max_features": ["sqrt", 0.8],   # 两种常见特征采样方式
+        "n_jobs": [-1],
     }
 
+    # ================== 2. XGBoost：小而精的网格 ==================
+    # 控制组合数量，同时覆盖“稳 & 稍激进”两种感觉
+    param_grid_xgb = {
+        "n_estimators": [300, 600],      # 轮数：中等 & 偏多
+        "learning_rate": [0.05, 0.1],    # 小学习率 vs 稍大一点
+        "max_depth": [4, 5],             # 深度适中，避免过拟合
+        "subsample": [0.8],              # 稍微抽样，增加泛化
+        "colsample_bytree": [0.8],       # 特征子采样
+        "min_child_weight": [1, 5],      # 叶子最小权重：更灵活 vs 更保守
+        "reg_lambda": [1.0],             # L2 正则固定住
+        "reg_alpha": [0.0, 0.5],         # 是否加一点 L1
+    }
+
+    # ================== 3. MLP：结构 & 正则小范围搜索 ==================
+    # 使用前记得对 X 标准化（StandardScaler）
     param_grid_mlp = {
-    "hidden_layer_sizes": [(64,), (128,)],
-    "activation": ["relu"],
-    "learning_rate_init": [0.001, 0.01],
-    "alpha": [0.0001, 0.001],   # L2 正则
-    "batch_size": [256],
-    "max_iter": [300],
-    "early_stopping": [True],
-    "solver": ["adam"]
-}
+        "hidden_layer_sizes": [
+            (64,),
+            (128,),
+            (128, 64),    # 再多一层
+        ],
+        "activation": ["relu"],
+        "learning_rate_init": [0.001, 0.0005],   # 稍快 & 稍慢两档
+        "alpha": [0.0001, 0.0005, 0.001],        # L2 正则强度三档
+        "batch_size": [256],
+        "max_iter": [200, 300],                 # 提前停用不上就自动停
+        "early_stopping": [True],
+        "solver": ["adam"],
+        "learning_rate": ["adaptive"],          # 让它自己调
+        "validation_fraction": [0.1],
+        "n_iter_no_change": [10],
+        "shuffle": [True],
+    }
 
-
-
-
-    # Initialize models
+    # ================== 4. 初始化模型（保持原来写法） ==================
     random_seed = np.random.randint(10000)
     models = {
-        "random_forest": (RandomForestClassifier(random_state=random_seed), param_grid_rf),
-        "xgboost": (XGBClassifier(random_state=random_seed, eval_metric="logloss"), param_grid_xgb),
-        "mlp": ( MLPClassifier(random_state=random_seed), param_grid_mlp)
+        "random_forest": (
+            RandomForestClassifier(random_state=random_seed),
+            param_grid_rf
+        ),
+        "xgboost": (
+            XGBClassifier(random_state=random_seed, eval_metric="logloss"),
+            param_grid_xgb
+        ),
+        "mlp": (
+            MLPClassifier(random_state=random_seed),
+            param_grid_mlp
+        )
     }
 
-    # Tune models
+    # ================== 5. GridSearch 不变 ==================
     best_params = {}
     for model_name, (model, param_grid) in models.items():
         print(f"Tuning {model_name}...")
-        grid_search = GridSearchCV(model, param_grid, cv=3, scoring="f1_macro", n_jobs=-1)
+        grid_search = GridSearchCV(
+            model,
+            param_grid,
+            cv=3,
+            scoring="f1_macro",
+            n_jobs=-1
+        )
         grid_search.fit(X_train, y_train)
         best_params[model_name] = grid_search.best_params_
     
     # save best_params
-    with open(f"{model_save_dir}/best_params{'_soi' if add_SOI else ''}.pkl", "wb") as file:
+    with open(
+        f"{model_save_dir}/best_params.pkl",
+        "wb"
+    ) as file:
         pickle.dump(best_params, file)
     
-
     return best_params
 
+
 # Function to load and prepare data
-def load_and_prepare_data(file_path, drop_columns):
+def load_and_prepare_data(file_path, feature_columns):
     df = pd.read_csv(file_path)
     
     # Create the target variable
-    # df['target'] = df['count_frequency_inequality_words'].apply(lambda x: 1 if x > 0 else 0)
-    df['target'] = df["AI_label"].apply(lambda x: 1 if int(x) == 1 else 0)
+    df['target'] = df['count_inequality_words'].apply(lambda x: 1 if x > 0 else 0)
+    # df['target'] = df["AI_label"].apply(lambda x: 1 if int(x) == 1 else 0)
 
     y = df['target']
     print(f"Positive class ratio: {y.sum()}/{len(y)} = {y.mean():.4f}")
 
     # Select features 
-    X = df.drop(columns=drop_columns)  
+    X = df[feature_columns]
     return X, y, df
 
 def add_second_order_interactions(X):
@@ -312,10 +345,10 @@ def plot_metrics_and_roc(predictions, y_test, save_dir, add_SOI, feature_num):
     
 
 # Main function
-def main(file_path, model_save_dir, add_SOI, use_best_params, drop_columns, scale):
+def main(file_path, model_save_dir, add_SOI, use_best_params, feature_columns, scale):
 
     # Step 1: Load and prepare data
-    X, y, _ = load_and_prepare_data(file_path, drop_columns)
+    X, y, _ = load_and_prepare_data(file_path, feature_columns)
     
     if add_SOI:
         X = add_second_order_interactions(X)
@@ -331,7 +364,7 @@ def main(file_path, model_save_dir, add_SOI, use_best_params, drop_columns, scal
 
     # Step 4: Train on full train set and predict on test set
     if use_best_params:
-        with open(f"{model_save_dir}/best_params{'_soi' if add_SOI else ''}.pkl", "rb") as file:
+        with open(f"{model_save_dir}/best_params.pkl", "rb") as file:
             best_params = pickle.load(file)
     else:
         print("Tuning hyperparameters...")
@@ -359,7 +392,7 @@ if __name__ == "__main__":
     import sys
 
     if len(sys.argv) < 3:
-        print("Usage: python step5_ml_classification.py <file_path> <model_save_dir>")
+        print("Usage: python code/semantic_scholar_ML/new/step6_ml_classification.py <file_path> <model_save_dir>")
         sys.exit(1)
 
     file_path = sys.argv[1]
@@ -367,27 +400,24 @@ if __name__ == "__main__":
     
     add_SOI = False
     
-    use_best_params = True
+    use_best_params = False
     
     scale = True
     
-    drop_columns = ['target', 
-                    'title', 'paper_abstract', 'count_frequency_inequality_words', 'AI_label', 'label_status', 
-                    'acad_ineq_t-0', 'acad_ineq_t-1', 'acad_ineq_t-2', 
-                    'acad_ineq_3yr_avg', 
-                    # 'acad_ineq_t-3', 
-                    'news_ineq_t-0', 'news_ineq_t-1', 'news_ineq_t-2', 
-                    'news_ineq_3yr_avg', 
-                    # 'news_ineq_t-3', 
-                    
-                    # 'news_gender_ineq_t-0', 'news_gender_ineq_t-1', 'news_gender_ineq_t-2', 'news_gender_ineq_t-3', 
-                    # 'news_gender_ineq_3yr_avg', 
-                    # 'news_econ_ineq_t-0', 'news_econ_ineq_t-1', 'news_econ_ineq_t-2', 'news_econ_ineq_t-3', 
-                    # 'news_econ_ineq_3yr_avg', 
-                    # 'news_race_ineq_t-0', 'news_race_ineq_t-1', 'news_race_ineq_t-2', 'news_race_ineq_t-3', 
-                    # 'news_race_ineq_3yr_avg'
-                    'female_score_min', 'female_score_max', 'first_author_female_score',
-                    ]
+    feature_columns =  [
+                       'female_mean', # 'female_max', 'female_min','first_author_female_score',
+                       'natural_sciences', 'engineering_and_technology', 'social_sciences',
+                       'country_race_shannon_entropy_mean', #'country_race_simpson_index_mean', 'country_race_inverse_dominance_mean',
+                       'paper_race_shannon_entropy', #'paper_race_simpson_index', 'paper_race_inverse_dominance',
+                        'white_composition', 'asian_composition', 'black_composition', 'hispanic_composition',
+                        # 'acad_ineq_t-0', 'acad_ineq_t-1', 'acad_ineq_t-2', 'acad_ineq_t-3', 
+                        'acad_ineq_3yr_avg', 
+                        # 'news_ineq_t-0', 'news_ineq_t-1', 'news_ineq_t-2', 'news_ineq_t-3', 
+                        'news_ineq_3yr_avg', 
+                        # 'news_gender_ineq_t-0', 'news_gender_ineq_t-1', 'news_gender_ineq_t-2', 'news_gender_ineq_t-3', 'news_gender_ineq_3yr_avg', 
+                        # 'news_econ_ineq_t-0', 'news_econ_ineq_t-1', 'news_econ_ineq_t-2', 'news_econ_ineq_t-3', 'news_econ_ineq_3yr_avg', 
+                        # 'news_race_ineq_t-0', 'news_race_ineq_t-1', 'news_race_ineq_t-2', 'news_race_ineq_t-3', 'news_race_ineq_3yr_avg'
+                        ]
     
-    main(file_path, model_save_dir, add_SOI, use_best_params, drop_columns, scale)
+    main(file_path, model_save_dir, add_SOI, use_best_params, feature_columns, scale)
 

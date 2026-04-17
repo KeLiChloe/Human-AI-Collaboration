@@ -111,7 +111,7 @@ def create_country_race_json(db_path, output_json):
     conn.close()
 
 # Example usage
-db_path = '/Users/like/Desktop/Research/Human-AI/database/race-by-country.sqlite'  # Replace with the actual path
-output_json = '/Users/like/Desktop/Research/Human-AI/meta_data/country_race_diversity_data.json'
+db_path = 'database/race-by-country.sqlite'  # Replace with the actual path
+output_json = 'meta_data/country_race_diversity_data.json'
 
 create_country_race_json(db_path, output_json)

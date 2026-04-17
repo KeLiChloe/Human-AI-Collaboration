@@ -141,8 +141,7 @@ def plot_ml_feature_underestimation(df, ml_top_features, total_participants, out
     sns.despine(left=True, bottom=True)
 
     plt.rcParams.update({
-        "font.family": "serif",
-        "font.serif": ["Times New Roman"],
+        "font.family": "Times New Roman",
         "axes.linewidth": 1,
         "axes.edgecolor": "black",
     })

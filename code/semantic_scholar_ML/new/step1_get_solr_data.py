@@ -1,4 +1,3 @@
-
 import requests
 from requests.auth import HTTPBasicAuth
 import json
@@ -9,8 +8,6 @@ import os
 import random
 import re
 import pandas as pd
-import csv
-
 
 def read_json_file(file_path):
     try:
@@ -21,40 +18,31 @@ def read_json_file(file_path):
         return None
 
 def contains_weird_characters(text):
-    # Check if the text contains non-ASCII characters
     if isinstance(text, str):
-        return bool(re.search(r'[^\x00-\xFF]', text))  # 覆盖了 ASCII（0-127）和 Latin-1（128-255）字符集
+        return bool(re.search(r'[^\x00-\xFF]', text))
     return False
 
-FIELDS = ["title", "paper_abstract", "year", "authors", "journal_name", "fields_of_study"]
+FIELDS = ["title", "paper_abstract", "year", "authors", "fields_of_study"]
 
-def write_to_csv(docs, output_csv):
-    write_header = not os.path.exists(output_csv) or os.stat(output_csv).st_size == 0
-    with open(output_csv, 'a', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=FIELDS)
-        if write_header:
-            writer.writeheader()
-        for doc in docs:
-            row = {field: doc.get(field, "") for field in FIELDS}
-            writer.writerow(row)
-
-        
-def get_query_result(params):
-    params['wt'] = 'json'  # force JSON
+def get_query_result(session, params):
+    params['wt'] = 'json'
     try:
-        response = requests.get(
-            solr_url, params=params,
-            auth=HTTPBasicAuth(username, password),
-            timeout=30
-        )
+        response = session.get(solr_url, params=params,
+                               auth=HTTPBasicAuth(username, password),
+                               timeout=30)
         response.raise_for_status()
         return response.json().get("response", {}).get("docs", [])
     except requests.exceptions.RequestException as e:
         print(f"Request failed: {e}")
         return []
 
-
-
+def flush_to_csv(response, output_csv, header_written):
+    """将一批数据写入 CSV"""
+    if not response:  # 空结果就跳过
+        return header_written
+    df_batch = pd.DataFrame(response, columns=FIELDS)
+    df_batch.to_csv(output_csv, mode='a', index=False, encoding='utf-8', header=not header_written)
+    return True  # 表示 header 已写过
 
 if __name__ == "__main__":
     start_time = time.time()
@@ -75,71 +63,75 @@ if __name__ == "__main__":
     categories = ["economic"]
     sentiments = [[1,-1]]
 
-    with open(output_csv, 'w', newline='', encoding='utf-8') as file:
-        file.write('')  # This ensures the file is empty before appending data
+    # 如果已有旧文件，先清空
+    open(output_csv, 'w', encoding='utf-8').close()
 
-   # Calculate total keywords for progress bar initialization
+    header_written = False
+
     total_iterations = sum(len(wordlist.get(category, {}).get(str(sentiment), [])) 
                      for category, sentiments_for_category in zip(categories, sentiments) 
                      for sentiment in sentiments_for_category)
 
-    if query_mode == "ineq":
-        with tqdm(total=total_iterations, desc="Processing Keywords") as pbar:
-            for i, category in enumerate(categories):
-                category_sentiments = sentiments[i]
-                for sentiment in category_sentiments:
-                    keywords = wordlist.get(category, {}).get(str(sentiment), [])
-                    for keyword in keywords:
-                        query = f'(title_lookup:"{keyword}" OR paper_abstract_lookup:"{keyword}") AND year:[2008 TO *]'
-                        random_seed = random.randint(0, 10000)
-                        params = {
-                            'q': query,
-                            'wt': 'json',
-                            'rows': 2,
-                            'fl': 'title,paper_abstract,year,authors,journal_name,fields_of_study',  # Fields to include in the CSV
-                            'sort': f'random_{random_seed} asc'
-                        }
-                        response = get_query_result(params)
-                        write_to_csv(response, output_csv)
-                        pbar.update(1)  # Update the progress bar after each keyword
+    with requests.Session() as session:  # 复用连接
+        if query_mode == "ineq":
+            with tqdm(total=total_iterations, desc="Processing Keywords") as pbar:
+                for i, category in enumerate(categories):
+                    category_sentiments = sentiments[i]
+                    for sentiment in category_sentiments:
+                        keywords = wordlist.get(category, {}).get(str(sentiment), [])
+                        for keyword in keywords:
+                            query = f'(title_lookup:"{keyword}" OR paper_abstract_lookup:"{keyword}") AND year:[2005 TO *]'
+                            random_seed = random.randint(0, 10000)
+                            params = {
+                                'q': query,
+                                'rows': 10000,
+                                'fl': ','.join(FIELDS),
+                                'sort': f'random_{random_seed} asc'
+                            }
+                            response = get_query_result(session, params)
+                            header_written = flush_to_csv(response, output_csv, header_written)
+                            pbar.update(1)
 
-    elif query_mode == "non-ineq":
-        query = "year:[2008 TO *]"
-        random_seed = random.randint(0, 10000)
-        params = {
-            'q': query,
-            'wt': 'json',
-            'rows': 200,
-            'fl': 'title,paper_abstract,year,authors,journal_name,fields_of_study',  # Fields to include in the CSV
-            'sort': f'random_{random_seed} asc'
-        }
-        response = get_query_result(params)
-        write_to_csv(response, output_csv)
+        elif query_mode == "non-ineq":
+            # 按年份循环 query，避免一次性卡死
+            years = range(2005, 2021)  # 2005 到 2020
+            with tqdm(total=len(years), desc="Processing Years") as pbar:
+                for year in years:
+                    query = f"year:{year}"
+                    random_seed = random.randint(0, 10000)
+                    params = {
+                        'q': query,
+                        'rows': 20000,  
+                        'fl': ','.join(FIELDS),
+                        'sort': f'random_{random_seed} asc'
+                    }
+                    response = get_query_result(session, params)
+                    header_written = flush_to_csv(response, output_csv, header_written)
+                    pbar.update(1)
 
-    
-    # read the output_csv and do data cleaning  
+        else: 
+            raise ValueError("Invalid query_mode. Use 'ineq' or 'non-ineq'.")
+
+    # ---- 数据清洗 ----
     df = pd.read_csv(output_csv)
     print(f"Initial rows: {len(df)}")
-    
-    df_cleaned = df.dropna(how='any')
+    df_cleaned = df.copy()
+
+    df_cleaned = df_cleaned.dropna(subset=["year", "authors", "fields_of_study"])
     print(f"Rows after dropping NA: {len(df_cleaned)}")
-    
-    df_cleaned = df_cleaned[df_cleaned.apply(lambda row: len(row) == 6, axis=1)]
-    print(f"Rows after ensuring 6 fields: {len(df_cleaned)}")
-    
-    df_cleaned = df_cleaned[~df_cleaned.map(contains_weird_characters).any(axis=1)]
+
+    df_cleaned = df_cleaned[~df_cleaned.map(contains_weird_characters).any(axis=1)] 
     print(f"Rows after dropping weird characters: {len(df_cleaned)}")
-    
+
     df_cleaned = df_cleaned.drop_duplicates(subset='title', keep='first')
     print(f"Rows after dropping duplicates: {len(df_cleaned)}")
     
-    
-    print(f"Dropped {(len(df) - len(df_cleaned))/len(df)} in total")
+    print(f"Dropped {(len(df) - len(df_cleaned))/len(df):.2%} in total")
     print(f"Remaining rows: {len(df_cleaned)}")
-    
-    # save cleaned data
-    df_cleaned.to_csv(output_csv, index=False)
+
+    # 保存清洗后的结果
+    df_cleaned.to_csv(output_csv, index=False, encoding='utf-8')
     
     end_time = time.time()
     elapsed_time = end_time - start_time
-    print(f"Execution time: {elapsed_time} seconds")
+    print(f"Execution time: {elapsed_time:.2f} seconds")
