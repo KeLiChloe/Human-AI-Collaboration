@@ -1,0 +1,16 @@
+{
+    "race": [
+        {"rank": 1, "feature": "social_science",              "sign": "+", "feature_importance": 0.362, "votes": 1000},
+        {"rank": 2, "feature": "female",                      "sign": "+", "feature_importance": 0.126, "votes": 1000},
+        {"rank": 3, "feature": "country_race_diversity_score", "sign": "+", "feature_importance": 0.074, "votes": 1000},
+        {"rank": 4, "feature": "asian",                       "sign": "+", "feature_importance": 0.060, "votes": 895},
+        {"rank": 5, "feature": "black",                       "sign": "+", "feature_importance": 0.052, "votes": 435}
+    ],
+    "gender": [
+        {"rank": 1, "feature": "social_science",                    "sign": "+", "feature_importance": 0.476, "votes": 1000},
+        {"rank": 2, "feature": "female",                            "sign": "+", "feature_importance": 0.172, "votes": 1000},
+        {"rank": 3, "feature": "natural_science",                   "sign": "-", "feature_importance": 0.085, "votes": 1000},
+        {"rank": 4, "feature": "asian",                             "sign": "+", "feature_importance": 0.047, "votes": 980},
+        {"rank": 5, "feature": "paper_inequality_mentions_3_years", "sign": "+", "feature_importance": 0.041, "votes": 720}
+    ]
+}
