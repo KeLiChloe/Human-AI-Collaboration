@@ -47,6 +47,7 @@ from viz_style import (
     legend_entry,
     set_axis_labels,
     set_figure_title,
+    SIG_LEVEL_LEGEND,
     style_axes,
 )
 
@@ -94,6 +95,16 @@ LAYOUT_COLLAPSED = dict(left=0.10, right=0.98, top=0.87, bottom=0.33)
 COMPARE_Y_THREE_GROUP = -0.24
 COMPARE_Y_COLLAPSED = -0.22
 DIAGRAM_FOOTNOTE_Y = 0.062
+DIAGRAM_WELCH_THREE_GROUP_FOOTNOTE = (
+    "Two-sided Welch t-test on pairwise group mean diagram-structure differences "
+    "(paths, max path length, latent variables; PhD Students vs Experts, "
+    "PhD Students vs GenAI, Experts vs GenAI).",
+    SIG_LEVEL_LEGEND,
+)
+DIAGRAM_WELCH_HUMAN_GENAI_FOOTNOTE = (
+    "Two-sided Welch t-test on mean diagram-structure difference (Humans vs GenAI).",
+    SIG_LEVEL_LEGEND,
+)
 DIAGRAM_Y_HEADROOM = 1.2
 
 apply_plot_style()
@@ -306,6 +317,7 @@ def plot_mean_ci_single_task(
         layout=LAYOUT_THREE_GROUP,
         comparisons=comparisons,
         footnote_y=DIAGRAM_FOOTNOTE_Y,
+        footnote_text=DIAGRAM_WELCH_THREE_GROUP_FOOTNOTE,
     )
 
 
@@ -417,6 +429,7 @@ def plot_mean_ci_single_task_collapsed(
         layout=LAYOUT_COLLAPSED,
         comparisons=comparisons,
         footnote_y=DIAGRAM_FOOTNOTE_Y,
+        footnote_text=DIAGRAM_WELCH_HUMAN_GENAI_FOOTNOTE,
     )
 
 

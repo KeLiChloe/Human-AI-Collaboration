@@ -17,9 +17,9 @@ from pathlib import Path
 
 SCRIPTS = [
     "LLM_integrate_race_main_effects.py",
-    # "LLM_integrate_race_soi.py",
-    # "LLM_integrate_gender_main_effects.py",
-    # "LLM_integrate_gender_soi.py",
+    "LLM_integrate_race_soi.py",
+    "LLM_integrate_gender_main_effects.py",
+    "LLM_integrate_gender_soi.py",
 ]
 
 

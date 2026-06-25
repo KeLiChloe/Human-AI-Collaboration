@@ -8,7 +8,7 @@ from pathlib import Path
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.transforms import Bbox
+from matplotlib.transforms import Bbox, blended_transform_factory
 
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
@@ -40,6 +40,7 @@ DISPLAY_LABELS = {
     "GenAI": "GenAI",
     "Human": "Humans",
 }
+HUMAN_DISPLAY_LABEL = DISPLAY_LABELS["Human"]
 HUMAN_COMPOSITION_NOTE = "PhD Students + Experts"
 
 SAVE_DPI = 600
@@ -56,18 +57,36 @@ SUBPLOT_RIGHT = 0.98
 SUBPLOT_TOP = 0.87
 
 FOOTNOTE_Y = 0.038
-SIG_FOOTNOTE = (
-    "Welch t-test | NS (p ≥ 0.05), * (p < 0.05), ** (p < 0.01), *** (p < 0.001)"
+SIG_LEVEL_LEGEND = (
+    "NS (p ≥ 0.05), * (p < 0.05), ** (p < 0.01), *** (p < 0.001)"
 )
+WELCH_TWO_SIDED_THREE_GROUP_FOOTNOTE = (
+    "Two-sided Welch t-test on pairwise group mean differences "
+    "(PhD Students vs Experts, PhD Students vs GenAI, Experts vs GenAI).",
+    SIG_LEVEL_LEGEND,
+)
+WELCH_TWO_SIDED_HUMAN_GENAI_FOOTNOTE = (
+    "Two-sided Welch t-test on mean difference (Humans vs GenAI).",
+    SIG_LEVEL_LEGEND,
+)
+WELCH_TWO_SIDED_PAIRWISE_FOOTNOTE = (
+    "Two-sided Welch t-test on pairwise group mean differences.",
+    SIG_LEVEL_LEGEND,
+)
+SIG_FOOTNOTE = WELCH_TWO_SIDED_PAIRWISE_FOOTNOTE
 ASSESSMENT_SIG_FOOTNOTE = (
-    "Between-group comparisons: Welch t-test",
-    "Within-group (Pre vs Post): paired t-test",
-    "NS (p ≥ 0.05), * (p < 0.05), ** (p < 0.01), *** (p < 0.001)",
+    "Two-sided Welch t-test on mean quality score (between groups, per phase).",
+    "Two-sided paired t-test on mean quality score (within-group Pre vs Post).",
+    SIG_LEVEL_LEGEND,
 )
 FOOTNOTE_LINE_STEP = 0.014
 PAIRED_BRACKET_LIFT = 0.035
 PAIRED_BRACKET_HEIGHT = 0.045
 PAIRED_BRACKET_LABEL_GAP = 0.014
+# Below x-tick labels (axes y < 0, blended with data x).
+PAIRED_BRACKET_BELOW_AXIS_ARM = -0.20
+PAIRED_BRACKET_BELOW_AXIS_LINE = -0.28
+PAIRED_BRACKET_BELOW_AXIS_LABEL = -0.36
 
 COMPARISON_BOX_BOTTOM = 0.085
 COMPARISON_AXIS_GAP = 0.065
@@ -217,17 +236,11 @@ def is_significant(p: float) -> bool:
 
 
 def format_comparison_line(label: str, p: float) -> str:
-    sig = significance_label(p)
-    if sig in {"NS", "n/a"}:
-        return f"{label}: {sig}"
-    return f"{label}: {sig} (p={fmt_p(p)})"
+    return f"{label}: {significance_label(p)}"
 
 
 def format_paired_pre_post_line(p: float) -> str:
-    sig = significance_label(p)
-    if sig in {"NS", "n/a"}:
-        return f"Pre vs Post: {sig}"
-    return f"Pre vs Post: {sig} (p={fmt_p(p)})"
+    return significance_label(p)
 
 
 def comparison_box_height(n_lines: int) -> float:
@@ -305,16 +318,69 @@ def draw_paired_pre_post_bracket(
     x_post: float,
     y_base: float,
     p: float,
+    *,
+    fontsize: float | None = None,
+    placement: str = "above",
+    below_arm: float | None = None,
+    below_line: float | None = None,
+    below_label: float | None = None,
+    label: str | None = None,
 ) -> None:
-    """Bracket over Pre/Post bars for within-group paired comparison."""
+    """Bracket between Pre/Post bars for within-group paired comparison."""
+    if fontsize is None:
+        fontsize = FONT_COMPARISON
     ylo, yhi = ax.get_ylim()
     span = yhi - ylo
-    y_bar = y_base + span * PAIRED_BRACKET_LIFT
-    y_tip = y_bar + span * PAIRED_BRACKET_HEIGHT
-    label_y = y_tip + span * PAIRED_BRACKET_LABEL_GAP
     sig = is_significant(p)
     color = SIG_TEXT_COLOR if sig else "black"
     weight = "bold" if sig else "normal"
+    if label is None:
+        label = format_paired_pre_post_line(p)
+
+    if placement == "below":
+        trans = blended_transform_factory(ax.transData, ax.transAxes)
+        y_arm = (
+            PAIRED_BRACKET_BELOW_AXIS_ARM
+            if below_arm is None
+            else below_arm
+        )
+        y_line = (
+            PAIRED_BRACKET_BELOW_AXIS_LINE
+            if below_line is None
+            else below_line
+        )
+        label_y = (
+            PAIRED_BRACKET_BELOW_AXIS_LABEL
+            if below_label is None
+            else below_label
+        )
+        ax.plot(
+            [x_pre, x_pre, x_post, x_post],
+            [y_arm, y_line, y_line, y_arm],
+            transform=trans,
+            color=color,
+            linewidth=1.1,
+            clip_on=False,
+            zorder=6,
+        )
+        ax.text(
+            (x_pre + x_post) / 2,
+            label_y,
+            label,
+            transform=trans,
+            ha="center",
+            va="top",
+            fontsize=fontsize,
+            fontweight=weight,
+            color=color,
+            clip_on=False,
+            zorder=7,
+        )
+        return
+
+    y_bar = y_base + span * PAIRED_BRACKET_LIFT
+    y_tip = y_bar + span * PAIRED_BRACKET_HEIGHT
+    label_y = y_tip + span * PAIRED_BRACKET_LABEL_GAP
     ax.plot(
         [x_pre, x_pre, x_post, x_post],
         [y_bar, y_tip, y_tip, y_bar],
@@ -326,10 +392,10 @@ def draw_paired_pre_post_bracket(
     ax.text(
         (x_pre + x_post) / 2,
         label_y,
-        format_paired_pre_post_line(p),
+        label,
         ha="center",
         va="bottom",
-        fontsize=FONT_COMPARISON,
+        fontsize=fontsize,
         fontweight=weight,
         color=color,
         clip_on=False,
@@ -665,9 +731,10 @@ def finalize_metric_figure(
     layout: dict,
     comparisons: list[tuple[int, list[str], list[float], float, float]],
     footnote_y: float = FOOTNOTE_Y,
+    footnote_text: str | tuple[str, ...] | None = None,
 ) -> None:
     fig.subplots_adjust(**layout)
     draw_metric_comparison_boxes(ax, comparisons)
-    draw_sig_footnote(fig, y=footnote_y)
+    draw_sig_footnote(fig, y=footnote_y, text=footnote_text)
     save_figure(fig, out_path)
     print(f"Saved figure: {out_path}")

@@ -341,7 +341,7 @@ def plot_by_group(pair_cols, sign_cols, ml_map, title, out_path):
     )
     ax.set_xlim(0, xmax)
     ax.set_xlabel(
-        "Percentage of participants selecting this interaction. \nPercent labels indicate sign-alignment rate with LR among those selecting it.",
+        "Percentage of respondents selecting this interaction. \nPercent labels indicate sign-alignment rate with LR among those selecting it.",
         fontsize=13.5
     )
     ax.set_title(title, fontweight="bold")

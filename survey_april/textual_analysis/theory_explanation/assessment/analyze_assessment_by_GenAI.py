@@ -17,9 +17,10 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 
-TEXTUAL_DIR = Path(__file__).resolve().parent
+ASSESSMENT_DIR = Path(__file__).resolve().parent
+TEXTUAL_DIR = ASSESSMENT_DIR.parent.parent
 ROOT = TEXTUAL_DIR.parent
-for p in (TEXTUAL_DIR, ROOT):
+for p in (ASSESSMENT_DIR, TEXTUAL_DIR, ROOT):
     if str(p) not in sys.path:
         sys.path.insert(0, str(p))
 from stats_utils import (
@@ -64,12 +65,8 @@ ASSESSMENT_SCORE_YMAX = 10
 ASSESSMENT_PLOT_YMAX = 11.8
 
 
-CSV_PATH = Path(
-    "All_Participants_All_Questions.csv"
-)
-OUT_DIR = Path(
-    "textual_analysis/outputs"
-)
+CSV_PATH = ROOT / "All_Participants_All_Questions.csv"
+OUT_DIR = ROOT / "textual_analysis" / "outputs"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 TASK_SPECS = [

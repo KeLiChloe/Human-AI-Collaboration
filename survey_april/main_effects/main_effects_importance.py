@@ -26,7 +26,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))
-from viz_config import GROUP_COLORS
+from viz_config import COLOR_ML_FEATURE_DEFAULT, COLOR_ML_FEATURE_HIGHLIGHT, GROUP_COLORS
 
 plt.rcParams.update({
     "figure.dpi": 180,
@@ -139,8 +139,8 @@ print(f"Respondents — Race:   all={n_race}, expert={n_race_exp}, non-expert={n
 print(f"Respondents — Gender: all={n_gender}, expert={n_gend_exp}, non-expert={n_gend_non}, genai={n_gend_gen}")
 
 # ── Colors ────────────────────────────────────────────────────────────────────
-COLOR_DEFAULT    = "#9E9E9E"
-COLOR_ML         = "#2E7D32"
+COLOR_DEFAULT    = COLOR_ML_FEATURE_DEFAULT
+COLOR_ML         = COLOR_ML_FEATURE_HIGHLIGHT
 COLOR_EXPERT     = GROUP_COLORS["expert"]
 COLOR_NONEXPERT  = GROUP_COLORS["phd"]
 COLOR_GENAI      = GROUP_COLORS["genai"]
@@ -255,7 +255,7 @@ def plot_group_comparison(exp_counts, n_exp, non_counts, n_non, gen_counts, n_ge
         if "(ML)" in t.get_text():
             t.set_color("#C62828")
     ax.invert_yaxis()
-    ax.set_xlabel("Percentage of participants selecting feature (%)", fontsize=10)
+    ax.set_xlabel("Percentage of respondents selecting feature (%)", fontsize=10)
     ax.set_title(
         f"Feature Selection Rate (By Group) — {task_label}",
         fontsize=11, fontweight="bold", pad=12

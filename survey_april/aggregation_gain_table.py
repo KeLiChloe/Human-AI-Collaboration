@@ -1,13 +1,13 @@
 """
-Aggregation gain summary: Δ Human − Δ GenAI (2×2 table).
+Aggregation gain summary: Δ Humans − Δ GenAI (2×2 table).
 
 Uses the same record-building and filtering logic as:
   - main_effects/main_effects_quant.py  (plot_sorted_cosine_individual_separate)
   - second_order_interactions/soi_quant.py
 
-Δ Human = Aggregated Human cosine − mean individual Human cosine (same pts pool as 06_*)
+Δ Humans = Aggregated Humans cosine − mean individual Humans cosine (same pts pool as 06_*)
 Δ GenAI = Aggregated GenAI cosine − mean individual GenAI cosine
-Gap     = Δ Human − Δ GenAI
+Gap     = Δ Humans − Δ GenAI
 """
 
 from __future__ import annotations
@@ -240,7 +240,7 @@ def plot_pts_soi(records: list[dict], task_key: str, vec_key: str) -> list[dict]
 def format_cell(g: dict[str, float]) -> str:
     return (
         f"{g['gain_gap']:+.3f} "
-        f"(Human Δ={g['gain_human']:+.3f}, GenAI Δ={g['gain_genai']:+.3f})"
+        f"(Humans Δ={g['gain_human']:+.3f}, GenAI Δ={g['gain_genai']:+.3f})"
     )
 
 
@@ -300,11 +300,11 @@ def main() -> None:
 
     md_path = OUT_DIR / "aggregation_gain_gap_table.md"
     md_lines = [
-        "# Aggregation gain gap (Δ Human − Δ GenAI)",
+        "# Aggregation gain gap (Δ Humans − Δ GenAI)",
         "",
         "Matches `06_*` sorted cosine figures: same pts filter, aggregation lines, and scatter means.",
         "",
-        "Δ Human = Aggregated Human (legend line) − mean individual Human cosine",
+        "Δ Humans = Aggregated Humans (legend line) − mean individual Humans cosine",
         "Δ GenAI = Aggregated GenAI (legend line) − mean individual GenAI cosine",
         "",
         "| | Main Effects | Interactions |",
@@ -317,7 +317,7 @@ def main() -> None:
         )
     md_path.write_text("\n".join(md_lines) + "\n", encoding="utf-8")
 
-    print("Aggregation gain gap (Δ Human − Δ GenAI)")
+    print("Aggregation gain gap (Δ Humans − Δ GenAI)")
     print("(aligned with 06_* figure legend + scatter means)\n")
     col_w = 44
     header = f"{'':<10} {'Main Effects':>{col_w}} {'Interactions':>{col_w}}"

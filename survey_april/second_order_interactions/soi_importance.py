@@ -22,7 +22,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))
-from viz_config import GROUP_COLORS
+from viz_config import COLOR_ML_FEATURE_DEFAULT, COLOR_ML_FEATURE_HIGHLIGHT, GROUP_COLORS
 
 FEATURE_LABELS = {
     "social_science":                    "Social Science",
@@ -169,7 +169,10 @@ def plot_overall(
         add_ml_mark = mark_unselected_ml_ticks and (p in ml_set) and (counts[p] == 0)
         labels.append(f"{lbl} (ML)" if add_ml_mark else lbl)
     vals = [counts[p] for p in ranked]
-    colors = ["#2E7D32" if p in ml_set else "#9E9E9E" for p in ranked]
+    colors = [
+        COLOR_ML_FEATURE_HIGHLIGHT if p in ml_set else COLOR_ML_FEATURE_DEFAULT
+        for p in ranked
+    ]
 
     y = np.arange(len(ranked))
     fig, ax = plt.subplots(figsize=(9.2, 7.2))
@@ -197,8 +200,8 @@ def plot_overall(
     ax.tick_params(axis="x", labelsize=12.5)
     ax.legend(
         handles=[
-            mpatches.Patch(color="#2E7D32", label="In ML top-3"),
-            mpatches.Patch(color="#9E9E9E", label="Not in ML top-3"),
+            mpatches.Patch(color=COLOR_ML_FEATURE_HIGHLIGHT, label="In ML top-3"),
+            mpatches.Patch(color=COLOR_ML_FEATURE_DEFAULT, label="Not in ML top-3"),
         ],
         loc="lower right",
         frameon=False,
@@ -233,7 +236,7 @@ def plot_group_comparison(exp_counts, n_exp, non_counts, n_non, gen_counts, n_ge
         if "(ML)" in t.get_text():
             t.set_color("#C62828")
     ax.invert_yaxis()
-    ax.set_xlabel("Percentage of participants selecting interaction (%)")
+    ax.set_xlabel("Percentage of respondents selecting interaction (%)")
     ax.set_xlim(0, max(exp_rate + non_rate + gen_rate) * 1.2 if (exp_rate + non_rate + gen_rate) else 1)
     ax.set_title(f"{title}\nTop {top_n} by average selection rate across groups", fontweight="bold")
     ax.spines[["top", "right"]].set_visible(False)

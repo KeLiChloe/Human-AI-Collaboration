@@ -15,16 +15,14 @@ from openai import OpenAI
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 from tqdm import tqdm
 
-DEFAULT_INPUT_CSV = Path(__file__).resolve().parents[2] / "All_Participants_All_Questions.csv"
+DEFAULT_INPUT_CSV = Path(__file__).resolve().parents[3] / "All_Participants_All_Questions.csv"
 
 SYSTEM_PROMPT = """
 You are a research data preprocessing assistant working on a human–AI collaborative theory-building survey. In this survey, participants were asked to develop theoretical explanations for why academic papers do or do not discuss social inequality. The survey focused on two prediction tasks: whether a paper discusses racial inequality and whether a paper discusses gender inequality.
 
 For each task, participants first provided their own pre-ML theoretical reasoning, including main-effect explanations and second-order interaction explanations. They were then shown machine-learning evidence, including the most predictive features and interactions identified from the data, and were asked to revise their theory after reviewing this evidence. The survey explicitly instructed participants to provide a complete version of their updated theory, rather than only listing the modified parts. However, in practice, many participants only wrote partial revisions, brief reactions, or incremental changes.
 
-Your task is to reconstruct participants’ post-ML theoretical explanations into complete versions. You should integrate each participant’s pre-ML theory with their post-ML revision, while preserving their original language, reasoning, uncertainty, and conceptual framing as much as possible.
-
-The goal is NOT to improve, evaluate, strengthen, or make the theory more persuasive. The goal is to produce a complete post-ML version of the participant’s own theory by integrating their pre-ML theory with their post-ML revision, while preserving the participant’s original language, reasoning, uncertainty, and conceptual framing as much as possible.
+Your task is to reconstruct participants’ post-ML theoretical explanations into complete versions by integrating each participant’s pre-ML theory with their post-ML revision, while preserving their original language, reasoning, uncertainty, and conceptual framing as much as possible. Do NOT improve, evaluate, strengthen, or make the theory more persuasive.
 
 You must follow these rules:
 
@@ -37,23 +35,30 @@ You must follow these rules:
 2. Use the post-ML response as the authoritative update.
    - If the post-ML response modifies the pre-ML theory, integrate those modifications into the full theory.
    - If the post-ML response contradicts the pre-ML theory, the post-ML response takes precedence.
-   - If the post-ML response rejects or questions the ML result, preserve that rejection or uncertainty.
 
 3. Use the pre-ML theory to reconstruct missing context.
    - If the post-ML response only states the modified parts, merge those modifications back into the pre-ML theory to produce a complete post-ML version.
-   - If the participant says they do not want to revise their theory, return the pre-ML theory as the complete post-ML theory.
+   - If the participant explicitly says they do not want to revise their theory, or indicates no change, return the pre-ML theory verbatim as the complete post-ML theory (status: no_change). Do not add, remove, or rephrase content.
    - If the post-ML response is merely a reaction to the ML evidence, use it only insofar as it reveals what the participant would revise or retain.
 
-4. Preserve style.
+4. Preserve style and write as theory, not as a reaction to ML.
    - Preserve the participant’s vocabulary, hedging, and level of specificity.
    - Do not turn the response into bullet points.
    - Do not add citations.
-   - The ML evidence is provided only as context. Do not introduce ML findings into the theory unless the participant explicitly accepts, rejects, or discusses them.
+   - Write the output as a standalone theoretical explanation.
+   - The ML evidence block is provided only as background for your reconstruction task. Do not introduce ML findings into refined_theory unless the participant explicitly incorporated them into their own theoretical reasoning.
+
+5. Scope.
+   - For main-effect questions, reconstruct only the participant’s theory about main effects.
+   - For second-order interaction questions, reconstruct only the participant’s theory about second-order interactions.
 
 6. Output JSON only, with exactly these fields:
-   - refined_theory: the reconstructed complete post-ML theory as one narrative paragraph.
-   - status: one of ["already_complete", "merged_pre_post", "expanded_no_change", "insufficient_information"].
-   - preservation_note: a short explanation of what you did, e.g. "Returned post-ML response nearly unchanged", "Merged post-ML delta into pre-ML theory", or "Used pre-ML theory because participant stated no revision."
+   - refined_theory: the reconstructed complete post-ML theory.
+   - status: one of:
+     - already_complete: the post-ML revision field already contains a complete theory; return it with minimal or no merging.
+     - merged_pre_post: the post-ML revision contained only partial updates; you merged those updates into the pre-ML theory.
+     - no_change: the participant explicitly indicated no revision; return the pre-ML theory verbatim.
+     - insufficient_information: pre-ML and post-ML together do not contain enough substance to reconstruct a complete theory.
    - uncertainty_note: any uncertainty about the reconstruction. Use an empty string if none.
 """.strip()
 
@@ -62,20 +67,24 @@ REFINED_THEORY_SCHEMA: Dict[str, Any] = {
     "properties": {
         "refined_theory": {
             "type": "string",
-            "description": "The reconstructed complete post-ML theory as one narrative paragraph.",
+            "description": (
+                "The reconstructed complete post-ML theory as one narrative paragraphs. "
+            ),
         },
         "status": {
             "type": "string",
             "enum": [
                 "already_complete",
                 "merged_pre_post",
-                "expanded_no_change",
+                "no_change",
                 "insufficient_information",
             ],
-        },
-        "preservation_note": {
-            "type": "string",
-            "description": "Brief note explaining how the reconstruction was done.",
+            "description": (
+                "already_complete: post-ML revision is already complete; "
+                "merged_pre_post: partial updates merged into pre-ML; "
+                "no_change: participant indicated no revision, return pre-ML verbatim; "
+                "insufficient_information: not enough substance to reconstruct."
+            ),
         },
         "uncertainty_note": {
             "type": "string",
@@ -85,7 +94,6 @@ REFINED_THEORY_SCHEMA: Dict[str, Any] = {
     "required": [
         "refined_theory",
         "status",
-        "preservation_note",
         "uncertainty_note",
     ],
     "additionalProperties": False,
@@ -120,7 +128,6 @@ def find_column(df: pd.DataFrame, exact_col: str) -> str:
 def build_user_prompt(
     config: Dict[str, str],
     pre_ml_theory: str,
-    ml_reaction: str,
     post_ml_response: str,
 ) -> str:
     return f"""
@@ -139,13 +146,12 @@ Participant's pre-ML theoretical explanation:
 Relevant ML evidence shown to participant:
 {config["ml_evidence"]}
 
-Participant's reaction to ML evidence:
-{ml_reaction}
-
 Participant's post-ML revision response:
 {post_ml_response}
 
 Now reconstruct the participant's complete post-ML theoretical explanation according to the rules above.
+Write refined_theory as a standalone theoretical explanation.
+If the participant indicated they do not want to revise, return the pre-ML theory verbatim (status: no_change).
 """.strip()
 
 
@@ -162,7 +168,7 @@ def call_llm(
     client: OpenAI,
     model: str,
     user_prompt: str,
-    max_output_tokens: int = 1200,
+    max_output_tokens: int = 2400,
 ) -> Dict[str, str]:
     try:
         response = client.responses.create(
@@ -185,7 +191,6 @@ def call_llm(
         for key in [
             "refined_theory",
             "status",
-            "preservation_note",
             "uncertainty_note",
         ]:
             if key not in parsed:
@@ -197,26 +202,70 @@ def call_llm(
         raise LLMCallError(f"OpenAI API call failed: {exc}") from exc
 
 
-def initialize_output_columns(df: pd.DataFrame, config: Dict[str, str]) -> pd.DataFrame:
+LLM_COLUMN_FIELDS = [
+    "refined",
+    "status",
+    "uncertainty_note",
+]
+
+
+def llm_column_label(config: Dict[str, str]) -> str:
+    post_col = config["post_col"]
     prefix = config["short_name"]
-    for suffix in [
-        "LLM_refined",
-        "LLM_status",
-        "LLM_preservation_note",
-        "LLM_uncertainty_note",
-        "LLM_error",
-    ]:
-        col = f"{prefix} ({suffix})"
+    if post_col.startswith(prefix):
+        return post_col[len(prefix) :].strip()
+    return post_col
+
+
+def llm_column_name(config: Dict[str, str], field: str) -> str:
+    return f"{config['short_name']} LLM_{field} {llm_column_label(config)}"
+
+
+def legacy_llm_column_name(prefix: str, field: str) -> str:
+    return f"{prefix} (LLM_{field})"
+
+
+def llm_column_names(config: Dict[str, str]) -> list[str]:
+    return [llm_column_name(config, field) for field in LLM_COLUMN_FIELDS]
+
+
+
+def migrate_legacy_llm_columns(df: pd.DataFrame, config: Dict[str, str]) -> pd.DataFrame:
+    prefix = config["short_name"]
+    for field in LLM_COLUMN_FIELDS:
+        old_col = legacy_llm_column_name(prefix, field)
+        new_col = llm_column_name(config, field)
+        if old_col not in df.columns:
+            continue
+        if new_col not in df.columns:
+            df = df.rename(columns={old_col: new_col})
+            continue
+        has_old = df[old_col].map(clean_text).astype(bool)
+        empty_new = ~df[new_col].map(clean_text).astype(bool)
+        df.loc[has_old & empty_new, new_col] = df.loc[has_old & empty_new, old_col]
+        df = df.drop(columns=[old_col])
+    return df
+
+
+def initialize_output_columns(df: pd.DataFrame, config: Dict[str, str]) -> pd.DataFrame:
+    df = migrate_legacy_llm_columns(df, config)
+    llm_cols = llm_column_names(config)
+
+    for col in llm_cols:
         if col not in df.columns:
             df[col] = ""
-    return df
+
+    post_col = find_column(df, config["post_col"])
+    other_cols = [col for col in df.columns if col not in llm_cols]
+    insert_at = other_cols.index(post_col) + 1
+    return df[other_cols[:insert_at] + llm_cols + other_cols[insert_at:]]
 
 
 def should_skip_existing(row: pd.Series, config: Dict[str, str], overwrite: bool) -> bool:
     if overwrite:
         return False
-    status_col = f"{config['short_name']} (LLM_status)"
-    refined_col = f"{config['short_name']} (LLM_refined)"
+    status_col = llm_column_name(config, "status")
+    refined_col = llm_column_name(config, "refined")
     return bool(clean_text(row.get(status_col, ""))) and bool(clean_text(row.get(refined_col, "")))
 
 
@@ -228,14 +277,12 @@ def process_one_cell(
     col_lookup: Dict[str, str],
 ) -> Dict[str, str]:
     pre_ml = clean_text(row.get(col_lookup[config["pre_col"]], ""))
-    reaction = clean_text(row.get(col_lookup[config["reaction_col"]], ""))
     post_ml = clean_text(row.get(col_lookup[config["post_col"]], ""))
 
     if not pre_ml and not post_ml:
         return {
             "refined_theory": "",
             "status": "insufficient_information",
-            "preservation_note": "Both pre-ML and post-ML theory responses were empty.",
             "uncertainty_note": "No theory text was available for reconstruction.",
         }
 
@@ -245,7 +292,6 @@ def process_one_cell(
         user_prompt=build_user_prompt(
             config=config,
             pre_ml_theory=pre_ml,
-            ml_reaction=reaction,
             post_ml_response=post_ml,
         ),
     )
@@ -333,7 +379,7 @@ def run(config: Dict[str, str], script_description: str) -> None:
 
     col_lookup = {
         config[key]: find_column(df, config[key])
-        for key in ["pre_col", "reaction_col", "post_col"]
+        for key in ["pre_col", "post_col"]
     }
 
     participant_type_col = "student_0, expert_1, genAI_2"
@@ -341,13 +387,12 @@ def run(config: Dict[str, str], script_description: str) -> None:
         participant_type_col = None
 
     prefix = config["short_name"]
-    refined_col = f"{prefix} (LLM_refined)"
-    status_col = f"{prefix} (LLM_status)"
-    preservation_col = f"{prefix} (LLM_preservation_note)"
-    uncertainty_col = f"{prefix} (LLM_uncertainty_note)"
-    error_col = f"{prefix} (LLM_error)"
+    refined_col = llm_column_name(config, "refined")
+    status_col = llm_column_name(config, "status")
+    uncertainty_col = llm_column_name(config, "uncertainty_note")
 
     completed_calls = 0
+    failed_calls = 0
     attempted_tasks = 0
     skipped_genai = 0
     skipped_done = 0
@@ -385,9 +430,7 @@ def run(config: Dict[str, str], script_description: str) -> None:
                 )
                 df.at[idx, refined_col] = result.get("refined_theory", "")
                 df.at[idx, status_col] = result.get("status", "")
-                df.at[idx, preservation_col] = result.get("preservation_note", "")
                 df.at[idx, uncertainty_col] = result.get("uncertainty_note", "")
-                df.at[idx, error_col] = ""
                 completed_calls += 1
 
                 if completed_calls % args.checkpoint_every == 0:
@@ -401,7 +444,9 @@ def run(config: Dict[str, str], script_description: str) -> None:
                     ok=completed_calls,
                 )
             except Exception as exc:
-                df.at[idx, error_col] = str(exc)
+                failed_calls += 1
+                name = clean_text(df.loc[idx, "What is your full name?"]) or f"row {row_num}"
+                print(f"ERROR row {row_num} ({name}): {exc}", file=sys.stderr)
                 save_checkpoint(df, output_path)
                 progress.set_postfix(row=row_num, status="error", ok=completed_calls)
 
@@ -410,7 +455,7 @@ def run(config: Dict[str, str], script_description: str) -> None:
     print("\nDone.")
     print(f"Rows: {len(df)} | Skipped (genAI): {skipped_genai} | Skipped (done): {skipped_done}")
     print(f"Attempted tasks: {attempted_tasks}")
-    print(f"Successful LLM calls: {completed_calls}")
+    print(f"Successful LLM calls: {completed_calls} | Failed: {failed_calls}")
     if inplace:
         print(f"Updated in place: {output_path}")
     else:

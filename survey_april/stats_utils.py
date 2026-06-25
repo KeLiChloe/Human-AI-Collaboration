@@ -61,6 +61,27 @@ def p_value_welch_ttest(a, b) -> float:
         return np.nan
 
 
+def p_value_welch_ttest_one_sided(a, b, *, alternative: str = "greater") -> float:
+    arr_a = np.asarray(a, dtype=float)
+    arr_b = np.asarray(b, dtype=float)
+    arr_a = arr_a[~np.isnan(arr_a)]
+    arr_b = arr_b[~np.isnan(arr_b)]
+    if len(arr_a) < 2 or len(arr_b) < 2:
+        return np.nan
+    try:
+        return float(
+            ttest_ind(
+                arr_a,
+                arr_b,
+                equal_var=False,
+                nan_policy="omit",
+                alternative=alternative,
+            ).pvalue
+        )
+    except Exception:
+        return np.nan
+
+
 def welch_test(a: dict, b: dict, values_key: str = "sims") -> float:
     return p_value_welch_ttest(a[values_key], b[values_key])
 

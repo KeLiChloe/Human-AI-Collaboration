@@ -50,7 +50,18 @@ from viz_style import (
     save_figure,
     set_axis_labels,
     set_figure_title,
+    SIG_LEVEL_LEGEND,
     style_axes,
+)
+
+LENGTH_WELCH_THREE_GROUP_FOOTNOTE = (
+    "Two-sided Welch t-test on pairwise group mean word count "
+    "(PhD Students vs Experts, PhD Students vs GenAI, Experts vs GenAI).",
+    SIG_LEVEL_LEGEND,
+)
+LENGTH_WELCH_HUMAN_GENAI_FOOTNOTE = (
+    "Two-sided Welch t-test on mean word count (Humans vs GenAI).",
+    SIG_LEVEL_LEGEND,
 )
 
 
@@ -221,7 +232,12 @@ def plot_metric(
     n_comp = len(comparisons)
     apply_bottom_layout(fig, n_lines=n_comp)
     draw_snug_footer_comparison_box(fig, comparisons)
-    draw_sig_footnote(fig, y=LENGTH_FOOTNOTE_Y)
+    footnote_text = (
+        LENGTH_WELCH_HUMAN_GENAI_FOOTNOTE
+        if collapsed_legend
+        else LENGTH_WELCH_THREE_GROUP_FOOTNOTE
+    )
+    draw_sig_footnote(fig, y=LENGTH_FOOTNOTE_Y, text=footnote_text)
     save_figure(fig, out_path)
     print(f"Saved figure: {out_path}")
 

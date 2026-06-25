@@ -1,41 +1,49 @@
 import os
 import time
+from pathlib import Path
+
 import pandas as pd
 from tqdm import tqdm
 from openai import BadRequestError, OpenAI
 from pydantic import BaseModel
 
+from csv_score_io import ensure_columns_after, locked_csv, locked_csv_read
+
 # =====================
 # FILE CONFIG
 # =====================
-INPUT_CSV = "All_Participants_All_Questions.csv"
+INPUT_CSV = Path(__file__).resolve().parents[3] / "All_Participants_All_Questions.csv"
 
 NAME_COLUMN = "What is your full name?"
-Q4_TARGET_COLUMN = "Q Race.4 pre-ML theory (main effects)"
-Q12_TARGET_COLUMN = "Q Race.12 post-ML theory (main effects)"
+Q4_TARGET_COLUMN = "Q Gender.4 pre-ML theory (main effects)"
+Q12_LLM_REFINED_COLUMN = "Q Gender.12 LLM_refined post-ML theory (main effects)"
+Q4_TARGET_PREFIX = "Q Gender.4"
+Q12_TARGET_PREFIX = "Q Gender.12 LLM_refined"
 
 # =====================
 # OUTPUT COLUMNS
 # =====================
 Q4_METRIC_COLUMNS = [
-    "Q Race.4 Clarity and Coherence",
-    "Q Race.4 Causal Reasoning",
-    "Q Race.4 Theoretical Depth",
-    "Q Race.4 Creativity",
-    "Q Race.4 Persuasiveness",
-    "Q Race.4 Mechanisms",
-    "Q Race.4 Brief Reasoning",
+    "Q Gender.4 Clarity and Coherence",
+    "Q Gender.4 Causal Reasoning",
+    "Q Gender.4 Theoretical Depth",
+    "Q Gender.4 Creativity",
+    "Q Gender.4 Persuasiveness",
+    "Q Gender.4 Mechanisms",
+    "Q Gender.4 Brief Reasoning",
 ]
 
 Q12_METRIC_COLUMNS = [
-    "Q Race.12 Updated Theory Clarity and Coherence",
-    "Q Race.12 Updated Theory Causal Reasoning",
-    "Q Race.12 Updated Theory Theoretical Depth",
-    "Q Race.12 Updated Theory Creativity",
-    "Q Race.12 Updated Theory Persuasiveness",
-    "Q Race.12 Updated Theory Mechanisms",
-    "Q Race.12 Updated Theory Brief Reasoning",
+    "Q Gender.12 Clarity and Coherence",
+    "Q Gender.12 Causal Reasoning",
+    "Q Gender.12 Theoretical Depth",
+    "Q Gender.12 Creativity",
+    "Q Gender.12 Persuasiveness",
+    "Q Gender.12 Mechanisms",
+    "Q Gender.12 Brief Reasoning",
 ]
+
+WRITE_COLUMNS = Q4_METRIC_COLUMNS + Q12_METRIC_COLUMNS
 
 # =====================
 # MODEL
@@ -64,9 +72,9 @@ You are an expert in social science research and theory evaluation.
 Use your strongest analytical judgment and highest level of social-scientific reasoning. Be rigorous, discerning, and careful.
 
 PROJECT CONTEXT
-This study examines theory building for predicting mentions of racial inequality in academic papers.
+This study examines theory building for predicting mentions of gender inequality in academic papers.
 
-The outcome is whether an academic paper discusses racial inequality. 
+The outcome is whether an academic paper discusses gender inequality.
 
 Respondents first selected a few features they believed were most important, ranked them, and indicated whether each feature was positively or negatively associated with the outcome. They were then asked to provide a theoretical explanation for these choices.
 
@@ -112,7 +120,7 @@ The study includes 13 available features:
    The average percentage of academic papers mentioning inequality over the three years preceding the paper’s publication year.
 
 TASK OVERVIEW
-You will be given a theoretical explanation about why certain variables predict whether an academic paper discusses racial inequality.
+You will be given a theoretical explanation about why certain variables predict whether an academic paper discusses gender inequality.
 
 Your task is to evaluate the QUALITY of this theoretical explanation.
 
@@ -136,6 +144,7 @@ Does the explanation demonstrate creative or original thinking, such as offering
 
 5. Persuasiveness
 Does the explanation provide a convincing theoretical account of why the predictors should be related to the outcome?
+
 -------------------------------------
 SCORING GUIDELINES
 -------------------------------------
@@ -160,12 +169,12 @@ Predefined mechanisms:
 - topic relevance
 - attention and salience
 - academic trend
-- identity and lived experience
+- gender-based bias or discrimination
 - demographic representation
-- diversity exposure
+- pipeline or career structure
+- institutional or workplace inequality
+- social norms or cultural expectations
 - motivation or intrinsic interest
-- legitimacy or role appropriateness
-- data or feasibility constraints
 
 If the explanation does not fit any of the above, you may create ONE new mechanism using a short descriptive phrase.
 
@@ -204,7 +213,7 @@ def analyze_q4_response(q4_text, retries=3):
             creativity=0,
             persuasiveness=0,
             mechanisms=[],
-            brief_reasoning="Empty or missing response.",
+            brief_reasoning="Empty or missing response."
         )
 
     user_prompt = f"""
@@ -218,11 +227,9 @@ Evaluate the following theoretical explanation.
     return _call_openai(user_prompt, retries=retries)
 
 
-def analyze_updated_theory(q4_text, q12_text, retries=3):
-    q4_clean = q4_text if isinstance(q4_text, str) and q4_text.strip() else ""
-    q12_clean = q12_text if isinstance(q12_text, str) and q12_text.strip() else ""
-
-    if not q4_clean and not q12_clean:
+def analyze_post_ml_theory(theory_text, retries=3):
+    """Evaluate the integrated post-ML theoretical explanation."""
+    if not isinstance(theory_text, str) or not theory_text.strip():
         return TheoryQualityMetrics(
             clarity_and_coherence=0,
             causal_reasoning=0,
@@ -230,32 +237,16 @@ def analyze_updated_theory(q4_text, q12_text, retries=3):
             creativity=0,
             persuasiveness=0,
             mechanisms=[],
-            brief_reasoning="Empty or missing initial and updated responses.",
+            brief_reasoning="Empty or missing response."
         )
 
     user_prompt = f"""
-    Evaluate the respondent's updated theoretical explanation.
+Evaluate the following post-ML theoretical explanation.
 
-    CONTEXT:
-    The respondent first provided an initial theory before seeing machine-learning evidence.
-    Then, after reviewing machine-learning evidence about the main effects predicting whether a paper discusses racial inequality, the respondent was asked to refine or update their theory.
-
-    Important:
-    - If the updated response only modifies part of the initial theory, treat the final theory as the initial theory plus the stated update.
-    - If the respondent says they did not update their theory, evaluate the initial theory together with their justification for not updating.
-    - Do NOT reward or penalize the respondent merely for agreeing with the machine-learning evidence.
-    - Focus on whether the resulting updated theory is clear, causally reasoned, theoretically deep, creative, and persuasive.
-
-    INITIAL THEORETICAL EXPLANATION:
-    \"\"\"
-    {q4_clean}
-    \"\"\"
-
-    UPDATED THEORETICAL EXPLANATION AFTER MACHINE-LEARNING EVIDENCE:
-    \"\"\"
-    {q12_clean}
-    \"\"\"
-    """
+\"\"\"
+{theory_text}
+\"\"\"
+"""
 
     return _call_openai(user_prompt, retries=retries)
 
@@ -285,7 +276,7 @@ def _call_openai(user_prompt, retries=3):
                     creativity=-1,
                     persuasiveness=-1,
                     mechanisms=[],
-                    brief_reasoning=f"API error after retries: {repr(e)}",
+                    brief_reasoning=f"API error after retries: {repr(e)}"
                 )
             time.sleep(2 ** attempt)
 
@@ -308,7 +299,7 @@ def _is_text_metric_column(col: str) -> bool:
 
 
 def prepare_metric_dtypes(df, metric_columns):
-    """Empty evaluation columns are often inferred as float64; text cols must be object."""
+    """Coerce only this script's score columns for numeric comparisons."""
     for col in metric_columns:
         if col not in df.columns:
             continue
@@ -319,22 +310,32 @@ def prepare_metric_dtypes(df, metric_columns):
     return df
 
 
-def ensure_metric_columns_after(df, anchor_column, metric_columns):
-    """
-    Ensure metric columns exist and are placed immediately after anchor_column.
-    Missing columns are inserted in metric_columns order.
-    """
-    if anchor_column not in df.columns:
-        raise ValueError(f"Column not found: {anchor_column}")
+def _normalize_header(text):
+    return " ".join(str(text).split()).strip().strip('"')
 
-    insert_at = df.columns.get_loc(anchor_column) + 1
-    for col in metric_columns:
-        if col in df.columns:
-            continue
-        df.insert(insert_at, col, pd.NA)
-        insert_at += 1
 
-    return prepare_metric_dtypes(df, metric_columns)
+def resolve_column_name(df, exact_name, prefix):
+    """
+    Resolve a column name robustly:
+    1) exact match
+    2) normalized exact match (handles newline/multi-space differences)
+    3) normalized prefix match (handles long prompt tails)
+    """
+    if exact_name in df.columns:
+        return exact_name
+
+    norm_exact = _normalize_header(exact_name)
+    norm_prefix = _normalize_header(prefix)
+
+    for col in df.columns:
+        if _normalize_header(col) == norm_exact:
+            return col
+
+    for col in df.columns:
+        if _normalize_header(col).startswith(norm_prefix):
+            return col
+
+    raise ValueError(f"Column not found: {exact_name}")
 
 
 def write_result(df, i, metric_columns, result):
@@ -351,47 +352,42 @@ def write_result(df, i, metric_columns, result):
 # MAIN
 # =====================
 def main():
-    df = pd.read_csv(INPUT_CSV)
-
-    if NAME_COLUMN not in df.columns:
-        raise ValueError(f"Column not found: {NAME_COLUMN}")
-
-    if Q4_TARGET_COLUMN not in df.columns:
-        raise ValueError(f"Column not found: {Q4_TARGET_COLUMN}")
-
-    if Q12_TARGET_COLUMN not in df.columns:
-        raise ValueError(f"Column not found: {Q12_TARGET_COLUMN}")
-
-    # Insert Q4 metrics immediately after Q Race.4.
-    df = ensure_metric_columns_after(df, Q4_TARGET_COLUMN, Q4_METRIC_COLUMNS)
-
-    # Insert Q12 metrics immediately after Q Race.12.
-    df = ensure_metric_columns_after(df, Q12_TARGET_COLUMN, Q12_METRIC_COLUMNS)
+    with locked_csv(INPUT_CSV) as df:
+        q4_col = resolve_column_name(df, Q4_TARGET_COLUMN, Q4_TARGET_PREFIX)
+        q12_llm_col = resolve_column_name(df, Q12_LLM_REFINED_COLUMN, Q12_TARGET_PREFIX)
+        ensure_columns_after(df, q4_col, Q4_METRIC_COLUMNS)
+        ensure_columns_after(df, q12_llm_col, Q12_METRIC_COLUMNS)
+        prepare_metric_dtypes(df, WRITE_COLUMNS)
+        row_count = len(df)
 
     for i in tqdm(
-        range(len(df)),
-        desc="Q Race.4 and updated race theory quality (API)",
+        range(row_count),
+        desc="Q Gender.4 and Q Gender.12 LLM-refined theory quality (API)",
         unit="row",
         mininterval=0.3,
     ):
-        q4_done = row_done(df, i, Q4_METRIC_COLUMNS)
-        q12_done = row_done(df, i, Q12_METRIC_COLUMNS)
+        with locked_csv_read(INPUT_CSV) as df:
+            q4_col = resolve_column_name(df, Q4_TARGET_COLUMN, Q4_TARGET_PREFIX)
+            q12_llm_col = resolve_column_name(df, Q12_LLM_REFINED_COLUMN, Q12_TARGET_PREFIX)
+            prepare_metric_dtypes(df, WRITE_COLUMNS)
 
-        if q4_done and q12_done:
-            continue
+            q4_done = row_done(df, i, Q4_METRIC_COLUMNS)
+            q12_done = row_done(df, i, Q12_METRIC_COLUMNS)
+            if q4_done and q12_done:
+                continue
 
-        q4_text = df.at[i, Q4_TARGET_COLUMN]
-        q12_text = df.at[i, Q12_TARGET_COLUMN]
+            q4_text = None if q4_done else df.at[i, q4_col]
+            q12_text = None if q12_done else df.at[i, q12_llm_col]
 
-        if not q4_done:
-            q4_result = analyze_q4_response(q4_text)
-            write_result(df, i, Q4_METRIC_COLUMNS, q4_result)
-            df.to_csv(INPUT_CSV, index=False)
+        q4_result = analyze_q4_response(q4_text) if q4_text is not None else None
+        q12_result = analyze_post_ml_theory(q12_text) if q12_text is not None else None
 
-        if not q12_done:
-            q12_result = analyze_updated_theory(q4_text, q12_text)
-            write_result(df, i, Q12_METRIC_COLUMNS, q12_result)
-            df.to_csv(INPUT_CSV, index=False)
+        with locked_csv(INPUT_CSV) as df:
+            prepare_metric_dtypes(df, WRITE_COLUMNS)
+            if q4_result is not None:
+                write_result(df, i, Q4_METRIC_COLUMNS, q4_result)
+            if q12_result is not None:
+                write_result(df, i, Q12_METRIC_COLUMNS, q12_result)
 
     print("Done!")
 

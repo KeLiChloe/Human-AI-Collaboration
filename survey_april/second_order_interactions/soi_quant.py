@@ -30,6 +30,17 @@ from viz_style import (
     comparison_pair_label,
     draw_centered_comparison_box,
     draw_sig_footnote,
+    SIG_LEVEL_LEGEND,
+)
+
+SOI_WELCH_THREE_GROUP_FOOTNOTE = (
+    "Brackets: two-sided Welch t-test on pairwise group mean ML feature-selection accuracy "
+    "(PhD Students vs Experts, PhD Students vs GenAI, Experts vs GenAI).",
+    SIG_LEVEL_LEGEND,
+)
+SOI_WELCH_HUMAN_GENAI_FOOTNOTE = (
+    "Brackets: two-sided Welch t-test on mean ML feature-selection accuracy (Humans vs GenAI).",
+    SIG_LEVEL_LEGEND,
 )
 
 QUANT_COMPARISON_BOX_BOTTOM = 0.062
@@ -368,7 +379,7 @@ def _build_sorted_figure_legend(ax, aggregations, extra_lines, scatter_legend=Tr
     handles.extend([
         _legend_line(
             COLOR_AGG_HUMAN, "-",
-            f"Aggregated Human = {format_legend_value(aggregations['human'])}",
+            f"Aggregated Humans = {format_legend_value(aggregations['human'])}",
         ),
         _legend_line(
             GROUP_COLORS["genai"], "-",
@@ -602,7 +613,12 @@ def _plot_metric_panels(
                 max_box_width=panel_w * QUANT_BOX_MAX_WIDTH_FRAC,
             )
         footnote_y = QUANT_COLLAPSED_FOOTNOTE_Y if collapsed else QUANT_FOOTNOTE_Y
-        draw_sig_footnote(fig, y=footnote_y)
+        footnote_text = (
+            SOI_WELCH_HUMAN_GENAI_FOOTNOTE
+            if collapsed
+            else SOI_WELCH_THREE_GROUP_FOOTNOTE
+        )
+        draw_sig_footnote(fig, y=footnote_y, text=footnote_text)
     out_path = Path(out_path)
     if panel == "both":
         final_path = out_path
@@ -689,7 +705,7 @@ def plot_sorted_cosine_individual_separate(ylim, panel="both"):
             linespacing=1.85,
             loc="center",
         )
-        ax.set_xlabel("Participant rank (sorted low → high by cosine similarity score)", fontsize=15.5)
+        ax.set_xlabel("Respondent rank (sorted low → high by cosine similarity score)", fontsize=15.5)
         ax.set_ylabel("Cosine Similarity", fontsize=16)
         ax.set_xlim(0, total_n + 1)
         dynamic_ymin = (float(np.min(y)) - 0.1) if n_pt else ylim[0]

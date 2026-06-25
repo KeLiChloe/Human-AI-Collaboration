@@ -342,7 +342,7 @@ def plot_sign_alignment_by_group(acc_by_group, ml_signs, task_label, out_path):
         )
     ax.set_xlim(0, 120)
     ax.set_xlabel(
-        "Percentage of participants selecting this feature. \nPercent labels indicate sign-alignment rate with LR among those selecting it.",
+        "Percentage of respondents selecting this feature. \nPercent labels indicate sign-alignment rate with LR among those selecting it.",
         fontsize=13.5
     )
     ax.set_title(
