@@ -3,7 +3,30 @@ archive/
 models
 df_cleaned*
 code/semantic_scholar_ML/data/
+code/semantic_scholar_ML/pilot/*
 code/patent/*.csv
-code/semantic_scholar_ML/samples/
+survey_april/**/*.csv
+code/semantic_scholar_ML/samples_archive
 forebears-surnames.sqlite
 .DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Cache
+.cache/
+**/__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+**/cache/
+# Virtualenvs
+.venv/
+survey_april/.venv/
+**/.venv/
+
+# Matplotlib / local caches
+.mplconfig/
+**/.mplconfig/

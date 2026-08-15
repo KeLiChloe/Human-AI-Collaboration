@@ -8,6 +8,8 @@ from pathlib import Path
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import numpy as np
+from dataclasses import dataclass
+from matplotlib.offsetbox import AnchoredOffsetbox, AnchoredText, DrawingArea, HPacker, TextArea, VPacker
 from matplotlib.transforms import Bbox, blended_transform_factory
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -23,25 +25,30 @@ PHASE_HATCH_COLOR = "#9e9e9e"
 
 GROUP_COLORS_TEXT = {
     "PhD Students": GROUP_COLORS["phd"],
-    "Experts": GROUP_COLORS["expert"],
+    "Senior Scientists": GROUP_COLORS["senior"],
+    "Topic Experts": GROUP_COLORS["topic"],
+    "Non-Topic Experts": GROUP_COLORS["non_topic"],
     "GenAI": GROUP_COLORS["genai"],
 }
 GROUP_COLORS_COLLAPSED = {
     "Human": COLOR_AGG_HUMAN,
+    "Topic Experts": GROUP_COLORS["topic"],
     "GenAI": GROUP_COLORS["genai"],
 }
 
-GROUP_ORDER = ["PhD Students", "Experts", "GenAI"]
+GROUP_ORDER = ["PhD Students", "Senior Scientists", "GenAI"]
 GROUP_ORDER_COLLAPSED = ["Human", "GenAI"]
 
 DISPLAY_LABELS = {
     "PhD Students": "PhD Students",
-    "Experts": "Experts",
+    "Senior Scientists": "Senior Scientists",
+    "Topic Experts": "Topic Experts",
+    "Non-Topic Experts": "Non-Topic Experts",
     "GenAI": "GenAI",
     "Human": "Humans",
 }
 HUMAN_DISPLAY_LABEL = DISPLAY_LABELS["Human"]
-HUMAN_COMPOSITION_NOTE = "PhD Students + Experts"
+HUMAN_COMPOSITION_NOTE = "PhD Students + Senior Scientists"
 
 SAVE_DPI = 600
 SAVE_PAD_INCHES = 0.08
@@ -60,9 +67,35 @@ FOOTNOTE_Y = 0.038
 SIG_LEVEL_LEGEND = (
     "NS (p ≥ 0.05), * (p < 0.05), ** (p < 0.01), *** (p < 0.001)"
 )
+METRIC_SUBTITLE_Y = 0.935
+METRIC_SUBTITLE_FONTSIZE = 19
+METRIC_SUBTITLE_LINE_STEP = 0.028
+FIGURE_SUPTITLE_Y = 0.99
+FIGURE_TITLE_METRIC_GAP = 0.014
+FIGURE_METRIC_LEGEND_GAP = 0.030
+FIGURE_LEGEND_PANEL_GAP = 0.060
+
+# Unified typography for theory_space_structure visualization figures.
+VIZ_SUPTITLE_FONTSIZE = 26
+VIZ_SUPTITLE_LINE_SPACING = 1.35
+VIZ_PANEL_TITLE_FONTSIZE = 19
+VIZ_AXIS_LABEL_FONTSIZE = 23
+VIZ_TICK_FONTSIZE = 18
+VIZ_FOOTNOTE_FONTSIZE = 17
+VIZ_FOOTNOTE_LINE_STEP = 0.017
+VIZ_FOOTNOTE_Y = 0.058
+VIZ_LEGEND_FONTSIZE = 18
+VIZ_LEGEND_Y_SHIFT = 0.012
+VIZ_BRACKET_FONTSIZE = 18
+VIZ_SUPYLABEL_X = 0.02
+VIZ_HEADER_VERTICAL_SHIFT = 0.028
+# Legacy defaults; prefer layout_title_and_metric() for per-figure placement.
+FIGURE_WITH_METRIC_PANEL_TOP = 0.78
+FIGURE_WITH_METRIC_LEGEND_Y = 0.875
 WELCH_TWO_SIDED_THREE_GROUP_FOOTNOTE = (
     "Two-sided Welch t-test on pairwise group mean differences "
-    "(PhD Students vs Experts, PhD Students vs GenAI, Experts vs GenAI).",
+    "(PhD Students vs Senior Scientists, PhD Students vs GenAI, "
+    "Senior Scientists vs GenAI).",
     SIG_LEVEL_LEGEND,
 )
 WELCH_TWO_SIDED_HUMAN_GENAI_FOOTNOTE = (
@@ -83,6 +116,7 @@ FOOTNOTE_LINE_STEP = 0.014
 PAIRED_BRACKET_LIFT = 0.035
 PAIRED_BRACKET_HEIGHT = 0.045
 PAIRED_BRACKET_LABEL_GAP = 0.014
+PAIRWISE_BRACKET_TIER_STEP = 0.058
 # Below x-tick labels (axes y < 0, blended with data x).
 PAIRED_BRACKET_BELOW_AXIS_ARM = -0.20
 PAIRED_BRACKET_BELOW_AXIS_LINE = -0.28
@@ -110,12 +144,20 @@ ERROR_LINEWIDTH = 1.0
 COMPARE_PAD_PX = 12
 COMPARE_LINE_STEP_METRIC = 0.045
 
+# Nature figure fonts: sans-serif, preferably Helvetica or Arial (same across all
+# figures). Greek letters: use unicode in Helvetica/Arial, or Symbol when
+# hand-editing in Illustrator (matplotlib mathtext stays on Helvetica).
 RC_PARAMS = {
     "figure.dpi": 180,
     "savefig.dpi": SAVE_DPI,
-    "font.family": "serif",
-    "font.serif": ["Times New Roman", "Times", "STIXGeneral", "DejaVu Serif"],
-    "mathtext.fontset": "stix",
+    "font.family": "sans-serif",
+    "font.sans-serif": ["Helvetica", "DejaVu Sans", "Arial"],
+    "mathtext.fontset": "custom",
+    "mathtext.rm": "Helvetica",
+    "mathtext.it": "Helvetica:italic",
+    "mathtext.bf": "Helvetica:bold",
+    "mathtext.sf": "Helvetica",
+    "mathtext.default": "regular",
     "font.size": 10.5,
     "axes.titlesize": FONT_TITLE,
     "axes.labelsize": 11,
@@ -132,6 +174,7 @@ RC_PARAMS = {
 
 
 def apply_plot_style() -> None:
+    """Apply shared Nature-oriented figure style (Helvetica / Arial)."""
     plt.rcParams.update(RC_PARAMS)
 
 
@@ -211,6 +254,30 @@ def save_figure(fig, out_path: Path) -> None:
     plt.close(fig)
 
 
+def save_figure_pdf_svg(
+    fig,
+    out_path: Path | str,
+    *,
+    pad_inches: float | None = None,
+    bbox_inches: str | None = None,
+    close: bool = True,
+) -> list[Path]:
+    """Save PDF and SVG using ``out_path`` stem (suffix ignored)."""
+    stem = Path(out_path).with_suffix("")
+    pad = SAVE_PAD_INCHES if pad_inches is None else pad_inches
+    kwargs: dict = {"pad_inches": pad}
+    if bbox_inches is not None:
+        kwargs["bbox_inches"] = bbox_inches
+    saved: list[Path] = []
+    for fmt in ("pdf", "svg"):
+        path = Path(f"{stem}.{fmt}")
+        fig.savefig(path, format=fmt, **kwargs)
+        saved.append(path)
+    if close:
+        plt.close(fig)
+    return saved
+
+
 def fmt_p(p: float) -> str:
     if not np.isfinite(p):
         return "NA"
@@ -218,6 +285,14 @@ def fmt_p(p: float) -> str:
         return "<1e-4"
     return f"{p:.4f}"
 
+
+def format_p_value_label(p: float) -> str:
+    """Compact p-value text for figure brackets (Nature-style)."""
+    if not np.isfinite(p):
+        return "n/a"
+    if p < 0.001:
+        return "p < 0.001"
+    return f"p = {p:.3f}"
 
 def significance_label(p: float) -> str:
     if not np.isfinite(p):
@@ -233,6 +308,143 @@ def significance_label(p: float) -> str:
 
 def is_significant(p: float) -> bool:
     return np.isfinite(p) and p < 0.05
+
+
+def sig_label_is_significant(sig: str) -> bool:
+    """True for *, **, ***; false for NS / n/a."""
+    return str(sig).strip() not in {"NS", "n/a", "NA", ""}
+
+
+def _axes_text_width(
+    ax,
+    text: str,
+    *,
+    fontsize: float,
+    fontweight: str = "normal",
+) -> float:
+    """Approximate text width in axes coordinates."""
+    fig = ax.figure
+    renderer = fig.canvas.get_renderer()
+    tmp = ax.text(
+        0.0,
+        0.0,
+        text,
+        transform=ax.transAxes,
+        fontsize=fontsize,
+        fontweight=fontweight,
+    )
+    bb = tmp.get_window_extent(renderer=renderer)
+    tmp.remove()
+    inv = ax.transAxes.inverted()
+    x0, _ = inv.transform((bb.x0, bb.y0))
+    x1, _ = inv.transform((bb.x1, bb.y0))
+    return abs(x1 - x0)
+
+
+def draw_pre_post_sig_columns(
+    ax,
+    columns: list[tuple[float, str, list[tuple[str, str]]]]
+    | list[tuple[str, list[tuple[str, str]]]],
+    *,
+    y0: float = -0.14,
+    fontsize: float,
+    linespacing: float = 1.65,
+    framed: bool = True,
+    col_gap: float = 0.055,
+) -> None:
+    """
+    Bottom Pre/Post notes: bold headers; significant rows in red.
+
+    Columns are packed tightly and the whole framed panel is centered under the axes.
+    ``columns`` may be ``(header, rows)`` or legacy ``(x, header, rows)`` (x ignored).
+    """
+    normalized: list[tuple[str, list[tuple[str, str]]]] = []
+    for item in columns:
+        if len(item) == 3 and isinstance(item[0], (int, float)):
+            normalized.append((str(item[1]), list(item[2])))
+        else:
+            normalized.append((str(item[0]), list(item[1])))
+
+    if not normalized:
+        return
+
+    bbox = ax.get_position()
+    ax_h_in = max(bbox.height * float(ax.figure.get_figheight()), 1e-6)
+    line_dy = (fontsize * linespacing) / 72.0 / ax_h_in
+    n_rows = max(len(rows) for _, rows in normalized)
+    n_lines = 1 + n_rows
+
+    # Measure content widths, then pack columns and center the panel.
+    col_widths: list[float] = []
+    for header, rows in normalized:
+        candidates = [header] + [f"{sig:<3}  {lab}" for sig, lab in rows]
+        weights = ["bold"] + ["normal"] * (len(candidates) - 1)
+        w = max(
+            _axes_text_width(ax, t, fontsize=fontsize, fontweight=wt)
+            for t, wt in zip(candidates, weights)
+        )
+        col_widths.append(w)
+
+    content_w = sum(col_widths) + col_gap * max(len(normalized) - 1, 0)
+    pad_x = 0.028
+    pad_y = 0.55 * line_dy
+    box_w = content_w + 2 * pad_x
+    box_left = 0.5 - box_w / 2
+    box_right = box_left + box_w
+    box_top = y0 + pad_y
+    box_bottom = y0 - n_lines * line_dy - pad_y
+
+    xs: list[float] = []
+    x_cursor = box_left + pad_x
+    for w in col_widths:
+        xs.append(x_cursor)
+        x_cursor += w + col_gap
+
+    if framed:
+        ax.add_patch(
+            mpatches.FancyBboxPatch(
+                (box_left, box_bottom),
+                box_right - box_left,
+                box_top - box_bottom,
+                boxstyle="round,pad=0.012",
+                transform=ax.transAxes,
+                facecolor="white",
+                edgecolor=PHASE_HATCH_COLOR,
+                linewidth=0.8,
+                alpha=1.0,
+                clip_on=False,
+                zorder=1,
+            )
+        )
+
+    for x, (header, rows) in zip(xs, normalized):
+        ax.text(
+            x,
+            y0,
+            header,
+            transform=ax.transAxes,
+            ha="left",
+            va="top",
+            fontsize=fontsize,
+            fontweight="bold",
+            color="#333333",
+            clip_on=False,
+            zorder=2,
+        )
+        for i, (sig, lab) in enumerate(rows):
+            color = SIG_TEXT_COLOR if sig_label_is_significant(sig) else "#555555"
+            ax.text(
+                x,
+                y0 - (i + 1) * line_dy,
+                f"{sig:<3}  {lab}",
+                transform=ax.transAxes,
+                ha="left",
+                va="top",
+                fontsize=fontsize,
+                color=color,
+                clip_on=False,
+                zorder=2,
+            )
 
 
 def format_comparison_line(label: str, p: float) -> str:
@@ -289,18 +501,137 @@ def apply_bottom_layout(
     )
 
 
+def draw_metric_subtitle(
+    fig,
+    lines: str | tuple[str, ...] | list[str],
+    *,
+    y: float = METRIC_SUBTITLE_Y,
+    fontsize: float = METRIC_SUBTITLE_FONTSIZE,
+    line_step: float = METRIC_SUBTITLE_LINE_STEP,
+) -> int:
+    """Place metric definition lines directly below the figure suptitle."""
+    content = (lines,) if isinstance(lines, str) else tuple(lines)
+    for i, line in enumerate(content):
+        fig.text(
+            0.5,
+            y - i * line_step,
+            line,
+            ha="center",
+            va="top",
+            fontsize=fontsize,
+            fontweight="normal",
+            color=FOOTNOTE_COLOR,
+            transform=fig.transFigure,
+            clip_on=False,
+        )
+    return len(content)
+
+
+@dataclass(frozen=True)
+class TitleBlockLayout:
+    legend_y: float
+    panel_top: float
+
+
+def _text_block_height_frac(
+    fontsize: float,
+    n_lines: int,
+    fig_height_in: float,
+    *,
+    line_spacing: float = 1.0,
+) -> float:
+    return (fontsize / 72.0 / fig_height_in) * n_lines * line_spacing
+
+
+def layout_title_and_metric(
+    fig,
+    *,
+    suptitle: str,
+    metric_lines: str | tuple[str, ...] | list[str],
+    suptitle_fontsize: float,
+    suptitle_y: float = FIGURE_SUPTITLE_Y,
+    suptitle_line_spacing: float = 1.0,
+    metric_fontsize: float = METRIC_SUBTITLE_FONTSIZE,
+    metric_line_step: float = METRIC_SUBTITLE_LINE_STEP,
+    gap_title_metric: float = FIGURE_TITLE_METRIC_GAP,
+    gap_metric_legend: float = FIGURE_METRIC_LEGEND_GAP,
+    gap_legend_panels: float = FIGURE_LEGEND_PANEL_GAP,
+    vertical_shift: float = 0.0,
+    metric_vertical_shift: float = 0.0,
+) -> TitleBlockLayout:
+    """Place suptitle (top-aligned) and metric lines below it without overlap."""
+    metric_content = (metric_lines,) if isinstance(metric_lines, str) else tuple(metric_lines)
+    n_metric = len(metric_content)
+    n_title = suptitle.count("\n") + 1
+    fig_h = float(fig.get_size_inches()[1])
+
+    title_h = _text_block_height_frac(
+        suptitle_fontsize,
+        n_title,
+        fig_h,
+        line_spacing=suptitle_line_spacing,
+    )
+    if n_metric == 0:
+        metric_h = 0.0
+    else:
+        metric_h = _text_block_height_frac(metric_fontsize, 1, fig_h)
+        metric_h += max(n_metric - 1, 0) * metric_line_step
+
+    title = fig.suptitle(
+        suptitle,
+        fontweight="bold",
+        fontsize=suptitle_fontsize,
+        y=suptitle_y,
+        va="top",
+    )
+    title.set_linespacing(suptitle_line_spacing)
+
+    metric_y = (
+        suptitle_y - title_h - gap_title_metric + vertical_shift + metric_vertical_shift
+    )
+    if n_metric:
+        draw_metric_subtitle(
+            fig,
+            metric_content,
+            y=metric_y,
+            fontsize=metric_fontsize,
+            line_step=metric_line_step,
+        )
+
+    legend_y = metric_y - metric_h - gap_metric_legend
+    panel_top = legend_y - gap_legend_panels
+    return TitleBlockLayout(legend_y=legend_y, panel_top=panel_top)
+
+
+def figure_legend_panel_top(
+    legend_anchor_y: float,
+    *,
+    n_items: int,
+    ncol: int,
+    fig_height_in: float,
+    legend_fontsize: float = VIZ_LEGEND_FONTSIZE,
+    gap_below_legend: float = 0.032,
+    row_spacing: float = 1.55,
+) -> float:
+    """Figure ``top`` for subplots_adjust below a multi-row figure legend."""
+    n_rows = (n_items + max(ncol, 1) - 1) // max(ncol, 1)
+    row_h = (legend_fontsize / 72.0 / fig_height_in) * row_spacing
+    return legend_anchor_y - n_rows * row_h - gap_below_legend
+
+
 def draw_sig_footnote(
     fig,
     y: float = FOOTNOTE_Y,
     *,
     text: str | tuple[str, ...] | list[str] | None = None,
+    line_step: float = FOOTNOTE_LINE_STEP,
 ) -> None:
     content = SIG_FOOTNOTE if text is None else text
     lines = [content] if isinstance(content, str) else list(content)
     for i, line in enumerate(lines):
         fig.text(
             0.5,
-            y - i * FOOTNOTE_LINE_STEP,
+            y - i * line_step,
             line,
             ha="center",
             va="bottom",
@@ -310,6 +641,179 @@ def draw_sig_footnote(
             clip_on=False,
             zorder=1,
         )
+
+
+def draw_pairwise_sig_legend(
+    ax,
+    columns: list[tuple[float, str, list[tuple[str, str]]]]
+    | list[tuple[str, list[tuple[str, str]]]],
+    *,
+    loc: str = "upper right",
+    fontsize: float = 6.5,
+) -> None:
+    """In-axes framed legend for pairwise Pre/Post significance (no below-axis box)."""
+    normalized = _normalize_sig_columns(columns)
+    if not normalized:
+        return
+
+    lines: list[str] = []
+    for i, (header, rows) in enumerate(normalized):
+        if i > 0:
+            lines.append("")
+        lines.append(str(header))
+        for sig, lab in rows:
+            lines.append(f"{sig:<3}  {lab}")
+
+    box = AnchoredText(
+        "\n".join(lines),
+        loc=loc,
+        prop={"size": fontsize, "color": "#333333"},
+        frameon=True,
+        borderpad=0.35,
+        pad=0.25,
+    )
+    box.patch.set_boxstyle("round,pad=0.25")
+    box.patch.set_facecolor("white")
+    box.patch.set_edgecolor(PHASE_HATCH_COLOR)
+    box.patch.set_linewidth(0.8)
+    box.patch.set_alpha(1.0)
+    ax.add_artist(box)
+
+NON_TOPIC_SWATCH_COLOR = "#111111"
+
+
+def draw_pairwise_sig_color_legend(
+    ax,
+    columns: list[tuple[str, list[tuple[str | float, tuple[str, str]]]]],
+    *,
+    group_colors: dict[str, str],
+    loc: str = "upper right",
+    fontsize: float = 6.5,
+    swatch_size: float | None = None,
+    layout: str = "columns",
+    column_sep: float = 16,
+    label_pvalues: bool = False,
+) -> None:
+    """In-axes legend: colored swatches vs swatches + stars or p-values."""
+    if not columns:
+        return
+
+    sw = sh = swatch_size if swatch_size is not None else max(5.5, fontsize * 0.95)
+
+    def _swatch(color: str) -> DrawingArea:
+        da = DrawingArea(sw, sh)
+        da.add_artist(
+            mpatches.Rectangle(
+                (0, 0),
+                sw,
+                sh,
+                facecolor=color,
+                edgecolor=BAR_EDGE_COLOR,
+                linewidth=0.5,
+                alpha=BAR_ALPHA,
+            )
+        )
+        return da
+
+    def _group_marker(group: str):
+        if group == "Non-Topic Experts":
+            return _swatch(NON_TOPIC_SWATCH_COLOR)
+        return _swatch(group_colors[group])
+
+    def _row_label(sig_or_p: str | float) -> tuple[str, bool]:
+        if label_pvalues and isinstance(sig_or_p, (int, float)):
+            p = float(sig_or_p)
+            return format_p_value_label(p), is_significant(p)
+        sig = str(sig_or_p)
+        return sig, sig_label_is_significant(sig)
+
+    def _comparison_row(sig_or_p: str | float, left: str, right: str) -> HPacker:
+        label, sig_flag = _row_label(sig_or_p)
+        sig_color = SIG_TEXT_COLOR if sig_flag else "#555555"
+        return HPacker(
+            children=[
+                _group_marker(left),
+                TextArea(" vs ", textprops={"size": fontsize, "color": "#666666"}),
+                _group_marker(right),
+                TextArea(
+                    f" {label}",
+                    textprops={"size": fontsize, "color": sig_color},
+                ),
+            ],
+            align="center",
+            pad=0,
+            sep=1,
+        )
+
+    def _phase_column(
+        header: str, pairs: list[tuple[str | float, tuple[str, str]]]
+    ) -> VPacker:
+        col_rows: list = [
+            TextArea(header, textprops={"size": fontsize, "weight": "bold", "color": "#333333"})
+        ]
+        for sig_or_p, (left, right) in pairs:
+            col_rows.append(_comparison_row(sig_or_p, left, right))
+        return VPacker(children=col_rows, align="left", pad=0, sep=2)
+
+    uses_non_topic = any(
+        left == "Non-Topic Experts" or right == "Non-Topic Experts"
+        for _header, pairs in columns
+        for _sig, (left, right) in pairs
+    )
+
+    if layout == "columns":
+        body = HPacker(
+            children=[_phase_column(header, pairs) for header, pairs in columns],
+            align="top",
+            pad=0,
+            sep=column_sep,
+        )
+    else:
+        rows: list = []
+        for i, (header, pairs) in enumerate(columns):
+            if i > 0:
+                rows.append(TextArea("", textprops={"size": fontsize * 0.35}))
+            rows.append(
+                TextArea(
+                    header, textprops={"size": fontsize, "weight": "bold", "color": "#333333"}
+                )
+            )
+            for sig, (left, right) in pairs:
+                rows.append(_comparison_row(sig, left, right))
+        body = VPacker(children=rows, align="left", pad=0, sep=2)
+
+    if uses_non_topic:
+        footnote = HPacker(
+            children=[
+                _swatch(NON_TOPIC_SWATCH_COLOR),
+                TextArea(
+                    f" = {display_label('Non-Topic Experts')}",
+                    textprops={"size": max(fontsize - 0.5, 5.5), "color": "#555555"},
+                ),
+            ],
+            align="center",
+            pad=0,
+            sep=2,
+        )
+        child = VPacker(children=[body, footnote], align="left", pad=0, sep=2)
+    else:
+        child = body
+
+    anchored = AnchoredOffsetbox(
+        loc=loc,
+        child=child,
+        pad=0.22,
+        borderpad=0.22,
+        frameon=True,
+        bbox_to_anchor=(1.0, 1.02),
+        bbox_transform=ax.transAxes,
+    )
+    anchored.patch.set_boxstyle("round,pad=0.12")
+    anchored.patch.set_facecolor("white")
+    anchored.patch.set_edgecolor(PHASE_HATCH_COLOR)
+    anchored.patch.set_linewidth(0.8)
+    anchored.patch.set_alpha(1.0)
+    ax.add_artist(anchored)
 
 
 def draw_paired_pre_post_bracket(
@@ -325,6 +829,7 @@ def draw_paired_pre_post_bracket(
     below_line: float | None = None,
     below_label: float | None = None,
     label: str | None = None,
+    color: str | None = None,
 ) -> None:
     """Bracket between Pre/Post bars for within-group paired comparison."""
     if fontsize is None:
@@ -332,7 +837,8 @@ def draw_paired_pre_post_bracket(
     ylo, yhi = ax.get_ylim()
     span = yhi - ylo
     sig = is_significant(p)
-    color = SIG_TEXT_COLOR if sig else "black"
+    if color is None:
+        color = SIG_TEXT_COLOR if sig else "black"
     weight = "bold" if sig else "normal"
     if label is None:
         label = format_paired_pre_post_line(p)
@@ -401,6 +907,65 @@ def draw_paired_pre_post_bracket(
         clip_on=False,
         zorder=7,
     )
+
+
+
+draw_pre_post_bracket = draw_paired_pre_post_bracket
+
+def draw_pairwise_group_brackets(
+    ax,
+    x,
+    group_order: list[str] | tuple[str, ...],
+    pairwise: tuple[tuple[str, str], ...],
+    phase_order: tuple[str, ...],
+    phase_offsets: dict[str, float],
+    phase_comp_sigs: dict[str, list[str]],
+    phase_bar_tops: dict[str, float],
+    *,
+    fontsize: float,
+    significant_only: bool = True,
+) -> None:
+    """Bracket annotations for between-group Welch comparisons (per phase)."""
+    span = ax.get_ylim()[1] - ax.get_ylim()[0]
+    tier_step = span * PAIRWISE_BRACKET_TIER_STEP
+    groups = list(group_order)
+
+    for phase in phase_order:
+        y_base = float(phase_bar_tops.get(phase, 0.0))
+        tier = 0
+        for (left, right), sig in zip(pairwise, phase_comp_sigs[phase]):
+            if significant_only and not sig_label_is_significant(sig):
+                continue
+            if left not in groups or right not in groups:
+                continue
+            x_left = float(x[groups.index(left)] + phase_offsets[phase])
+            x_right = float(x[groups.index(right)] + phase_offsets[phase])
+            color = SIG_TEXT_COLOR if sig_label_is_significant(sig) else "#555555"
+            weight = "bold" if sig_label_is_significant(sig) else "normal"
+            y_bar = y_base + span * PAIRED_BRACKET_LIFT + tier * tier_step
+            y_tip = y_bar + span * PAIRED_BRACKET_HEIGHT
+            label_y = y_tip + span * PAIRED_BRACKET_LABEL_GAP
+            ax.plot(
+                [x_left, x_left, x_right, x_right],
+                [y_bar, y_tip, y_tip, y_bar],
+                color=color,
+                linewidth=1.1,
+                clip_on=False,
+                zorder=6,
+            )
+            ax.text(
+                (x_left + x_right) / 2,
+                label_y,
+                sig,
+                ha="center",
+                va="bottom",
+                fontsize=fontsize,
+                fontweight=weight,
+                color=color,
+                clip_on=False,
+                zorder=7,
+            )
+            tier += 1
 
 
 def _add_comparison_box(

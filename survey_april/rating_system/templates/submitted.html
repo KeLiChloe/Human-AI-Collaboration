@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Submission Complete</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css?v=20260721d" />
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <h1 class="brand-title">Blind Evaluation of Theories</h1>
+      </div>
+    </header>
+
+    <section class="login-panel">
+      <div class="login-card">
+        <h2>Submission successful</h2>
+        <p class="lede">Your ratings have been saved.</p>
+        <p class="hint">Tip: To revise your ratings, sign in with the same identifier, make your changes, and submit again.</p>
+        <div class="admin-actions">
+          <a class="primary-btn" id="revise-link" href="/">Return and revise</a>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+    (() => {
+      const q = new URLSearchParams(window.location.search);
+      const identifier = (q.get("identifier") || "").trim();
+      const seed = (q.get("seed") || "").trim();
+      if (!identifier && !seed) return;
+      const next = new URLSearchParams();
+      if (seed) next.set("seed", seed);
+      if (identifier) next.set("identifier", identifier);
+      document.getElementById("revise-link").href = `/?${next.toString()}`;
+    })();
+  </script>
+</body>
+</html>

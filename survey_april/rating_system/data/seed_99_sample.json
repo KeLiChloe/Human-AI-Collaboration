@@ -1,0 +1,940 @@
+{
+  "seed": "99",
+  "sample_per_cell": 25,
+  "total": 100,
+  "genai_sample_weight": 2.0,
+  "expert_sample_weight": 3.5,
+  "group_counts": {
+    "PhD Student": 42,
+    "Senior Scientist": 30,
+    "GenAI": 28
+  },
+  "names": [
+    "Byounghoon Koh",
+    "Isabelle Solal",
+    "Chen Kai Huang",
+    "Dequn Teng",
+    "Rui Sun",
+    "GPT_5.4_thinking_extended",
+    "Theorista_GPT5.5_instant",
+    "Qwen_3.7Plus_thinking",
+    "Sunny Lee",
+    "Igor Grossmann",
+    "Cyrille Grumbach",
+    "Maria Hademer",
+    "Mert Kobas",
+    "Dingzhe Leng",
+    "Alexis Du",
+    "Na Hyun Kim",
+    "gemini_3.1_pro_standard",
+    "Britt Hadar",
+    "Izzy Gainsburg",
+    "Gregory Lanzalotto",
+    "Claude_opus4.8_adaptive",
+    "Matthew Eshbaugh-Soha",
+    "Duygu Yilmaz",
+    "Michael Schaerer",
+    "Junghyo Sun",
+    "Jacob Xiangyu JIN",
+    "Yoel Inbar",
+    "Isabel Fernandez-Mateo",
+    "Ecem Yucesoy",
+    "Mistral_thinking",
+    "Byounghoon Koh",
+    "Shun Yiu",
+    "GPT_5.5_thinking_standard",
+    "Zhongyuan Liang",
+    "Britt Hadar",
+    "Zhehang Du",
+    "Gemini_3_fast",
+    "Irmak Dai",
+    "DeepSeek_expert",
+    "GPT_5.2_instant",
+    "Mert Kobas",
+    "Duygu Yilmaz",
+    "Claude_sonnet4.6",
+    "Jiuyao Lu",
+    "Sunny Lee",
+    "GPT_5.4_thinking_standard",
+    "Igor Grossmann",
+    "Izzy Gainsburg",
+    "Roderick Swaab",
+    "Claude_opus4.8_adaptive",
+    "Junghyo Sun",
+    "GPT_5.4_thinking_standard",
+    "Theorista_GPT5.5_instant",
+    "Gemini_3_fast",
+    "Sunny Lee",
+    "Yoel Inbar",
+    "Christina A. Nguyen",
+    "Xiaomeng Wang",
+    "Claude_sonnet4.6",
+    "Isabelle Solal",
+    "Wanteng Ma",
+    "Zhehang Du",
+    "Matthew Eshbaugh-Soha",
+    "Peihong Liu",
+    "Roderick Swaab",
+    "Chenjun Li",
+    "Ning Liu",
+    "Dequn Teng",
+    "Claude_opus4.7_adaptive",
+    "Claude_opus4.8",
+    "GPT_5.2_instant",
+    "Connor Douglas",
+    "Zhongyuan Liang",
+    "GPT_5.5_thinking_standard",
+    "Izzy Gainsburg",
+    "Christina A. Nguyen",
+    "Matthew Bidwell",
+    "Isabel Fernandez-Mateo",
+    "Theorista_GPT5.5_thinking_standard",
+    "Matthew Eshbaugh-Soha",
+    "Sunny Lee",
+    "Izzy Gainsburg",
+    "Igor Grossmann",
+    "gemini_3.1_pro_standard",
+    "Roderick Swaab",
+    "Michael Schaerer",
+    "Ruijia Zhang",
+    "Jay Hardy",
+    "Gavin Jared Bala",
+    "Gemini_3_fast",
+    "Ecem Yucesoy",
+    "GPT_5.2_instant",
+    "Theorista_GPT5.5_instant",
+    "Claude_opus4.8",
+    "Cory Clark",
+    "Claude_opus4.7",
+    "Wanteng Ma",
+    "Robin Vigerbaeck",
+    "Duygu Yilmaz",
+    "Qingyao Sun"
+  ],
+  "pages": [
+    {
+      "page": "Racial Inequality — Main Effects",
+      "key": "race_main",
+      "theories": [
+        {
+          "page_position": 1,
+          "display_label": "Theory 1 (Race · Main)",
+          "participant_name": "Byounghoon Koh",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "c1dacd00bc6e"
+        },
+        {
+          "page_position": 2,
+          "display_label": "Theory 2 (Race · Main)",
+          "participant_name": "Isabelle Solal",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "0630034b3c7c"
+        },
+        {
+          "page_position": 3,
+          "display_label": "Theory 3 (Race · Main)",
+          "participant_name": "Chen Kai Huang",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "05acf024f672"
+        },
+        {
+          "page_position": 4,
+          "display_label": "Theory 4 (Race · Main)",
+          "participant_name": "Dequn Teng",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "b8fdaba1c7b5"
+        },
+        {
+          "page_position": 5,
+          "display_label": "Theory 5 (Race · Main)",
+          "participant_name": "Rui Sun",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "95661eb9b486"
+        },
+        {
+          "page_position": 6,
+          "display_label": "Theory 6 (Race · Main)",
+          "participant_name": "GPT_5.4_thinking_extended",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "a9d576eba8c7"
+        },
+        {
+          "page_position": 7,
+          "display_label": "Theory 7 (Race · Main)",
+          "participant_name": "Theorista_GPT5.5_instant",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "5d734098e3a5"
+        },
+        {
+          "page_position": 8,
+          "display_label": "Theory 8 (Race · Main)",
+          "participant_name": "Qwen_3.7Plus_thinking",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "4d260f407445"
+        },
+        {
+          "page_position": 9,
+          "display_label": "Theory 9 (Race · Main)",
+          "participant_name": "Sunny Lee",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "d236b358a139"
+        },
+        {
+          "page_position": 10,
+          "display_label": "Theory 10 (Race · Main)",
+          "participant_name": "Igor Grossmann",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "33d98066648d"
+        },
+        {
+          "page_position": 11,
+          "display_label": "Theory 11 (Race · Main)",
+          "participant_name": "Cyrille Grumbach",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "8255d52798f2"
+        },
+        {
+          "page_position": 12,
+          "display_label": "Theory 12 (Race · Main)",
+          "participant_name": "Maria Hademer",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "320d6aed355d"
+        },
+        {
+          "page_position": 13,
+          "display_label": "Theory 13 (Race · Main)",
+          "participant_name": "Mert Kobas",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "9ce68d62de2a"
+        },
+        {
+          "page_position": 14,
+          "display_label": "Theory 14 (Race · Main)",
+          "participant_name": "Dingzhe Leng",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "674770194a6e"
+        },
+        {
+          "page_position": 15,
+          "display_label": "Theory 15 (Race · Main)",
+          "participant_name": "Alexis Du",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "9cbe2045cf9a"
+        },
+        {
+          "page_position": 16,
+          "display_label": "Theory 16 (Race · Main)",
+          "participant_name": "Na Hyun Kim",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "6a4bd42f2d68"
+        },
+        {
+          "page_position": 17,
+          "display_label": "Theory 17 (Race · Main)",
+          "participant_name": "gemini_3.1_pro_standard",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "d1367524a563"
+        },
+        {
+          "page_position": 18,
+          "display_label": "Theory 18 (Race · Main)",
+          "participant_name": "Britt Hadar",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "35b1737c4e59"
+        },
+        {
+          "page_position": 19,
+          "display_label": "Theory 19 (Race · Main)",
+          "participant_name": "Izzy Gainsburg",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "285aece7b94c"
+        },
+        {
+          "page_position": 20,
+          "display_label": "Theory 20 (Race · Main)",
+          "participant_name": "Gregory Lanzalotto",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "942a939185e6"
+        },
+        {
+          "page_position": 21,
+          "display_label": "Theory 21 (Race · Main)",
+          "participant_name": "Claude_opus4.8_adaptive",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "f8753037bad2"
+        },
+        {
+          "page_position": 22,
+          "display_label": "Theory 22 (Race · Main)",
+          "participant_name": "Matthew Eshbaugh-Soha",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "0f0909a95b13"
+        },
+        {
+          "page_position": 23,
+          "display_label": "Theory 23 (Race · Main)",
+          "participant_name": "Duygu Yilmaz",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "7407ca2637fe"
+        },
+        {
+          "page_position": 24,
+          "display_label": "Theory 24 (Race · Main)",
+          "participant_name": "Michael Schaerer",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "468c73a314f4"
+        },
+        {
+          "page_position": 25,
+          "display_label": "Theory 25 (Race · Main)",
+          "participant_name": "Junghyo Sun",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "696fb796be26"
+        }
+      ]
+    },
+    {
+      "page": "Racial Inequality — Interactions",
+      "key": "race_soi",
+      "theories": [
+        {
+          "page_position": 1,
+          "display_label": "Theory 1 (Race · Interactions)",
+          "participant_name": "Jacob Xiangyu JIN",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "98be17d98e3d"
+        },
+        {
+          "page_position": 2,
+          "display_label": "Theory 2 (Race · Interactions)",
+          "participant_name": "Yoel Inbar",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "3f7972bbe4cc"
+        },
+        {
+          "page_position": 3,
+          "display_label": "Theory 3 (Race · Interactions)",
+          "participant_name": "Isabel Fernandez-Mateo",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "f4c78f163f39"
+        },
+        {
+          "page_position": 4,
+          "display_label": "Theory 4 (Race · Interactions)",
+          "participant_name": "Ecem Yucesoy",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "330c03d9d201"
+        },
+        {
+          "page_position": 5,
+          "display_label": "Theory 5 (Race · Interactions)",
+          "participant_name": "Mistral_thinking",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "5942321ffc22"
+        },
+        {
+          "page_position": 6,
+          "display_label": "Theory 6 (Race · Interactions)",
+          "participant_name": "Byounghoon Koh",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "4f5d2fb5a3af"
+        },
+        {
+          "page_position": 7,
+          "display_label": "Theory 7 (Race · Interactions)",
+          "participant_name": "Shun Yiu",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "4b856d1a1914"
+        },
+        {
+          "page_position": 8,
+          "display_label": "Theory 8 (Race · Interactions)",
+          "participant_name": "GPT_5.5_thinking_standard",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "b0080bb088b1"
+        },
+        {
+          "page_position": 9,
+          "display_label": "Theory 9 (Race · Interactions)",
+          "participant_name": "Zhongyuan Liang",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "b5f44bb63f55"
+        },
+        {
+          "page_position": 10,
+          "display_label": "Theory 10 (Race · Interactions)",
+          "participant_name": "Britt Hadar",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "861f6a02701a"
+        },
+        {
+          "page_position": 11,
+          "display_label": "Theory 11 (Race · Interactions)",
+          "participant_name": "Zhehang Du",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "2c83fb437ea1"
+        },
+        {
+          "page_position": 12,
+          "display_label": "Theory 12 (Race · Interactions)",
+          "participant_name": "Gemini_3_fast",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "aef7c2f6a371"
+        },
+        {
+          "page_position": 13,
+          "display_label": "Theory 13 (Race · Interactions)",
+          "participant_name": "Irmak Dai",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "b3fdb919ead1"
+        },
+        {
+          "page_position": 14,
+          "display_label": "Theory 14 (Race · Interactions)",
+          "participant_name": "DeepSeek_expert",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "1a934c363400"
+        },
+        {
+          "page_position": 15,
+          "display_label": "Theory 15 (Race · Interactions)",
+          "participant_name": "GPT_5.2_instant",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "95ad227e407e"
+        },
+        {
+          "page_position": 16,
+          "display_label": "Theory 16 (Race · Interactions)",
+          "participant_name": "Mert Kobas",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "d880276dcd4b"
+        },
+        {
+          "page_position": 17,
+          "display_label": "Theory 17 (Race · Interactions)",
+          "participant_name": "Duygu Yilmaz",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "2aed6809ad4b"
+        },
+        {
+          "page_position": 18,
+          "display_label": "Theory 18 (Race · Interactions)",
+          "participant_name": "Claude_sonnet4.6",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "bdc9788e0f54"
+        },
+        {
+          "page_position": 19,
+          "display_label": "Theory 19 (Race · Interactions)",
+          "participant_name": "Jiuyao Lu",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "fb8cf9c300d1"
+        },
+        {
+          "page_position": 20,
+          "display_label": "Theory 20 (Race · Interactions)",
+          "participant_name": "Sunny Lee",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "ff149df1b7fa"
+        },
+        {
+          "page_position": 21,
+          "display_label": "Theory 21 (Race · Interactions)",
+          "participant_name": "GPT_5.4_thinking_standard",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "dcb2f3d4d989"
+        },
+        {
+          "page_position": 22,
+          "display_label": "Theory 22 (Race · Interactions)",
+          "participant_name": "Igor Grossmann",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "81bf3952ad2c"
+        },
+        {
+          "page_position": 23,
+          "display_label": "Theory 23 (Race · Interactions)",
+          "participant_name": "Izzy Gainsburg",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "aa47eb5d4523"
+        },
+        {
+          "page_position": 24,
+          "display_label": "Theory 24 (Race · Interactions)",
+          "participant_name": "Roderick Swaab",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "b724632fd3a8"
+        },
+        {
+          "page_position": 25,
+          "display_label": "Theory 25 (Race · Interactions)",
+          "participant_name": "Claude_opus4.8_adaptive",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "980c4b2a042a"
+        }
+      ]
+    },
+    {
+      "page": "Gender Inequality — Main Effects",
+      "key": "gender_main",
+      "theories": [
+        {
+          "page_position": 1,
+          "display_label": "Theory 1 (Gender · Main)",
+          "participant_name": "Junghyo Sun",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "05d63188558b"
+        },
+        {
+          "page_position": 2,
+          "display_label": "Theory 2 (Gender · Main)",
+          "participant_name": "GPT_5.4_thinking_standard",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "f606d8a0bdb6"
+        },
+        {
+          "page_position": 3,
+          "display_label": "Theory 3 (Gender · Main)",
+          "participant_name": "Theorista_GPT5.5_instant",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "85eb976c4bd1"
+        },
+        {
+          "page_position": 4,
+          "display_label": "Theory 4 (Gender · Main)",
+          "participant_name": "Gemini_3_fast",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "1868df590f50"
+        },
+        {
+          "page_position": 5,
+          "display_label": "Theory 5 (Gender · Main)",
+          "participant_name": "Sunny Lee",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "9c1386ad4efa"
+        },
+        {
+          "page_position": 6,
+          "display_label": "Theory 6 (Gender · Main)",
+          "participant_name": "Yoel Inbar",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "e20ded1cf931"
+        },
+        {
+          "page_position": 7,
+          "display_label": "Theory 7 (Gender · Main)",
+          "participant_name": "Christina A. Nguyen",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "4593e88fb784"
+        },
+        {
+          "page_position": 8,
+          "display_label": "Theory 8 (Gender · Main)",
+          "participant_name": "Xiaomeng Wang",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "7152f7d50423"
+        },
+        {
+          "page_position": 9,
+          "display_label": "Theory 9 (Gender · Main)",
+          "participant_name": "Claude_sonnet4.6",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "66d038212826"
+        },
+        {
+          "page_position": 10,
+          "display_label": "Theory 10 (Gender · Main)",
+          "participant_name": "Isabelle Solal",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "8785541111fc"
+        },
+        {
+          "page_position": 11,
+          "display_label": "Theory 11 (Gender · Main)",
+          "participant_name": "Wanteng Ma",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "a86d1565e641"
+        },
+        {
+          "page_position": 12,
+          "display_label": "Theory 12 (Gender · Main)",
+          "participant_name": "Zhehang Du",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "420bc3476cbc"
+        },
+        {
+          "page_position": 13,
+          "display_label": "Theory 13 (Gender · Main)",
+          "participant_name": "Matthew Eshbaugh-Soha",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "5123b57435de"
+        },
+        {
+          "page_position": 14,
+          "display_label": "Theory 14 (Gender · Main)",
+          "participant_name": "Peihong Liu",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "1764efe7b172"
+        },
+        {
+          "page_position": 15,
+          "display_label": "Theory 15 (Gender · Main)",
+          "participant_name": "Roderick Swaab",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "f7f565f46994"
+        },
+        {
+          "page_position": 16,
+          "display_label": "Theory 16 (Gender · Main)",
+          "participant_name": "Chenjun Li",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "0629bdc4eedf"
+        },
+        {
+          "page_position": 17,
+          "display_label": "Theory 17 (Gender · Main)",
+          "participant_name": "Ning Liu",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "b93a4fb391ec"
+        },
+        {
+          "page_position": 18,
+          "display_label": "Theory 18 (Gender · Main)",
+          "participant_name": "Dequn Teng",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "66f590e1ed7e"
+        },
+        {
+          "page_position": 19,
+          "display_label": "Theory 19 (Gender · Main)",
+          "participant_name": "Claude_opus4.7_adaptive",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "e9ffa9431bd2"
+        },
+        {
+          "page_position": 20,
+          "display_label": "Theory 20 (Gender · Main)",
+          "participant_name": "Claude_opus4.8",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "3f7e84645c5a"
+        },
+        {
+          "page_position": 21,
+          "display_label": "Theory 21 (Gender · Main)",
+          "participant_name": "GPT_5.2_instant",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "089e7d030518"
+        },
+        {
+          "page_position": 22,
+          "display_label": "Theory 22 (Gender · Main)",
+          "participant_name": "Connor Douglas",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "53a770fa60c2"
+        },
+        {
+          "page_position": 23,
+          "display_label": "Theory 23 (Gender · Main)",
+          "participant_name": "Zhongyuan Liang",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "26d7d927ec00"
+        },
+        {
+          "page_position": 24,
+          "display_label": "Theory 24 (Gender · Main)",
+          "participant_name": "GPT_5.5_thinking_standard",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "70c6b168f3b3"
+        },
+        {
+          "page_position": 25,
+          "display_label": "Theory 25 (Gender · Main)",
+          "participant_name": "Izzy Gainsburg",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "895aa6ed61d4"
+        }
+      ]
+    },
+    {
+      "page": "Gender Inequality — Interactions",
+      "key": "gender_soi",
+      "theories": [
+        {
+          "page_position": 1,
+          "display_label": "Theory 1 (Gender · Interactions)",
+          "participant_name": "Christina A. Nguyen",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "a21b63cfb7eb"
+        },
+        {
+          "page_position": 2,
+          "display_label": "Theory 2 (Gender · Interactions)",
+          "participant_name": "Matthew Bidwell",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "0b1d4844c857"
+        },
+        {
+          "page_position": 3,
+          "display_label": "Theory 3 (Gender · Interactions)",
+          "participant_name": "Isabel Fernandez-Mateo",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "c5d3659d7591"
+        },
+        {
+          "page_position": 4,
+          "display_label": "Theory 4 (Gender · Interactions)",
+          "participant_name": "Theorista_GPT5.5_thinking_standard",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "5f65adb3ea49"
+        },
+        {
+          "page_position": 5,
+          "display_label": "Theory 5 (Gender · Interactions)",
+          "participant_name": "Matthew Eshbaugh-Soha",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "d400158141cc"
+        },
+        {
+          "page_position": 6,
+          "display_label": "Theory 6 (Gender · Interactions)",
+          "participant_name": "Sunny Lee",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "3885ec0f69b5"
+        },
+        {
+          "page_position": 7,
+          "display_label": "Theory 7 (Gender · Interactions)",
+          "participant_name": "Izzy Gainsburg",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "d1b542ac49d8"
+        },
+        {
+          "page_position": 8,
+          "display_label": "Theory 8 (Gender · Interactions)",
+          "participant_name": "Igor Grossmann",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "0493843eee74"
+        },
+        {
+          "page_position": 9,
+          "display_label": "Theory 9 (Gender · Interactions)",
+          "participant_name": "gemini_3.1_pro_standard",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "7a41310defae"
+        },
+        {
+          "page_position": 10,
+          "display_label": "Theory 10 (Gender · Interactions)",
+          "participant_name": "Roderick Swaab",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "421e0e522238"
+        },
+        {
+          "page_position": 11,
+          "display_label": "Theory 11 (Gender · Interactions)",
+          "participant_name": "Michael Schaerer",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "fab31a3a6cf3"
+        },
+        {
+          "page_position": 12,
+          "display_label": "Theory 12 (Gender · Interactions)",
+          "participant_name": "Ruijia Zhang",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "3c861b24bc34"
+        },
+        {
+          "page_position": 13,
+          "display_label": "Theory 13 (Gender · Interactions)",
+          "participant_name": "Jay Hardy",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "024e8a371eb7"
+        },
+        {
+          "page_position": 14,
+          "display_label": "Theory 14 (Gender · Interactions)",
+          "participant_name": "Gavin Jared Bala",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "714127bdd14e"
+        },
+        {
+          "page_position": 15,
+          "display_label": "Theory 15 (Gender · Interactions)",
+          "participant_name": "Gemini_3_fast",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "2c32ce7f40a9"
+        },
+        {
+          "page_position": 16,
+          "display_label": "Theory 16 (Gender · Interactions)",
+          "participant_name": "Ecem Yucesoy",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "e27243462031"
+        },
+        {
+          "page_position": 17,
+          "display_label": "Theory 17 (Gender · Interactions)",
+          "participant_name": "GPT_5.2_instant",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "ebef7fb233ba"
+        },
+        {
+          "page_position": 18,
+          "display_label": "Theory 18 (Gender · Interactions)",
+          "participant_name": "Theorista_GPT5.5_instant",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "e807392efad0"
+        },
+        {
+          "page_position": 19,
+          "display_label": "Theory 19 (Gender · Interactions)",
+          "participant_name": "Claude_opus4.8",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "f49e4d2449e2"
+        },
+        {
+          "page_position": 20,
+          "display_label": "Theory 20 (Gender · Interactions)",
+          "participant_name": "Cory Clark",
+          "group": "1",
+          "group_label": "Senior Scientist",
+          "id": "3e5de22bfe38"
+        },
+        {
+          "page_position": 21,
+          "display_label": "Theory 21 (Gender · Interactions)",
+          "participant_name": "Claude_opus4.7",
+          "group": "2",
+          "group_label": "GenAI",
+          "id": "db939fd32614"
+        },
+        {
+          "page_position": 22,
+          "display_label": "Theory 22 (Gender · Interactions)",
+          "participant_name": "Wanteng Ma",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "30cd1bf4572b"
+        },
+        {
+          "page_position": 23,
+          "display_label": "Theory 23 (Gender · Interactions)",
+          "participant_name": "Robin Vigerbaeck",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "1a0b36cf0fd0"
+        },
+        {
+          "page_position": 24,
+          "display_label": "Theory 24 (Gender · Interactions)",
+          "participant_name": "Duygu Yilmaz",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "24d03398c3db"
+        },
+        {
+          "page_position": 25,
+          "display_label": "Theory 25 (Gender · Interactions)",
+          "participant_name": "Qingyao Sun",
+          "group": "0",
+          "group_label": "PhD Student",
+          "id": "c45efdedf7f2"
+        }
+      ]
+    }
+  ]
+}

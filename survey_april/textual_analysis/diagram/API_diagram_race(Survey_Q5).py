@@ -1,12 +1,13 @@
 import os
 import time
+from pathlib import Path
 
 import pandas as pd
 from openai import OpenAI
 from pydantic import BaseModel, Field
 from tqdm import tqdm
 
-INPUT_CSV = "All_Participants_All_Questions.csv"
+INPUT_CSV = Path(__file__).resolve().parents[2] / "All_Participants_All_Questions.csv"
 TARGET_COLUMN = "Q Race.5 pre-ML diagram (main effects)"
 
 METRIC_COLUMNS = [
@@ -201,40 +202,29 @@ def main():
         if col not in df.columns:
             df[col] = pd.NA
 
-    # Resume based on the INPUT file itself:
-    # find the first row that is missing any metric, then process from there.
-    first_missing_idx = next((i for i in range(len(df)) if not _row_metrics_done(df, i)), None)
-    if first_missing_idx is None:
+    incomplete_rows = [i for i in range(len(df)) if not _row_metrics_done(df, i)]
+    if not incomplete_rows:
         print("All rows already have Q Race.5 metrics in input file. Nothing to do.")
         return
 
-    # Reset to 0..n-1 so work_df.at[i, ...] with loop index i works.
-    work_df = df.iloc[first_missing_idx:].copy().reset_index(drop=True)
     print(
-        f"Starting from first incomplete input row index {first_missing_idx} "
-        f"(processing {len(work_df)} rows)."
+        f"Scanning {len(df)} rows; {len(incomplete_rows)} row(s) missing Q Race.5 metrics."
     )
 
-    n = len(work_df)
-    with tqdm(range(n), desc="Q Race.5 diagram coding", unit="row") as pbar:
+    with tqdm(range(len(df)), desc="Q Race.5 diagram coding", unit="row") as pbar:
         for i in pbar:
-            source_row = first_missing_idx + i
-            if _row_metrics_done(work_df, i):
-                pbar.set_postfix(row=source_row + 1, status="skip")
+            if _row_metrics_done(df, i):
+                pbar.set_postfix(row=i + 1, status="skip")
                 continue
 
-            pbar.set_postfix(row=source_row + 1, status="API")
-            text = work_df.at[i, TARGET_COLUMN]
+            pbar.set_postfix(row=i + 1, status="API")
+            text = df.at[i, TARGET_COLUMN]
             result = analyze_response(text)
 
-            work_df.at[i, METRIC_COLUMNS[0]] = result.number_of_paths
-            work_df.at[i, METRIC_COLUMNS[1]] = result.maximum_path_length
-            work_df.at[i, METRIC_COLUMNS[2]] = result.number_of_latent_variables
-            work_df.at[i, METRIC_COLUMNS[3]] = result.brief_reasoning
-
-            # Persist directly into the original input file for true in-place resume.
-            for c in METRIC_COLUMNS:
-                df.at[source_row, c] = work_df.at[i, c]
+            df.at[i, METRIC_COLUMNS[0]] = result.number_of_paths
+            df.at[i, METRIC_COLUMNS[1]] = result.maximum_path_length
+            df.at[i, METRIC_COLUMNS[2]] = result.number_of_latent_variables
+            df.at[i, METRIC_COLUMNS[3]] = result.brief_reasoning
             df.to_csv(INPUT_CSV, index=False)
 
     print(f"Done. Updated metrics in-place in: {INPUT_CSV}")

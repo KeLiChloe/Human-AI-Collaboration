@@ -1,0 +1,164 @@
+{
+  "input": "/Users/keli/Desktop/iCloudDesktop/PhD/Project_Code/Human-AI/survey_april/textual_analysis/theory_explanation/theory_space_structure/causal_claim_analysis/claim_level_dataset.json",
+  "stage": "pre-ML",
+  "outcome": "racial inequality",
+  "theory_type": "main effects",
+  "text_field": "claim_text",
+  "causal_only": true,
+  "exclude_review": false,
+  "embedding_provider": "openai",
+  "openai_embedding_model": "text-embedding-3-large",
+  "openai_dimensions": 1024,
+  "min_topic_size": 5,
+  "min_samples": 2,
+  "n_neighbors": 10,
+  "n_components": 5,
+  "seed": 12345,
+  "diagnostics": {
+    "n_claims": 137,
+    "n_respondents": 27,
+    "n_review_flagged_claims": 13,
+    "review_flagged_pct": 9.5,
+    "n_topics_excluding_outliers": 7,
+    "n_outlier_claims": 4,
+    "outlier_pct": 2.9,
+    "respondents_by_group": {
+      "student": 27
+    },
+    "claims_per_respondent_median": 5.0,
+    "claims_per_respondent_mean": 5.07,
+    "topic_sizes": [
+      {
+        "topic_id": 1,
+        "n_claims": 28,
+        "n_respondents": 24
+      },
+      {
+        "topic_id": 0,
+        "n_claims": 43,
+        "n_respondents": 22
+      },
+      {
+        "topic_id": 2,
+        "n_claims": 17,
+        "n_respondents": 13
+      },
+      {
+        "topic_id": 3,
+        "n_claims": 14,
+        "n_respondents": 11
+      },
+      {
+        "topic_id": 4,
+        "n_claims": 14,
+        "n_respondents": 9
+      },
+      {
+        "topic_id": 5,
+        "n_claims": 10,
+        "n_respondents": 9
+      },
+      {
+        "topic_id": 6,
+        "n_claims": 7,
+        "n_respondents": 6
+      }
+    ]
+  },
+  "top_antecedents": [
+    {
+      "antecedent_text": "social_science",
+      "n_claims": 4,
+      "n_respondents": 4,
+      "top_directions": "positive:4"
+    },
+    {
+      "antecedent_text": "social science",
+      "n_claims": 3,
+      "n_respondents": 3,
+      "top_directions": "positive:3"
+    },
+    {
+      "antecedent_text": "paper_inequality_mentions_3_years",
+      "n_claims": 3,
+      "n_respondents": 2,
+      "top_directions": "positive:3"
+    },
+    {
+      "antecedent_text": "news_inequality_mentions_3_years",
+      "n_claims": 3,
+      "n_respondents": 2,
+      "top_directions": "positive:3"
+    },
+    {
+      "antecedent_text": "white",
+      "n_claims": 3,
+      "n_respondents": 2,
+      "top_directions": "negative:3"
+    },
+    {
+      "antecedent_text": "Social science",
+      "n_claims": 2,
+      "n_respondents": 2,
+      "top_directions": "positive:2"
+    },
+    {
+      "antecedent_text": "white people",
+      "n_claims": 2,
+      "n_respondents": 2,
+      "top_directions": "negative:1; positive:1"
+    },
+    {
+      "antecedent_text": "Black",
+      "n_claims": 2,
+      "n_respondents": 2,
+      "top_directions": "positive:2"
+    },
+    {
+      "antecedent_text": "natural_science",
+      "n_claims": 2,
+      "n_respondents": 2,
+      "top_directions": "negative:2"
+    },
+    {
+      "antecedent_text": "more prominent in news",
+      "n_claims": 2,
+      "n_respondents": 1,
+      "top_directions": "positive:2"
+    },
+    {
+      "antecedent_text": "more prominent in papers",
+      "n_claims": 2,
+      "n_respondents": 1,
+      "top_directions": "positive:2"
+    },
+    {
+      "antecedent_text": "social science journals",
+      "n_claims": 2,
+      "n_respondents": 1,
+      "top_directions": "positive:2"
+    },
+    {
+      "antecedent_text": "authors_race_diversity_score",
+      "n_claims": 2,
+      "n_respondents": 1,
+      "top_directions": "positive:2"
+    },
+    {
+      "antecedent_text": "Paper_inequality_mentions_3_years",
+      "n_claims": 2,
+      "n_respondents": 1,
+      "top_directions": "positive:2"
+    },
+    {
+      "antecedent_text": "Authors race diversity",
+      "n_claims": 1,
+      "n_respondents": 1,
+      "top_directions": "positive:1"
+    }
+  ],
+  "outputs": [
+    "/Users/keli/Desktop/iCloudDesktop/PhD/Project_Code/Human-AI/survey_april/textual_analysis/theory_explanation/theory_space_structure/causal_claim_analysis/bertopic_outputs/pre-ML_race_main-effects/claim_topic_assignments.csv",
+    "/Users/keli/Desktop/iCloudDesktop/PhD/Project_Code/Human-AI/survey_april/textual_analysis/theory_explanation/theory_space_structure/causal_claim_analysis/bertopic_outputs/pre-ML_race_main-effects/candidate_topics_for_llm_labeling.json"
+  ]
+}

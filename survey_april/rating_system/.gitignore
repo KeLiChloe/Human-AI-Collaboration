@@ -1,0 +1,6 @@
+data/ratings.db
+data/*.db-journal
+__pycache__/
+*.pyc
+.DS_Store
+.admin_token

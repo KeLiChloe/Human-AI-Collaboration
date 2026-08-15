@@ -1,0 +1,2023 @@
+{
+  "stage": "pre-ML",
+  "outcome": "racial inequality",
+  "theory_type": "main effects",
+  "n_claims_input": 368,
+  "n_unique_chains": 137,
+  "model": "gpt-5.5",
+  "merge_notes": "Merged semantically equivalent chains with the same direction, antecedent, and broadly matching mechanism; kept separate chains where direction differed or mechanisms differed materially (e.g., salience vs publication acceptance vs base-rate effects). Some partial chains with vague/non-panel antecedents were retained as distinct so every claim_uid appears exactly once.",
+  "unique_causal_chains": [
+    {
+      "chain_id": 1,
+      "direction": "positive",
+      "antecedent_canonical": "authors_race_diversity_score",
+      "mechanism_canonical": "research interest in racial inequality leads authors to form racially diverse teams",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) Authors race diversity → if you want to do research in this area you would be more likely to form a diverse author team → racial inequality discussion",
+      "claim_uids": [
+        "9a304101b5392960"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 2,
+      "direction": "positive",
+      "antecedent_canonical": "diverse university or research-group community",
+      "mechanism_canonical": "diverse research environments increase interest in racial inequality research",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) a diverse community at university/research group → more interest in racial inequality research → racial inequality discussion",
+      "claim_uids": [
+        "19151a20078e2029"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 3,
+      "direction": "positive",
+      "antecedent_canonical": "country_race_diversity_score",
+      "mechanism_canonical": "authors from racially diverse countries have greater exposure, awareness, openness, or motivation around racial inequality",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) country race diversity score → racially diverse environments increase exposure and awareness of racial inequality → racial inequality discussion",
+      "claim_uids": [
+        "18a81da8d01facd6",
+        "cad565c3918b4033",
+        "fd2861e9a79760d4",
+        "eba5b348d098f384",
+        "63a7ead586f1acc0",
+        "1eecd8598db51932",
+        "354b74ee4aa05283",
+        "e93dd3b3fb82811d",
+        "294bde330b58eac2"
+      ],
+      "n_claims": 9,
+      "n_respondents": 9
+    },
+    {
+      "chain_id": 4,
+      "direction": "positive",
+      "antecedent_canonical": "country_race_diversity_score",
+      "mechanism_canonical": "racially diverse societal contexts generate more racial-inequality issues, conversations, and research attention",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) country race diversity score → racially diverse environments generate more racial issues and research attention → racial inequality discussion",
+      "claim_uids": [
+        "dd413640724c6018",
+        "a644376bddd2364f",
+        "a33886a2643c6575",
+        "0e05bc54e980700b"
+      ],
+      "n_claims": 4,
+      "n_respondents": 4
+    },
+    {
+      "chain_id": 5,
+      "direction": "positive",
+      "antecedent_canonical": "country_race_diversity_score",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) countries with high racial diversity → racial inequality discussion",
+      "claim_uids": [
+        "f4763bbef3fb8aae",
+        "95456ab4943b10c2",
+        "43cd7453525d76a2"
+      ],
+      "n_claims": 3,
+      "n_respondents": 3
+    },
+    {
+      "chain_id": 6,
+      "direction": "negative",
+      "antecedent_canonical": "country_race_diversity_score",
+      "mechanism_canonical": "racially diverse country contexts make it harder for scholars to find common ground on inequality topics because experiences differ",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) country race diversity score → less common ground because experiences differ → racial inequality discussion",
+      "claim_uids": [
+        "94d9a0a22faa1135"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 7,
+      "direction": "positive",
+      "antecedent_canonical": "authors from countries with a dominant race",
+      "mechanism_canonical": "racial inequality hurts minorities, making the topic resonate and motivating contributions",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) authors from countries with dominant race → racial inequality hurts minorities and resonates → racial inequality discussion",
+      "claim_uids": [
+        "12b0a257d204a5d8"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 8,
+      "direction": "negative",
+      "antecedent_canonical": "highly homogeneous countries or ethnostates",
+      "mechanism_canonical": "racially homogeneous countries or ethnostates provide less impetus to care about or focus on racial inequality",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) highly homogeneous countries/ethnostates → less focus or concern about racial inequality → racial inequality discussion",
+      "claim_uids": [
+        "55e83599e19a63ae",
+        "ebcf32525f3f6588"
+      ],
+      "n_claims": 2,
+      "n_respondents": 2
+    },
+    {
+      "chain_id": 9,
+      "direction": "negative",
+      "antecedent_canonical": "lower country_race_diversity_score",
+      "mechanism_canonical": "authors from less racially diverse countries may be more likely to exhibit racial inequality",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) lower country race diversity score → countries not diverse in races may exhibit racial inequality → racial inequality discussion",
+      "claim_uids": [
+        "8f9f85275b893001"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 10,
+      "direction": "negative",
+      "antecedent_canonical": "country_race_diversity_score",
+      "mechanism_canonical": "higher value is associated with authors from African countries where mostly Black populations may make racial inequality seem less important to address",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) country race diversity score → mostly Black country contexts may reduce perceived importance of racial inequality → racial inequality discussion",
+      "claim_uids": [
+        "4870a9975ea0696a"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 11,
+      "direction": "positive",
+      "antecedent_canonical": "countries where racial inequality is a popular topic of discussion",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) countries where racial inequality is a popular topic of discussion → racial inequality discussion",
+      "claim_uids": [
+        "07f0f8ffef6ee12d"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 12,
+      "direction": "unclear",
+      "antecedent_canonical": "country racial inequality background",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(?) the country's racial inequality background → racial inequality discussion",
+      "claim_uids": [
+        "674f7d1d5ccc31e5"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 13,
+      "direction": "mixed",
+      "antecedent_canonical": "researcher country or country context",
+      "mechanism_canonical": "researchers from certain countries may be more or less interested in the topic",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(±) researcher country context → may be more or less interested in racial inequality → racial inequality discussion",
+      "claim_uids": [
+        "f319d1f21c3eb546"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 14,
+      "direction": "unclear",
+      "antecedent_canonical": "paper_inequality_mentions_3_years",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(?) paper inequality mentions / academic publication trend → racial inequality discussion",
+      "claim_uids": [
+        "b8ba03b2458fdbbc",
+        "642efab9d4bcc4c7"
+      ],
+      "n_claims": 2,
+      "n_respondents": 2
+    },
+    {
+      "chain_id": 15,
+      "direction": "positive",
+      "antecedent_canonical": "paper_inequality_mentions_3_years",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) academic papers / publication of papers → racial inequality discussion",
+      "claim_uids": [
+        "fa0f597c5d90f481",
+        "c9e234d6fb6eaed4"
+      ],
+      "n_claims": 2,
+      "n_respondents": 2
+    },
+    {
+      "chain_id": 16,
+      "direction": "positive",
+      "antecedent_canonical": "paper_inequality_mentions_3_years",
+      "mechanism_canonical": "prior academic attention or elevated academic discourse makes journals, editors, or reviewers more receptive to racial inequality work",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) paper inequality mentions → journals and reviewers become more receptive to racial inequality work → racial inequality discussion",
+      "claim_uids": [
+        "660cedf4626c4acd",
+        "429cc6e20cf2eeb0",
+        "f033814af33c84c8"
+      ],
+      "n_claims": 3,
+      "n_respondents": 3
+    },
+    {
+      "chain_id": 17,
+      "direction": "positive",
+      "antecedent_canonical": "paper_inequality_mentions_3_years",
+      "mechanism_canonical": "recent academic attention signals trends, salience, field interest, or an epistemological shift and motivates similar future research",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) paper inequality mentions → academic attention and trends make racial inequality salient and motivate future research → racial inequality discussion",
+      "claim_uids": [
+        "95f2144c9fc0afad",
+        "73a02ef2f21017bb",
+        "27a4c120bda661f0",
+        "eb7c088031fe8af9",
+        "8958989275c159a3",
+        "8534da1b27121039",
+        "d46e214427c20f1f",
+        "0c3b0034a5b9a502",
+        "c5635e8a561d59de",
+        "55a9e66c1e66c6f2",
+        "8a70ee51e93c968a",
+        "df77c78c6487ba0f",
+        "9701cbffdb13a54e",
+        "eb0da85281863254",
+        "e18ae6c5cd71e059",
+        "bc0f026858b5cc53",
+        "cdaff0fd6af23dc2",
+        "347731f0a3d7f23d",
+        "9cddc343c830652c",
+        "c26172fdfc50b489",
+        "89fae2c83362cec5",
+        "160f07130023e0cd",
+        "2dd6897ddcf0314e",
+        "46d5b1c30265db6f",
+        "106d80f40c7b29c4",
+        "2bff51a7ae8d8d85",
+        "b1bdc89789efd92a",
+        "7dd1fca4083c923f",
+        "243581fb6087bdf3",
+        "85e8eb5549ebc0fa",
+        "f99d4e4e809a2d02"
+      ],
+      "n_claims": 31,
+      "n_respondents": 28
+    },
+    {
+      "chain_id": 18,
+      "direction": "positive",
+      "antecedent_canonical": "paper_inequality_mentions_3_years",
+      "mechanism_canonical": "academic salience of inequality increases related submissions to journals",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) paper inequality mentions → journals receive more related submissions → racial inequality discussion",
+      "claim_uids": [
+        "0d799ff558eb2dea"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 19,
+      "direction": "positive",
+      "antecedent_canonical": "paper_inequality_mentions_3_years",
+      "mechanism_canonical": "prior research-paper mentions and textbooks make racial concerns salient in these fields",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) prior research-paper mentions and textbooks → racial concerns become salient → racial inequality discussion",
+      "claim_uids": [
+        "f78b4840f442810a"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 20,
+      "direction": "positive",
+      "antecedent_canonical": "paper_inequality_mentions_3_years",
+      "mechanism_canonical": "academic popularity increases perceived permissibility or popularity of the topic",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) popular publication theme → permissibility/popularity → racial inequality discussion",
+      "claim_uids": [
+        "9652e780999aef42"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 21,
+      "direction": "positive",
+      "antecedent_canonical": "paper_inequality_mentions_3_years",
+      "mechanism_canonical": "academic popularity creates incentives to publish or cite work on the topic",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) paper inequality mentions → academics chase hot topics and citations → racial inequality discussion",
+      "claim_uids": [
+        "7dc45e3b8aee12a6",
+        "cf1be49ba08eeabf"
+      ],
+      "n_claims": 2,
+      "n_respondents": 2
+    },
+    {
+      "chain_id": 22,
+      "direction": "positive",
+      "antecedent_canonical": "paper_inequality_mentions_3_years",
+      "mechanism_canonical": "academic publication trends heighten mechanisms related to authors' own race",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) publication trends → heighten mechanisms related to one's own race → racial inequality discussion",
+      "claim_uids": [
+        "05624abe2ab5e6a9"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 23,
+      "direction": "positive",
+      "antecedent_canonical": "paper_inequality_mentions_3_years",
+      "mechanism_canonical": "academic publication trends heighten mechanisms related to gender",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) publication trends → heighten gender-related mechanisms → racial inequality discussion",
+      "claim_uids": [
+        "4b274e31be74b0ee"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 24,
+      "direction": "positive",
+      "antecedent_canonical": "paper_inequality_mentions_3_years",
+      "mechanism_canonical": "a paper mention indicates a relationship between the paper's argument and inequality discussion in prior papers",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) paper mentioned → relationship between the paper argument and prior inequality discussion → racial inequality discussion",
+      "claim_uids": [
+        "e11d214c46a90f72"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 25,
+      "direction": "positive",
+      "antecedent_canonical": "paper_inequality_mentions_3_years",
+      "mechanism_canonical": "prior paper mentions are a proximate base-rate or autoregressive indicator of ongoing academic inequality discourse",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) paper inequality mentions → proximate base-rate measure of inequality discourse → racial inequality discussion",
+      "claim_uids": [
+        "97b71d000b61a3cd",
+        "3c4e27479d561bae",
+        "452d701ca40aa8a2",
+        "9a0e13ace8f0b51a"
+      ],
+      "n_claims": 4,
+      "n_respondents": 3
+    },
+    {
+      "chain_id": 26,
+      "direction": "positive",
+      "antecedent_canonical": "paper_inequality_mentions_3_years",
+      "mechanism_canonical": "racial inequality is a component of the broader inequality topic that is trending in papers",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) papers discussing inequality → racial inequality is one component of the general issue → racial inequality discussion",
+      "claim_uids": [
+        "a57012466aa90885",
+        "6787550b6a5cf342"
+      ],
+      "n_claims": 2,
+      "n_respondents": 2
+    },
+    {
+      "chain_id": 27,
+      "direction": "positive",
+      "antecedent_canonical": "paper_inequality_mentions_3_years",
+      "mechanism_canonical": "much inequality-related research in papers may be on gender",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) mentions of inequality in papers → much of that research may be on gender → racial inequality discussion",
+      "claim_uids": [
+        "46c8562a06ebe5f9"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 28,
+      "direction": "negative",
+      "antecedent_canonical": "paper_inequality_mentions_3_years",
+      "mechanism_canonical": "when many papers already exist in an area, research interest may decline because the area is less new",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) paper inequality mentions → more existing papers reduce novelty and interest → racial inequality discussion",
+      "claim_uids": [
+        "f4ffc6a1c161b64f"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 29,
+      "direction": "negative",
+      "antecedent_canonical": "paper_inequality_mentions_3_years",
+      "mechanism_canonical": "generic inequality discussion in academic papers dilutes focus on racial inequality specifically",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) inequality in other academic papers → generic inequality chatter dilutes racial inequality focus → racial inequality discussion",
+      "claim_uids": [
+        "575d5919c47d7b91"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 30,
+      "direction": "positive",
+      "antecedent_canonical": "news_inequality_mentions_3_years",
+      "mechanism_canonical": "media or public discourse makes inequality salient, popular, or attention-worthy and motivates researchers to study racial inequality",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) news inequality mentions → public/media salience motivates researchers to focus on racial inequality → racial inequality discussion",
+      "claim_uids": [
+        "9185090275a34e39",
+        "bf4ccf709370e8e3",
+        "b3f2ce06ea5ac43c",
+        "423b577fc2f986bd",
+        "e767355e7d7d3640",
+        "e30b0eb0c24e5080",
+        "5da17fd7e28f4668",
+        "e5e3179f0fb1c527",
+        "91e3b671bca2f4d5",
+        "0fb47cccdd074140",
+        "0ce1991a9c3604c4",
+        "2dd9ed7eda570368",
+        "8bbf3e8f2b6288ef",
+        "5d007767dd1edb03",
+        "3c59742935830995",
+        "5bafa8aa612fdd01",
+        "89e692ffd286fb85",
+        "37b26d2ad6b424d9",
+        "faec70283927dfe2",
+        "aeb753861e8e5c75",
+        "0d1afff0fa660ea0",
+        "4669827dde3a527e",
+        "88d2f0f883a10972",
+        "85ac87dd9fc237c4",
+        "77694855c1f4f786"
+      ],
+      "n_claims": 25,
+      "n_respondents": 24
+    },
+    {
+      "chain_id": 31,
+      "direction": "positive",
+      "antecedent_canonical": "news_inequality_mentions_3_years",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) news/media articles or latest news → racial inequality discussion",
+      "claim_uids": [
+        "380b49d8392e5fc2",
+        "270dd8ed8c5bae61",
+        "67aeaf0007794f4b"
+      ],
+      "n_claims": 3,
+      "n_respondents": 3
+    },
+    {
+      "chain_id": 32,
+      "direction": "positive",
+      "antecedent_canonical": "news_inequality_mentions_3_years",
+      "mechanism_canonical": "news or public prominence signals relevance to editors and increases attention or acceptance of racial inequality papers",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) news/public discussion of inequality → signals relevance to editors and increases acceptance or attention → racial inequality discussion",
+      "claim_uids": [
+        "c3fb600d7495aa1a",
+        "9b043be6ba442e90",
+        "7860d7ba072d90d6",
+        "41ac3fd8ddf894d4"
+      ],
+      "n_claims": 4,
+      "n_respondents": 4
+    },
+    {
+      "chain_id": 33,
+      "direction": "positive",
+      "antecedent_canonical": "news_inequality_mentions_3_years",
+      "mechanism_canonical": "racial inequality appears more in news coverage than in papers",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) news coverage of inequality → more racial inequality appears in news than papers → racial inequality discussion",
+      "claim_uids": [
+        "35781c0f9f11088a"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 34,
+      "direction": "positive",
+      "antecedent_canonical": "news_inequality_mentions_3_years",
+      "mechanism_canonical": "general social awareness from media coverage affects peer-reviewed publication after a time lag",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) news inequality mentions → media awareness precedes peer-reviewed publication after a lag → racial inequality discussion",
+      "claim_uids": [
+        "3fc22e1598601a8e"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 35,
+      "direction": "positive",
+      "antecedent_canonical": "news_inequality_mentions_3_years",
+      "mechanism_canonical": "a news mention indicates a relationship between the paper's argument and inequality discussion in the news",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) news mentioned → relationship between the paper argument and inequality news → racial inequality discussion",
+      "claim_uids": [
+        "541bc255df6f42ab"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 36,
+      "direction": "positive",
+      "antecedent_canonical": "news_inequality_mentions_3_years",
+      "mechanism_canonical": "news coverage follows or lags behind academic discussion",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) news inequality mentions → news coverage follows academic discussion → racial inequality discussion",
+      "claim_uids": [
+        "a7d841a402d9736e"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 37,
+      "direction": "positive",
+      "antecedent_canonical": "news_inequality_mentions_3_years",
+      "mechanism_canonical": "media zeitgeist increases the perceived permissibility or popularity of writing about racial inequality",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) inequality in the news zeitgeist → permissibility/popularity of writing about it → racial inequality discussion",
+      "claim_uids": [
+        "f0ccea6daeae31c3"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 38,
+      "direction": "positive",
+      "antecedent_canonical": "news_inequality_mentions_3_years",
+      "mechanism_canonical": "news trends heighten mechanisms related to authors' own race",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) news trends → heighten mechanisms related to one's own race → racial inequality discussion",
+      "claim_uids": [
+        "f19aed57c31c56d7"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 39,
+      "direction": "positive",
+      "antecedent_canonical": "news_inequality_mentions_3_years",
+      "mechanism_canonical": "news trends heighten mechanisms related to gender",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) news trends → heighten gender-related mechanisms → racial inequality discussion",
+      "claim_uids": [
+        "3fcef9757c265d67"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 40,
+      "direction": "positive",
+      "antecedent_canonical": "news_inequality_mentions_3_years",
+      "mechanism_canonical": "news coverage increases the number of papers focusing on inequality",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) inequality news coverage → increases papers focusing on inequality → racial inequality discussion",
+      "claim_uids": [
+        "b6825e7ca3f2c4ec"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 41,
+      "direction": "positive",
+      "antecedent_canonical": "news_inequality_mentions_3_years",
+      "mechanism_canonical": "news coverage is a base-rate or focus measure of inequality discourse",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) news inequality mentions → base-rate measure of inequality discourse → racial inequality discussion",
+      "claim_uids": [
+        "f2fa9104bcf281f1",
+        "daa986a8c1f312f3"
+      ],
+      "n_claims": 2,
+      "n_respondents": 2
+    },
+    {
+      "chain_id": 42,
+      "direction": "positive",
+      "antecedent_canonical": "news_inequality_mentions_3_years",
+      "mechanism_canonical": "news mentions influence broad time trends in racial inequality discussion",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) news mentions → influence broad time trends → racial inequality discussion",
+      "claim_uids": [
+        "06c92c812afe0f16"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 43,
+      "direction": "unclear",
+      "antecedent_canonical": "news_inequality_mentions_3_years or society-level features",
+      "mechanism_canonical": "news or society-level features are ambiguously related, politically charged, or less important than work-specific factors",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(?) news/society-level features → ambiguous relation to racial inequality discussion",
+      "claim_uids": [
+        "4f7da6d7b8c1e425",
+        "ca9df87359be61ba",
+        "9cd168f6d4559543"
+      ],
+      "n_claims": 3,
+      "n_respondents": 3
+    },
+    {
+      "chain_id": 44,
+      "direction": "not_applicable",
+      "antecedent_canonical": "news_inequality_mentions_3_years",
+      "mechanism_canonical": "research moves slower than the three-year news window",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(n/a) news inequality → research moves slower than 3 years → racial inequality discussion",
+      "claim_uids": [
+        "9044fd8527366874"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 45,
+      "direction": "negative",
+      "antecedent_canonical": "news_inequality_mentions_3_years",
+      "mechanism_canonical": "generic inequality news dilutes focus on racial inequality specifically",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) inequality in the news → generic inequality chatter dilutes racial inequality focus → racial inequality discussion",
+      "claim_uids": [
+        "a483fa1fb22ab0db"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 46,
+      "direction": "positive",
+      "antecedent_canonical": "news_inequality_mentions_3_years",
+      "mechanism_canonical": "much inequality-related research prompted by news may be on gender",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) inequality news mentions → much of that research may be on gender → racial inequality discussion",
+      "claim_uids": [
+        "b701f203414a105d"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 47,
+      "direction": "positive",
+      "antecedent_canonical": "social_science",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) social science → racial inequality discussion",
+      "claim_uids": [
+        "af3580f28376b0d5",
+        "4655f0ff6e9b7fe6",
+        "923799872c1e4f18",
+        "20765ee476a4f669",
+        "ac40111e649bee86",
+        "f9780cdc3068dc90",
+        "07166d6b682e4a5b",
+        "bc978dd2336f5738",
+        "373675d0ea9bf6a0",
+        "796899e27dd880bb",
+        "1594f2e9c10e13cb",
+        "8fe8af92112341a6"
+      ],
+      "n_claims": 12,
+      "n_respondents": 12
+    },
+    {
+      "chain_id": 48,
+      "direction": "positive",
+      "antecedent_canonical": "social_science",
+      "mechanism_canonical": "racial inequality is a core, relevant, or established social-science topic concerned with social phenomena, human interaction, hierarchies, and inequality",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) social science → racial inequality is a core social-science topic → racial inequality discussion",
+      "claim_uids": [
+        "1c4009e3ba443a57",
+        "46f829829dfabd0c",
+        "20955c7639f0c812",
+        "a1833207c854e8f5",
+        "b7db5ad8a4b9dc37",
+        "c200c3fb0a184386",
+        "9c62777e85a6edf2",
+        "b7b44ba330c4fa6d",
+        "bf331a79229f04d2",
+        "9a3fb574c229276b",
+        "30fe3167e5969dd7",
+        "f417434bdada760d",
+        "2961b10b0800db49",
+        "fe725524778a76f1",
+        "6b05fbf1b01f773e",
+        "b5afc92fb80ac356",
+        "064319c702a9ae15",
+        "7844b7f156c57b0f",
+        "8cdcbe3fe38f66b6",
+        "3abfe914060dd089",
+        "c0b7993109a5c556",
+        "768dda7fb9ebd7fd",
+        "7d9d6b3f5e5fbf1a",
+        "dc60a03fbc1d993a",
+        "441763f9b1cafa95",
+        "6fe60ae436ab33bd",
+        "726f7e5f951e257b",
+        "2d7dec00d7004271",
+        "591378a9294de638",
+        "f1cbbfdf638f152d",
+        "0a11a5567b288322",
+        "89b47ca7d7f9e866",
+        "626952bd3f6cc6a5",
+        "df70c3710d6ec9ec",
+        "d68cfb6c7a53f6b7",
+        "896042b66d8ed441",
+        "7b66cddec170a9e4",
+        "8d0c2c032d4314bb",
+        "75fd1408ef447610"
+      ],
+      "n_claims": 39,
+      "n_respondents": 38
+    },
+    {
+      "chain_id": 49,
+      "direction": "positive",
+      "antecedent_canonical": "social_science",
+      "mechanism_canonical": "social scientists have more training and sensitivity toward societal issues like racial inequality",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) social science → more training and sensitivity toward societal issues → racial inequality discussion",
+      "claim_uids": [
+        "f05fe7c925c7b8e2"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 50,
+      "direction": "positive",
+      "antecedent_canonical": "social_science",
+      "mechanism_canonical": "social science journals attract more submissions on racial inequality",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) social science journals → attract more submissions on racial inequality → racial inequality discussion",
+      "claim_uids": [
+        "b1ca6147faa54a36"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 51,
+      "direction": "positive",
+      "antecedent_canonical": "social_science",
+      "mechanism_canonical": "social science journals have greater editorial openness to publishing racial inequality work",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) social science journals → greater editorial openness → racial inequality discussion",
+      "claim_uids": [
+        "f198f478774046a1"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 52,
+      "direction": "positive",
+      "antecedent_canonical": "social_science",
+      "mechanism_canonical": "social scientists routinely collect race or demographic information because demographics matter for understanding human outcomes",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) social science → researchers collect race demographics → racial inequality discussion",
+      "claim_uids": [
+        "048b86e7708b1415"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 53,
+      "direction": "positive",
+      "antecedent_canonical": "social_science",
+      "mechanism_canonical": "social sciences are more left-leaning or liberal",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) social sciences → more left-leaning/liberal authors → racial inequality discussion",
+      "claim_uids": [
+        "5846c847beb419b7"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 54,
+      "direction": "positive",
+      "antecedent_canonical": "people interested in racial concerns",
+      "mechanism_canonical": "people interested in racial concerns select into social sciences",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) people interested in racial concerns → select into social sciences → racial inequality discussion",
+      "claim_uids": [
+        "48f733e37b97f552"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 55,
+      "direction": "mixed",
+      "antecedent_canonical": "journal field contrast: social science vs STEM/natural science",
+      "mechanism_canonical": "race is treated as a social-science construct with little relevance to STEM and limited relevance to natural sciences",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(±) race as a social-science construct with little STEM/natural-science relevance → racial inequality discussion",
+      "claim_uids": [
+        "6fcf7a4e9867a990"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 56,
+      "direction": "negative",
+      "antecedent_canonical": "natural_science",
+      "mechanism_canonical": "natural science rarely or only minimally discusses racial inequality",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) natural science → few or rare papers on racial inequality → racial inequality discussion",
+      "claim_uids": [
+        "529a70365d7fc7b8",
+        "c0bc863abebe1d5d",
+        "e04fc81bb475439d",
+        "fec32ee689ce6ff2",
+        "ec709cf044bda782"
+      ],
+      "n_claims": 5,
+      "n_respondents": 5
+    },
+    {
+      "chain_id": 57,
+      "direction": "negative",
+      "antecedent_canonical": "natural_science",
+      "mechanism_canonical": "racial inequality is a human or social issue rather than a physical or natural-science topic",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) natural science → racial inequality is a human/social issue rather than a natural-science topic → racial inequality discussion",
+      "claim_uids": [
+        "4a558f943651d79f",
+        "8230d0f39baa955a",
+        "d35311e67820eced",
+        "68b9d048f7ce9128",
+        "3318f5153fb60739"
+      ],
+      "n_claims": 5,
+      "n_respondents": 5
+    },
+    {
+      "chain_id": 58,
+      "direction": "negative",
+      "antecedent_canonical": "natural_science",
+      "mechanism_canonical": "natural science is expected to have less relevant racial-inequality research than engineering and technology",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) natural science → less racial-inequality research than engineering and technology → racial inequality discussion",
+      "claim_uids": [
+        "c072007da15ed119"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 59,
+      "direction": "negative",
+      "antecedent_canonical": "natural_science",
+      "mechanism_canonical": "researchers who study racial inequality are in the social sciences rather than natural science",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) natural science → racial inequality researchers are in the social sciences → racial inequality discussion",
+      "claim_uids": [
+        "e9592d2b70a9be4a"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 60,
+      "direction": "negative",
+      "antecedent_canonical": "natural_science",
+      "mechanism_canonical": "natural science fields focus more on scientific facts and phenomena",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) natural science → focus on scientific facts and phenomena → racial inequality discussion",
+      "claim_uids": [
+        "a2b433b23188a857"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 61,
+      "direction": "negative",
+      "antecedent_canonical": "natural_science",
+      "mechanism_canonical": "natural science has moved beyond differentiating human races through eugenics perspectives",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) natural science → moved beyond eugenics perspectives differentiating races → racial inequality discussion",
+      "claim_uids": [
+        "d029e222e966859b"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 62,
+      "direction": "positive",
+      "antecedent_canonical": "major natural_science journals",
+      "mechanism_canonical": "major natural science journals publish broad interdisciplinary papers that can include racial concerns",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) major natural science journals → broad interdisciplinary papers can include racial concerns → racial inequality discussion",
+      "claim_uids": [
+        "c6bb928e9e1ba82f"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 63,
+      "direction": "negative",
+      "antecedent_canonical": "engineering_and_technology",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) engineering and technology → racial inequality discussion",
+      "claim_uids": [
+        "2e2ea3449dbe8d0b",
+        "7616002450070d06",
+        "20e12df651402cd1"
+      ],
+      "n_claims": 3,
+      "n_respondents": 3
+    },
+    {
+      "chain_id": 64,
+      "direction": "negative",
+      "antecedent_canonical": "engineering_and_technology",
+      "mechanism_canonical": "racial inequality is outside or less relevant to engineering and technology, which is contrasted with social-science fields that study it",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) engineering and technology → racial inequality is outside this domain and studied in social science → racial inequality discussion",
+      "claim_uids": [
+        "d316224f83c1f09b",
+        "49eed62ca204a4d6",
+        "112c40bc9fadcb42",
+        "7a6f219bf5ee57da",
+        "469dd18b43823046"
+      ],
+      "n_claims": 5,
+      "n_respondents": 4
+    },
+    {
+      "chain_id": 65,
+      "direction": "negative",
+      "antecedent_canonical": "engineering_and_technology",
+      "mechanism_canonical": "engineering and technology fields focus more on scientific facts and phenomena",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) engineering and technology → focus on scientific facts and phenomena → racial inequality discussion",
+      "claim_uids": [
+        "b3e7fb4c188047c5"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 66,
+      "direction": "negative",
+      "antecedent_canonical": "natural_science and engineering_and_technology",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) natural science and engineering and technology → racial inequality discussion",
+      "claim_uids": [
+        "162926ca5ace6f10",
+        "963dfdd351942580"
+      ],
+      "n_claims": 2,
+      "n_respondents": 2
+    },
+    {
+      "chain_id": 67,
+      "direction": "negative",
+      "antecedent_canonical": "natural_science and engineering_and_technology",
+      "mechanism_canonical": "these fields focus on technical or physical problems, reward racial-inequality research less, or are less suitable than social science",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) natural science and engineering/technology → technical or physical focus makes racial inequality less likely → racial inequality discussion",
+      "claim_uids": [
+        "32ee482b55328802",
+        "3d1503074cd4c7db",
+        "c97bc0d80a96c526",
+        "ec8bc090f664e013"
+      ],
+      "n_claims": 4,
+      "n_respondents": 3
+    },
+    {
+      "chain_id": 68,
+      "direction": "not_applicable",
+      "antecedent_canonical": "engineering_and_technology / computer science",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(n/a) computer science papers → racial inequality discussion",
+      "claim_uids": [
+        "deb5747d1b57fbcd"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 69,
+      "direction": "positive",
+      "antecedent_canonical": "authors_race_diversity_score",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) diversity of the author group → racial inequality discussion",
+      "claim_uids": [
+        "d1997a6b6091e30c"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 70,
+      "direction": "positive",
+      "antecedent_canonical": "authors_race_diversity_score",
+      "mechanism_canonical": "racially diverse author teams bring broader perspectives, awareness, lived experience, salience, or shared interest in race-related questions",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) authors race diversity score → diverse teams bring perspectives, awareness, and shared interest in racial inequality → racial inequality discussion",
+      "claim_uids": [
+        "170db2c378cdbe4f",
+        "b1c028653b66a170",
+        "31ff0b91342e14f5",
+        "e64902ebd36c370d",
+        "7c73b466db61c8cb",
+        "1a6b3b05473430c9",
+        "21b8318fff549e70",
+        "69f546f2e40b53e9",
+        "b1d51d2b0daa523c",
+        "990be95f7bb2d354",
+        "29e0708a1a0dedfd",
+        "141128f472bafd72",
+        "cfe85547ce736916",
+        "a7c9f4e9854a22bf",
+        "72d2a3b1d854cc38",
+        "f16db97e49091e89",
+        "eaf6b3a5fb20cf40"
+      ],
+      "n_claims": 17,
+      "n_respondents": 16
+    },
+    {
+      "chain_id": 71,
+      "direction": "positive",
+      "antecedent_canonical": "authors_race_diversity_score",
+      "mechanism_canonical": "racially diverse author teams have the opposite of aversion or low topic fit",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) racially diverse author teams → opposite of aversion or low topic fit → racial inequality discussion",
+      "claim_uids": [
+        "c36244de7ab43606"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 72,
+      "direction": "positive",
+      "antecedent_canonical": "authors_race_diversity_score",
+      "mechanism_canonical": "diverse author teams may discuss racial inequality to signal they are not part of the problem",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) diverse author teams → signal they are not part of the problem → racial inequality discussion",
+      "claim_uids": [
+        "cdb8e10d96df7f28"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 73,
+      "direction": "positive",
+      "antecedent_canonical": "authors_race_diversity_score",
+      "mechanism_canonical": "racial inequality research requires contact with different groups, making diverse author teams more common",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) authors race diversity score → research requires contact with different groups → racial inequality discussion",
+      "claim_uids": [
+        "0c4578091ab57cab"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 74,
+      "direction": "positive",
+      "antecedent_canonical": "authors_race_diversity_score",
+      "mechanism_canonical": "the author race diversity metric itself accentuates or implies association with race",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) author race diversity score → metric itself concerns race and accentuates racial inequality discussion → racial inequality discussion",
+      "claim_uids": [
+        "94bd0f8f961040fd",
+        "00446e23a6b05fe8"
+      ],
+      "n_claims": 2,
+      "n_respondents": 2
+    },
+    {
+      "chain_id": 75,
+      "direction": "positive",
+      "antecedent_canonical": "authors_race_diversity_score",
+      "mechanism_canonical": "racial inequality research is inherently diverse",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) high diversity score → topic is inherently diverse → racial inequality discussion",
+      "claim_uids": [
+        "f6b5e33f8b32ffd7"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 76,
+      "direction": "positive",
+      "antecedent_canonical": "authors_race_diversity_score",
+      "mechanism_canonical": "racial diversity of authors is confounded with progressive values in the author team",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) racial diversity of authors → progressive values in the author team → racial inequality discussion",
+      "claim_uids": [
+        "9fef075254b99593"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 77,
+      "direction": "positive",
+      "antecedent_canonical": "authors_race_diversity_score",
+      "mechanism_canonical": "racial diversity reflects broader collaborative networks that improve funding and publication prospects",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) authors' race diversity score → diverse networks help funding and publication → racial inequality discussion",
+      "claim_uids": [
+        "f0a952df6bff9eef"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 78,
+      "direction": "unclear",
+      "antecedent_canonical": "authors_race_diversity_score / racial composition of author team",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(?) racial composition of the author team → racial inequality discussion",
+      "claim_uids": [
+        "625ff63d5301fc3f"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 79,
+      "direction": "negative",
+      "antecedent_canonical": "authors_race_diversity_score",
+      "mechanism_canonical": "racially diverse author teams may have less shared interest because groups experience racial inequality differently",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) more diverse author group → less shared interest due to different experiences → racial inequality discussion",
+      "claim_uids": [
+        "16b8c6315d5376f9"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 80,
+      "direction": "positive",
+      "antecedent_canonical": "black",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) black authors → racial inequality discussion",
+      "claim_uids": [
+        "2beae5f5c1f7c085",
+        "4655e0ca75455df7",
+        "1d6e2faba94ffa67",
+        "ee25c702ad0da991",
+        "d5b135de0c9b1304"
+      ],
+      "n_claims": 5,
+      "n_respondents": 4
+    },
+    {
+      "chain_id": 81,
+      "direction": "positive",
+      "antecedent_canonical": "black",
+      "mechanism_canonical": "Black authors' identity, lived experience, direct affectedness, positionality, or personal relevance motivates racial inequality research",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) black authors → lived experience and personal relevance motivate racial inequality research → racial inequality discussion",
+      "claim_uids": [
+        "f1c1581bef431a24",
+        "567ef14ca64ce59d",
+        "9ce62987c4e6dd82",
+        "fb40150cf8c2c887",
+        "fe27d3c4c9c2fa01",
+        "675744222cbaa53b",
+        "59fa78713e353c40",
+        "381d52ed85022d95",
+        "981e7bc2c67fbd49",
+        "c58108db21bf1bbe",
+        "e0d854c3925df11c",
+        "4b6d6db6c4d1ab24",
+        "afe033488e675d57",
+        "1ea0c25be1b498bb",
+        "76a8b61f9e310ee0",
+        "b3fa7b2f9ba6542c",
+        "f1a61d0d28484454",
+        "c826644f0acac506",
+        "df8d986eb3856c1c",
+        "db5ac5fc64772d39",
+        "414891033911dd85",
+        "351a7017b44049d1",
+        "cffade7e9e0c0558",
+        "db50c8e6b47452da",
+        "d4221575f09582bf"
+      ],
+      "n_claims": 25,
+      "n_respondents": 25
+    },
+    {
+      "chain_id": 82,
+      "direction": "positive",
+      "antecedent_canonical": "black",
+      "mechanism_canonical": "anti-Black discrimination or Blackness is especially historically prominent, widely discussed, or central to racial inequality discourse",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) black authors → anti-Black discrimination is central or historically prominent in racial inequality discourse → racial inequality discussion",
+      "claim_uids": [
+        "89d9a4290d394ad0",
+        "432054fab12ab4c6",
+        "da5de933a8b4025b",
+        "01d803b35541dc5a",
+        "9c1097b7d33d83f4"
+      ],
+      "n_claims": 5,
+      "n_respondents": 5
+    },
+    {
+      "chain_id": 83,
+      "direction": "positive",
+      "antecedent_canonical": "black",
+      "mechanism_canonical": "Black authors are members of minority groups, and scholars tend to focus on minority groups",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) black → minority group status increases scholarly focus → racial inequality discussion",
+      "claim_uids": [
+        "ffe285b9498eecd8"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 84,
+      "direction": "positive",
+      "antecedent_canonical": "black",
+      "mechanism_canonical": "affirmative action created positions focused on inequalities faced by Black individuals, often filled by Black individuals",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) black → affirmative action positions focus on Black inequality and are often filled by Black individuals → racial inequality discussion",
+      "claim_uids": [
+        "9697c0dd9ef04fec"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 85,
+      "direction": "positive",
+      "antecedent_canonical": "black",
+      "mechanism_canonical": "not all Black authors focus on racial inequalities",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) black authors → not all Black authors focus on racial inequalities → racial inequality discussion",
+      "claim_uids": [
+        "7a523a6646ebbfff"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 86,
+      "direction": "positive",
+      "antecedent_canonical": "black",
+      "mechanism_canonical": "Black authors' racial inequality research is viewed as naturally justified, giving them more credit to do it",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) black authors → research is naturally justified and credited → racial inequality discussion",
+      "claim_uids": [
+        "70e17dfb5187111a"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 87,
+      "direction": "positive",
+      "antecedent_canonical": "black",
+      "mechanism_canonical": "Black authors may be more likely to publish in social science journals",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) higher representation of Black authors → higher probability of social science journal → racial inequality discussion",
+      "claim_uids": [
+        "51a05c15311f4aed"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 88,
+      "direction": "positive",
+      "antecedent_canonical": "black + hispanic_and_other authors",
+      "mechanism_canonical": "racial inequality research is more popular in Western countries where authors from these identities live and produce",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) Black and Hispanic/other authors → racial inequality research is popular in Western countries → racial inequality discussion",
+      "claim_uids": [
+        "024f367982b3cb51"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 89,
+      "direction": "positive",
+      "antecedent_canonical": "black + hispanic_and_other authors",
+      "mechanism_canonical": "social identity and personal relevance motivate Black and Hispanic scholars to discuss racial inequality",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) Black and Hispanic scholars → social identity and personal relevance → racial inequality discussion",
+      "claim_uids": [
+        "c73cf0e2ba08b1c4"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 90,
+      "direction": "positive",
+      "antecedent_canonical": "underrepresented, disadvantaged, or racial-minority authors",
+      "mechanism_canonical": "underrepresented or disadvantaged racial-minority identities increase attention, interest, or intention to investigate racial inequality and social issues",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) underrepresented/disadvantaged racial-minority authors → more attention and motivation toward racial inequality → racial inequality discussion",
+      "claim_uids": [
+        "d417cd7dfbb29d33",
+        "380a537da5c98647",
+        "049d3aafa62b5556",
+        "9ba4b068fa49da49",
+        "f1a25cad8b3549f8"
+      ],
+      "n_claims": 5,
+      "n_respondents": 5
+    },
+    {
+      "chain_id": 91,
+      "direction": "positive",
+      "antecedent_canonical": "hispanic_and_other",
+      "mechanism_canonical": "Hispanic or other minority authors' marginalization, personal relevance, or history of discrimination increases interest in racial inequality",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) Hispanic/other authors → marginalization and discrimination motivate racial inequality research → racial inequality discussion",
+      "claim_uids": [
+        "3292fccd5db10218",
+        "d0f74798d93bca5d",
+        "1957a688d9d2efb4",
+        "731b743137d731ca"
+      ],
+      "n_claims": 4,
+      "n_respondents": 4
+    },
+    {
+      "chain_id": 92,
+      "direction": "negative",
+      "antecedent_canonical": "hispanic_and_other",
+      "mechanism_canonical": "Hispanic authors may avoid racial-inequality topics to avoid feeding stereotypes about their race",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) Hispanic authors → avoid feeding race-based stereotypes → racial inequality discussion",
+      "claim_uids": [
+        "f89725a702eeda60"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 93,
+      "direction": "not_applicable",
+      "antecedent_canonical": "hispanic_and_other",
+      "mechanism_canonical": "motivational or salience mechanisms will not appear in the published literature until later years",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(n/a) Hispanic/Other → mechanism will appear only in later published literature → racial inequality discussion",
+      "claim_uids": [
+        "eae0bc57c8d97cd4"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 94,
+      "direction": "positive",
+      "antecedent_canonical": "asian",
+      "mechanism_canonical": "Asian authors' minority-group status or personal motivation makes racial inequality more salient",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) Asian authors → minority status or personal motivation increases racial inequality discussion",
+      "claim_uids": [
+        "cae36553162a136c",
+        "af2903746a5f4e14"
+      ],
+      "n_claims": 2,
+      "n_respondents": 2
+    },
+    {
+      "chain_id": 95,
+      "direction": "negative",
+      "antecedent_canonical": "asian",
+      "mechanism_canonical": "Asian authors do not care about racial inequality",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) Asian authors → do not care → racial inequality discussion",
+      "claim_uids": [
+        "43224918418b1a6f"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 96,
+      "direction": "unclear",
+      "antecedent_canonical": "asian",
+      "mechanism_canonical": "Asian communities are described as more oriented toward mathematical and engineering sciences and less likely to call out hate",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(?) Asian communities → more mathematical/engineering-oriented and less likely to call out hate → racial inequality discussion",
+      "claim_uids": [
+        "45b79879f5efef1b"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 97,
+      "direction": "unclear",
+      "antecedent_canonical": "authors' race",
+      "mechanism_canonical": "authors' race may influence their field of interest, but the direction is unspecified",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(?) authors' own race → may influence field of interest → racial inequality discussion",
+      "claim_uids": [
+        "6928d7fc594a6c1f",
+        "95e663c93b2a22ad",
+        "fac0bccf9bef33e3"
+      ],
+      "n_claims": 3,
+      "n_respondents": 3
+    },
+    {
+      "chain_id": 98,
+      "direction": "positive",
+      "antecedent_canonical": "authors' own racial identity",
+      "mechanism_canonical": "experiencing racial inequality or personal motivation to reduce it for family, friends, or future generations inspires research",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) one's own racial identity → salience and motivation to reduce racial inequality → racial inequality discussion",
+      "claim_uids": [
+        "c984f109382d41fa",
+        "7809b01a8635db66"
+      ],
+      "n_claims": 2,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 99,
+      "direction": "negative",
+      "antecedent_canonical": "Black Americans as a minority group experiencing pronounced discrimination",
+      "mechanism_canonical": "experiencing the most pronounced discrimination",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) Black Americans as a minority group experiencing pronounced discrimination → racial inequality discussion",
+      "claim_uids": [
+        "d48bdfed8f65eac5"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 100,
+      "direction": "negative",
+      "antecedent_canonical": "white",
+      "mechanism_canonical": "White authors are less exposed to, less affected by, less knowledgeable about, or less motivated by racial inequality",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) white authors → less direct exposure, affectedness, knowledge, or motivation → racial inequality discussion",
+      "claim_uids": [
+        "652a85d35741cdbf",
+        "63a55d5c83df2293",
+        "34f7fd9dda629628",
+        "14928d6037321c8c",
+        "e7ecdeb52912fde7",
+        "bb2f9666767cb67b"
+      ],
+      "n_claims": 6,
+      "n_respondents": 6
+    },
+    {
+      "chain_id": 101,
+      "direction": "negative",
+      "antecedent_canonical": "white",
+      "mechanism_canonical": "majority-white author teams may feel aversion or discomfort claiming space in racial inequality discussions",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) majority-white author teams → discomfort claiming space in racial inequality discussion → racial inequality discussion",
+      "claim_uids": [
+        "07c0e56b5a202534"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 102,
+      "direction": "negative",
+      "antecedent_canonical": "white",
+      "mechanism_canonical": "White researchers are assumed to prioritize racial-inequality or minority-group topics less and focus on other traditional topics",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) white authors → deprioritize racial inequality and focus on traditional topics → racial inequality discussion",
+      "claim_uids": [
+        "98f563080340bf64",
+        "41bf4e1e88b27919",
+        "addef2dcda3fe800"
+      ],
+      "n_claims": 3,
+      "n_respondents": 3
+    },
+    {
+      "chain_id": 103,
+      "direction": "negative",
+      "antecedent_canonical": "white",
+      "mechanism_canonical": "White authors' greater representation in the academy reduces association with racial inequality discussion",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) white authors → greater academy representation reduces association with racial inequality discussion",
+      "claim_uids": [
+        "99519109430ffcf8"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 104,
+      "direction": "positive",
+      "antecedent_canonical": "white",
+      "mechanism_canonical": "White academics may be politically or normatively motivated to be vocal about racial bias",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) white academics → vocal about racial bias → racial inequality discussion",
+      "claim_uids": [
+        "17c9e053dcae635e",
+        "32e2f6c92cf38a22"
+      ],
+      "n_claims": 2,
+      "n_respondents": 2
+    },
+    {
+      "chain_id": 105,
+      "direction": "positive",
+      "antecedent_canonical": "white",
+      "mechanism_canonical": "White researchers are overrepresented in many fields",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) more White researchers → overrepresented in many fields → racial inequality discussion",
+      "claim_uids": [
+        "34252bafdccb4ece"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 106,
+      "direction": "unclear",
+      "antecedent_canonical": "white",
+      "mechanism_canonical": "White authors dominate the author population, so they may numerically appear often on any topic",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(?) white authors → numerical dominance may make them appear on any topic → racial inequality discussion",
+      "claim_uids": [
+        "44ccdd602c001285"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 107,
+      "direction": "positive",
+      "antecedent_canonical": "female",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) female authors → racial inequality discussion",
+      "claim_uids": [
+        "1e841e902bca748a",
+        "7f355365fc03c44f"
+      ],
+      "n_claims": 2,
+      "n_respondents": 2
+    },
+    {
+      "chain_id": 108,
+      "direction": "positive",
+      "antecedent_canonical": "female",
+      "mechanism_canonical": "women or female scholars are more interested in, attracted to, or likely to study inequality topics",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) female authors → more likely to study inequality topics → racial inequality discussion",
+      "claim_uids": [
+        "7d17f5009c1ae230",
+        "242fc252ce8abf8b",
+        "26f6f44abf823b77"
+      ],
+      "n_claims": 3,
+      "n_respondents": 3
+    },
+    {
+      "chain_id": 109,
+      "direction": "positive",
+      "antecedent_canonical": "female",
+      "mechanism_canonical": "women's experiences of discrimination, identity, justice concerns, or prosocial concern make racial inequality salient and shape research agendas",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) female authors → experiences of discrimination and justice concerns motivate racial inequality research → racial inequality discussion",
+      "claim_uids": [
+        "eb351ed96b9d1bdf",
+        "2ea8f2b81dc95401",
+        "24a051db48300a94",
+        "c720eb5fbb00a97d",
+        "d474334dba29ad07",
+        "a5cf4fc59b4eb608",
+        "c39dcbd13fbbff34",
+        "2ef2cdcc8ec32735"
+      ],
+      "n_claims": 8,
+      "n_respondents": 6
+    },
+    {
+      "chain_id": 110,
+      "direction": "negative",
+      "antecedent_canonical": "female",
+      "mechanism_canonical": "female author teams may feel aversion or discomfort claiming space in racial inequality discussions",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) female authors → discomfort claiming space in racial inequality discussion → racial inequality discussion",
+      "claim_uids": [
+        "0cec243280743ea7"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 111,
+      "direction": "not_applicable",
+      "antecedent_canonical": "female/sex composition",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(n/a) sex composition → racial inequality discussion",
+      "claim_uids": [
+        "fb60fb9d9d463783"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 112,
+      "direction": "positive",
+      "antecedent_canonical": "female",
+      "mechanism_canonical": "women are more represented in or more likely to publish in social science fields where racial inequality is studied",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) female authors → more represented in social sciences → racial inequality discussion",
+      "claim_uids": [
+        "3c2edc9a5b99335f",
+        "ed5d0e89898ce500"
+      ],
+      "n_claims": 2,
+      "n_respondents": 2
+    },
+    {
+      "chain_id": 113,
+      "direction": "positive",
+      "antecedent_canonical": "female",
+      "mechanism_canonical": "fields or topics with more women are perceived as less prestigious, less aggressive, and more inclusive",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) women → less aggressive and more inclusive research culture → racial inequality discussion",
+      "claim_uids": [
+        "f67dc4b3647dc998"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 114,
+      "direction": "negative",
+      "antecedent_canonical": "female",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) female authors → racial inequality discussion",
+      "claim_uids": [
+        "a95e5c44b47037a9"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 115,
+      "direction": "positive",
+      "antecedent_canonical": "female conditioned on race",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) females, conditioned on race → racial inequality discussion",
+      "claim_uids": [
+        "3505ad4f7828257e"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 116,
+      "direction": "not_applicable",
+      "antecedent_canonical": "num_authors",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(n/a) number of authors → racial inequality discussion",
+      "claim_uids": [
+        "5ef0594227897ccf"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 117,
+      "direction": "negative",
+      "antecedent_canonical": "num_authors",
+      "mechanism_canonical": "larger author teams are more likely to indicate a natural science paper",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) large number of authors → more likely natural science paper → racial inequality discussion",
+      "claim_uids": [
+        "6f22fda5c7a3d021"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 118,
+      "direction": "negative",
+      "antecedent_canonical": "num_authors",
+      "mechanism_canonical": "racial inequality papers have few authors",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) num authors → racial inequality papers have few authors → racial inequality discussion",
+      "claim_uids": [
+        "ead65f9fea7d3b8e"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 119,
+      "direction": "positive",
+      "antecedent_canonical": "num_authors",
+      "mechanism_canonical": "larger teams may be more interdisciplinary",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) num authors → larger teams may be more interdisciplinary → racial inequality discussion",
+      "claim_uids": [
+        "17a0098904e95edf"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 120,
+      "direction": "positive",
+      "antecedent_canonical": "num_authors",
+      "mechanism_canonical": "larger teams may include broader viewpoints",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) num authors → larger teams may include broader viewpoints → racial inequality discussion",
+      "claim_uids": [
+        "f60f7671e531cced"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 121,
+      "direction": "positive",
+      "antecedent_canonical": "num_authors",
+      "mechanism_canonical": "racial discrimination projects may attract more academic popularity and thus larger author teams",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) number of authors → racial discrimination projects garner academic popularity → racial inequality discussion",
+      "claim_uids": [
+        "802c7807a3f0ff49"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 122,
+      "direction": "positive",
+      "antecedent_canonical": "volume of submissions on the topic",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) volume of submissions on the topic → racial inequality discussion",
+      "claim_uids": [
+        "4f4a4a18045993b2"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 123,
+      "direction": "positive",
+      "antecedent_canonical": "probability that submissions on the topic are accepted",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) probability that such submissions are accepted → racial inequality discussion",
+      "claim_uids": [
+        "09c394a137d3d770"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 124,
+      "direction": "positive",
+      "antecedent_canonical": "journal focus, broad scholarly attention, and public attention",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) journal focus; broad scholarly attention; public attention → racial inequality discussion",
+      "claim_uids": [
+        "f54c3e786e6faaa5"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 125,
+      "direction": "positive",
+      "antecedent_canonical": "race terms in the title",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) race terms in the title → racial inequality discussion",
+      "claim_uids": [
+        "4357a754187145e9"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 126,
+      "direction": "negative",
+      "antecedent_canonical": "permission to collect racial data",
+      "mechanism_canonical": "restrictions on collecting racial data prevent researchers from conducting racial-inequality studies",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(-) restrictions on collecting racial data → prevents racial-inequality studies → racial inequality discussion",
+      "claim_uids": [
+        "26e508bd4abe1e74"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 127,
+      "direction": "positive",
+      "antecedent_canonical": "individuals",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) individuals → racial inequality discussion",
+      "claim_uids": [
+        "5c860984054d9b6f"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 128,
+      "direction": "positive",
+      "antecedent_canonical": "interactions",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) interactions → racial inequality discussion",
+      "claim_uids": [
+        "f57a686e5c320d2b"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 129,
+      "direction": "positive",
+      "antecedent_canonical": "gender discourse",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) issue in gender discourse → racial inequality discussion",
+      "claim_uids": [
+        "16e58e60fae17e2e"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 130,
+      "direction": "positive",
+      "antecedent_canonical": "researchers working on equity-related issues",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) researchers who work on equity-related issues → racial inequality discussion",
+      "claim_uids": [
+        "2e55811dbf4059b1"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 131,
+      "direction": "not_applicable",
+      "antecedent_canonical": "public interest",
+      "mechanism_canonical": "foundational work has already been done",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(n/a) public interest → foundational work already done → racial inequality discussion",
+      "claim_uids": [
+        "223648e9244b98ce"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 132,
+      "direction": "positive",
+      "antecedent_canonical": "new academic work in the field",
+      "mechanism_canonical": "new work poses new questions to answer",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) new work in the field → poses new questions to answer → racial inequality discussion",
+      "claim_uids": [
+        "23d7461c0b8e5964"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 133,
+      "direction": "positive",
+      "antecedent_canonical": "scholars who focus on racial diversity",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) scholars who focus on racial diversity → racial inequality discussion",
+      "claim_uids": [
+        "476ff2792599c389"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 134,
+      "direction": "positive",
+      "antecedent_canonical": "racially homogeneous author team",
+      "mechanism_canonical": "the group focusing on racial inequality is concentrated",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) authors with a single racial characteristic → group focusing on racial inequality is concentrated → racial inequality discussion",
+      "claim_uids": [
+        "f4e1a5ab8690e83d"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 135,
+      "direction": "positive",
+      "antecedent_canonical": "special issues or editorial calls on racial inequality",
+      "mechanism_canonical": "special issues increase submission and acceptance of racial inequality papers",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) special issues/editorial calls → increase submission and acceptance → racial inequality discussion",
+      "claim_uids": [
+        "3d6f8b8b5b7b09dc"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 136,
+      "direction": "positive",
+      "antecedent_canonical": "all flagged features",
+      "mechanism_canonical": "active pursuit of a topic is a stronger motive than avoidance of other topics",
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(+) all flagged features → active pursuit of topic is stronger motive → racial inequality discussion",
+      "claim_uids": [
+        "2b3f68840da26888"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    },
+    {
+      "chain_id": 137,
+      "direction": "unclear",
+      "antecedent_canonical": "trend flow",
+      "mechanism_canonical": null,
+      "outcome_canonical": "racial inequality discussion",
+      "representative_label": "(?) flow of trends → racial inequality discussion",
+      "claim_uids": [
+        "cc6ea2e3e3d6d851"
+      ],
+      "n_claims": 1,
+      "n_respondents": 1
+    }
+  ]
+}

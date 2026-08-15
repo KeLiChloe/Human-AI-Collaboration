@@ -21,9 +21,10 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-TEXTUAL_DIR = Path(__file__).resolve().parent
-ROOT = TEXTUAL_DIR.parent
-for p in (TEXTUAL_DIR, ROOT):
+LENGTH_DIR = Path(__file__).resolve().parent
+TEXTUAL_DIR = LENGTH_DIR.parent  # textual_analysis/
+ROOT = TEXTUAL_DIR.parent  # survey_april/
+for p in (LENGTH_DIR, TEXTUAL_DIR, ROOT):
     if str(p) not in sys.path:
         sys.path.insert(0, str(p))
 from stats_utils import bootstrap_mean_ci, p_value_welch_ttest
@@ -56,7 +57,7 @@ from viz_style import (
 
 LENGTH_WELCH_THREE_GROUP_FOOTNOTE = (
     "Two-sided Welch t-test on pairwise group mean word count "
-    "(PhD Students vs Experts, PhD Students vs GenAI, Experts vs GenAI).",
+    "(PhD Students vs Senior Scientists, PhD Students vs GenAI, Senior Scientists vs GenAI).",
     SIG_LEVEL_LEGEND,
 )
 LENGTH_WELCH_HUMAN_GENAI_FOOTNOTE = (
@@ -65,12 +66,8 @@ LENGTH_WELCH_HUMAN_GENAI_FOOTNOTE = (
 )
 
 
-CSV_PATH = Path(
-    "All_Participants_All_Questions.csv"
-)
-OUT_DIR = Path(
-    "textual_analysis/outputs"
-)
+CSV_PATH = ROOT / "All_Participants_All_Questions.csv"
+OUT_DIR = LENGTH_DIR / "outputs"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 OUT_SUMMARY = OUT_DIR / "length_theoretical_explanation_summary.csv"
@@ -79,7 +76,7 @@ OUT_GENDER = OUT_DIR / "length_qgender4_by_group.png"
 OUT_RACE_COLLAPSED = OUT_DIR / "length_qrace4_by_group_human_genai.png"
 OUT_GENDER_COLLAPSED = OUT_DIR / "length_qgender4_by_group_human_genai.png"
 
-GROUP_MAP = {"0": "PhD Students", "1": "Experts", "2": "GenAI"}
+GROUP_MAP = {"0": "PhD Students", "1": "Senior Scientists", "2": "GenAI"}
 
 FIGSIZE_THREE_GROUP = (8.2, 9.4)
 FIGSIZE_COLLAPSED = (7.6, 8.8)
@@ -135,7 +132,7 @@ def summarize(arr: np.ndarray) -> dict[str, float]:
 
 def collapse_lengths(lengths_by_group: dict[str, list[float]]) -> dict[str, list[float]]:
     return {
-        "Human": lengths_by_group["PhD Students"] + lengths_by_group["Experts"],
+        "Human": lengths_by_group["PhD Students"] + lengths_by_group["Senior Scientists"],
         "GenAI": lengths_by_group["GenAI"],
     }
 
@@ -143,16 +140,16 @@ def collapse_lengths(lengths_by_group: dict[str, list[float]]) -> dict[str, list
 def three_group_comparisons(lengths_by_group: dict[str, np.ndarray]) -> list[tuple[str, float]]:
     return [
         (
-            comparison_pair_label("PhD Students", "Experts"),
-            p_value_welch_ttest(lengths_by_group["PhD Students"], lengths_by_group["Experts"]),
+            comparison_pair_label("PhD Students", "Senior Scientists"),
+            p_value_welch_ttest(lengths_by_group["PhD Students"], lengths_by_group["Senior Scientists"]),
         ),
         (
             comparison_pair_label("PhD Students", "GenAI"),
             p_value_welch_ttest(lengths_by_group["PhD Students"], lengths_by_group["GenAI"]),
         ),
         (
-            comparison_pair_label("Experts", "GenAI"),
-            p_value_welch_ttest(lengths_by_group["Experts"], lengths_by_group["GenAI"]),
+            comparison_pair_label("Senior Scientists", "GenAI"),
+            p_value_welch_ttest(lengths_by_group["Senior Scientists"], lengths_by_group["GenAI"]),
         ),
     ]
 
@@ -248,7 +245,7 @@ def main() -> None:
     headers = rows[0]
     data = rows[1:]
 
-    idx_group = find_col(headers, "student_0, expert_1, genAI_2")
+    idx_group = find_col(headers, "student_0, senior_1, genAI_2")
     idx_name = find_col(headers, "What is your full name?")
     idx_r4 = find_col(headers, Q_RACE_4_COL)
     idx_g4 = find_col(headers, Q_GENDER_4_COL)

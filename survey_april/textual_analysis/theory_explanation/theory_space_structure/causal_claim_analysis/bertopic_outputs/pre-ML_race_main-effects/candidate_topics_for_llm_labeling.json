@@ -1,0 +1,963 @@
+{
+  "topics": [
+    {
+      "topic_id": 1,
+      "is_outlier_topic": false,
+      "n_claims": 32,
+      "n_respondents": 27,
+      "top_terms": "social; social science; science; racial social; journals; science journals; science racial; journals racial; sciences; social sciences",
+      "examples": [
+        {
+          "participant": "Irmak Dai",
+          "group": "student",
+          "claim_text": "Being in social science has a positive effect on the likelihood that a paper discusses racial inequality.",
+          "supporting_text": "Social science should also have a positive affect.",
+          "antecedent_text": "Social science",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Alexis Du",
+          "group": "student",
+          "claim_text": "Broad interdisciplinary natural science journals may be more likely to include papers discussing racial inequality because they include interdisciplinary papers on racial concerns.",
+          "supporting_text": "major \"natural science\" journals such as Nature, Science, PNAS, allow for broad interdisciplinary papers to be included within the journal, which would then concern many topics within the domain of racial concerns.",
+          "antecedent_text": "major \"natural science\" journals such as Nature, Science, PNAS",
+          "mechanism_text": "allow for broad interdisciplinary papers to be included within the journal, which would then concern many topics within the domain of racial concerns"
+        },
+        {
+          "participant": "Ecem Yucesoy",
+          "group": "student",
+          "claim_text": "Social science papers are more likely than natural science or engineering and technology papers to discuss racial inequality.",
+          "supporting_text": "A social science paper is more likely to talk about racial inequality rather than natural science or engineering and technology papers.",
+          "antecedent_text": "A social science paper",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Yuhan Liu",
+          "group": "student",
+          "claim_text": "Papers in social science are more likely to discuss racial inequality because racial inequality is a social science research topic.",
+          "supporting_text": "Third, race inequality is a research topic in social science, which is strongly correlated. Most race inequality papers are associated with a tag of social science, even if it uses computational or mathematical methods.",
+          "antecedent_text": "social science",
+          "mechanism_text": "race inequality is a research topic in social science"
+        },
+        {
+          "participant": "Skyler Yumeng Chen",
+          "group": "student",
+          "claim_text": "Papers in social science are more likely to discuss racial inequality because there should be more work on racial inequality in social science.",
+          "supporting_text": "the sign is positive because there should be more work on racial inequality in social science",
+          "antecedent_text": "social_science",
+          "mechanism_text": "there should be more work on racial inequality in social science"
+        },
+        {
+          "participant": "Qingyao Sun",
+          "group": "student",
+          "claim_text": "Papers in Social Science are more likely to discuss racial inequality.",
+          "supporting_text": "Racial inequality is a top in Social Science",
+          "antecedent_text": "Social Science",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Anmol Gupta",
+          "group": "student",
+          "claim_text": "Papers in social science journals are more likely to discuss racial inequality because the field is most focused on these issues.",
+          "supporting_text": "social_science, which I think will be most predictive as it's the field most focused on these issues",
+          "antecedent_text": "social_science",
+          "mechanism_text": "it's the field most focused on these issues"
+        },
+        {
+          "participant": "Chen Kai Huang",
+          "group": "student",
+          "claim_text": "Social science papers are more likely or more important for discussing racial inequality because social science is a broad umbrella field that includes discussion of racial inequality.",
+          "supporting_text": "Social_science is a broad field that includes discussion of racial inequality, so i ranked it as most important because it is an umbrella term.",
+          "antecedent_text": "Social_science",
+          "mechanism_text": "is a broad field that includes discussion of racial inequality; it is an umbrella term"
+        },
+        {
+          "participant": "Alexis Du",
+          "group": "student",
+          "claim_text": "Social science journals are more likely to discuss racial inequality because social science fields are fundamentally concerned with social harmony, equality, morality, and individual differences.",
+          "supporting_text": "Positive association to social_science due to the nature of the field itself. This should also be very intuitive as social science related fields are fundamentally involved with the question of social harmony, equality, morality and interindividual differences.",
+          "antecedent_text": "social_science",
+          "mechanism_text": "social science related fields are fundamentally involved with the question of social harmony, equality, morality and interindividual differences"
+        },
+        {
+          "participant": "Vansh Gupta",
+          "group": "student",
+          "claim_text": "Papers in social science disciplines are more likely to discuss racial inequality because racial inequality is a social phenomenon and social science fields engage in inequality research.",
+          "supporting_text": "Racial inequality is a social phenomenon, so the discipline of a paper is likely important and hence social_science would be a predictor. Papers published in journals covering sociology, political science, economics and psychology are probably very likely to engage in inequality research.",
+          "antecedent_text": "social_science",
+          "mechanism_text": "Racial inequality is a social phenomenon, so the discipline of a paper is likely important; social science fields engage in inequality research."
+        },
+        {
+          "participant": "Byounghoon Koh",
+          "group": "student",
+          "claim_text": "Social science journals are more likely to include racial inequality papers because racial inequality is at home in social science and scholars are likely to submit there.",
+          "supporting_text": "Social science is the home of racial inequality topic. It is likely that scholars will submit to social science journals.",
+          "antecedent_text": "Social science",
+          "mechanism_text": "Social science is the home of racial inequality topic"
+        },
+        {
+          "participant": "Peihong Liu",
+          "group": "student",
+          "claim_text": "Papers from social science fields have a higher probability of discussing racial inequality because racial inequality is a socio-economic topic.",
+          "supporting_text": "racial inequality is also a socio-economic topic and naturally papers from fields in social science have higher probability to discuss it",
+          "antecedent_text": "fields in social science",
+          "mechanism_text": "racial inequality is also a socio-economic topic"
+        },
+        {
+          "participant": "Zhongyuan Liang",
+          "group": "student",
+          "claim_text": "Papers in the social sciences are more likely to be in this type of racial fairness work.",
+          "supporting_text": "I also think the social sciences are the main area for this type of work.",
+          "antecedent_text": "the social sciences",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Junghyo Sun",
+          "group": "student",
+          "claim_text": "Papers in social science journals are more likely to discuss racial inequality because these journals attract more submissions on inequality topics.",
+          "supporting_text": "social science journals is a particularly receptive venue for inequality scholarship. These outlets not only attract more submissions on such topics",
+          "antecedent_text": "social science journals",
+          "mechanism_text": "attract more submissions on such topics"
+        },
+        {
+          "participant": "Maria Hademer",
+          "group": "student",
+          "claim_text": "Papers in social science are more likely to discuss racial inequality.",
+          "supporting_text": "social science is the most likely field for this research hence high positive predictive power",
+          "antecedent_text": "social science",
+          "mechanism_text": "social science is the most likely field for this research"
+        },
+        {
+          "participant": "Junghyo Sun",
+          "group": "student",
+          "claim_text": "Papers in social science journals are more likely to discuss racial inequality because these journals have greater editorial openness to publishing inequality work.",
+          "supporting_text": "social science journals is a particularly receptive venue for inequality scholarship. These outlets not only attract more submissions on such topics but also show greater editorial openness to publishing this work",
+          "antecedent_text": "social science journals",
+          "mechanism_text": "greater editorial openness to publishing this work"
+        },
+        {
+          "participant": "Xilan Zhang",
+          "group": "student",
+          "claim_text": "Papers in social science are more likely to discuss racial inequality because social science disciplines naturally and inherently build themselves around discussions of social issues.",
+          "supporting_text": "social science naturally and inherently build themselves on these discussions",
+          "antecedent_text": "social science",
+          "mechanism_text": "naturally and inherently build themselves on these discussions"
+        },
+        {
+          "participant": "Ruijia Zhang",
+          "group": "student",
+          "claim_text": "Papers that highlight race terms in the title are more likely to be associated with racial inequality.",
+          "supporting_text": "If they highlight race terms in the title, they are more likely to be associated with race inequality to me.",
+          "antecedent_text": "highlight race terms in the title",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Weiyuan Li",
+          "group": "student",
+          "claim_text": "A paper about social science is more likely to discuss racial inequality.",
+          "supporting_text": "If this paper is about social science, it's more likely to discuss the race inequality issue.",
+          "antecedent_text": "this paper is about social science",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Gregory Lanzalotto",
+          "group": "student",
+          "claim_text": "Social science papers are more likely to study racial inequality.",
+          "supporting_text": "social science papers are going to actually study this issue",
+          "antecedent_text": "social science papers",
+          "mechanism_text": "unspecified"
+        }
+      ]
+    },
+    {
+      "topic_id": 0,
+      "is_outlier_topic": false,
+      "n_claims": 46,
+      "n_respondents": 25,
+      "top_terms": "news; attention; academic; prior; higher; recent; academic attention; increasing; racial prior; attention racial",
+      "examples": [
+        {
+          "participant": "Ruijia Zhang",
+          "group": "student",
+          "claim_text": "News coverage of inequality is relevant to racial inequality because racial inequality appears more in news than in papers.",
+          "supporting_text": "The last one is the news coverage of inequality. There could be many different types of inequalities in the news. Also, I think there will be more race inequality appearing on news than papers.",
+          "antecedent_text": "the news coverage of inequality",
+          "mechanism_text": "there will be more race inequality appearing on news than papers"
+        },
+        {
+          "participant": "Junghyo Sun",
+          "group": "student",
+          "claim_text": "Higher recent academic attention to inequality increases the likelihood that a paper discusses racial inequality by making journals more inclined to publish related submissions.",
+          "supporting_text": "paper_inequality_mentions_3_years captures the salience of the inequality topic. When a topic gets more attention, journals are more likely to receive related submissions and more inclined to publish them",
+          "antecedent_text": "paper_inequality_mentions_3_years",
+          "mechanism_text": "captures the salience of the inequality topic; journals are more inclined to publish them"
+        },
+        {
+          "participant": "Vansh Gupta",
+          "group": "student",
+          "claim_text": "Higher recent academic mentions of inequality are more likely to lead papers to focus on racial inequality by capturing broader intellectual trends that motivate authors to write relevant research.",
+          "supporting_text": "Finally, the time-lagged news and academic inequality mentions both capture the broader societal and intellectual trends. This can motivate authors willing to write relevant research to focus on racial inequality.",
+          "antecedent_text": "time-lagged academic inequality mentions",
+          "mechanism_text": "capture the broader intellectual trends; motivate authors willing to write relevant research to focus on racial inequality"
+        },
+        {
+          "participant": "Yuhan Liu",
+          "group": "student",
+          "claim_text": "More news mentions in the past three years indicate a higher likelihood that the paper discusses racial inequality.",
+          "supporting_text": "First, news and papers mentioned in the past three years are a strong indicator of the main question discussed in the paper. They show the ongoing research interest of the author, and a higher percentage of race inequality citations indicates a higher likelihood of this topic.",
+          "antecedent_text": "news mentioned in the past three years",
+          "mechanism_text": "They show the ongoing research interest of the author"
+        },
+        {
+          "participant": "Ecem Yucesoy",
+          "group": "student",
+          "claim_text": "News mentions of inequality in the past three years are a weaker positive indicator that academics may conduct research on racial inequality.",
+          "supporting_text": "inequality being mentioned in the news for the past 3 years is a less strong indicator that academics could be interested in conducting research in this topic.",
+          "antecedent_text": "inequality being mentioned in the news for the past 3 years",
+          "mechanism_text": "academics could be interested in conducting research in this topic"
+        },
+        {
+          "participant": "Naja Pape",
+          "group": "student",
+          "claim_text": "Events in the news such as Black Lives Matter may influence authors to view racial inequality as a topic worthy of their time, increasing the likelihood that they discuss it.",
+          "supporting_text": "events in the news (e.g. Black Lives Matter) and trends in other academic papers presented at conferences and published in journals that the authors read may naturally influence whether they consider it to be a topic worthy of their time",
+          "antecedent_text": "events in the news (e.g. Black Lives Matter)",
+          "mechanism_text": "influence whether they consider it to be a topic worthy of their time"
+        },
+        {
+          "participant": "Naja Pape",
+          "group": "student",
+          "claim_text": "Trends in other academic papers presented at conferences and published in journals that authors read may influence authors to view racial inequality as a topic worthy of their time, increasing the likelihood that they discuss it.",
+          "supporting_text": "events in the news (e.g. Black Lives Matter) and trends in other academic papers presented at conferences and published in journals that the authors read may naturally influence whether they consider it to be a topic worthy of their time",
+          "antecedent_text": "trends in other academic papers presented at conferences and published in journals that the authors read",
+          "mechanism_text": "influence whether they consider it to be a topic worthy of their time"
+        },
+        {
+          "participant": "Weiyuan Li",
+          "group": "student",
+          "claim_text": "A higher number of papers about inequality in the last three years is positively correlated with the likelihood of discussing racial inequality.",
+          "supporting_text": "The total number of paper about inequality in the last 3 years may also have a positive correlation with our prediction, as it captures the trends of discussing any form of inequality in academia.",
+          "antecedent_text": "The total number of paper about inequality in the last 3 years",
+          "mechanism_text": "it captures the trends of discussing any form of inequality in academia"
+        },
+        {
+          "participant": "Junghyo Sun",
+          "group": "student",
+          "claim_text": "Higher recent media attention to inequality increases the likelihood that a paper discusses racial inequality by signaling broader relevance to editors and potentially increasing acceptance likelihood.",
+          "supporting_text": "news_inequality_mentions_3_years reflects public attention to inequality. Media coverage may stimulate scholarly interest in the topic, thereby increasing submission rates, while simultaneously signaling to editors the broader relevance of such work, potentially enhancing acceptance likelihood",
+          "antecedent_text": "news_inequality_mentions_3_years",
+          "mechanism_text": "signaling to editors the broader relevance of such work, potentially enhancing acceptance likelihood"
+        },
+        {
+          "participant": "Gregory Lanzalotto",
+          "group": "student",
+          "claim_text": "Academic papers on racial inequality are likely to cause more academic papers on the topic.",
+          "supporting_text": "academic papers are likely to cause more academic papers on the topic.",
+          "antecedent_text": "academic papers",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Junghyo Sun",
+          "group": "student",
+          "claim_text": "Higher recent media attention to inequality increases the likelihood that a paper discusses racial inequality by stimulating scholarly interest and increasing submission rates.",
+          "supporting_text": "news_inequality_mentions_3_years reflects public attention to inequality. Media coverage may stimulate scholarly interest in the topic, thereby increasing submission rates",
+          "antecedent_text": "news_inequality_mentions_3_years",
+          "mechanism_text": "Media coverage may stimulate scholarly interest in the topic, thereby increasing submission rates"
+        },
+        {
+          "participant": "Junghyo Sun",
+          "group": "student",
+          "claim_text": "Higher recent academic attention to inequality increases the likelihood that a paper discusses racial inequality by increasing related submissions to journals.",
+          "supporting_text": "paper_inequality_mentions_3_years captures the salience of the inequality topic. When a topic gets more attention, journals are more likely to receive related submissions",
+          "antecedent_text": "paper_inequality_mentions_3_years",
+          "mechanism_text": "captures the salience of the inequality topic; journals are more likely to receive related submissions"
+        },
+        {
+          "participant": "Ecem Yucesoy",
+          "group": "student",
+          "claim_text": "Prior academic mentions of inequality in the past three years are a positive indicator that a paper will discuss racial inequality because the topic is getting attention in academia.",
+          "supporting_text": "If academic papers mention inequality in the past 3 years, that could be an indicator that the topic is getting attention in academia.",
+          "antecedent_text": "academic papers mention inequality in the past 3 years",
+          "mechanism_text": "the topic is getting attention in academia"
+        },
+        {
+          "participant": "Junghyo Sun",
+          "group": "student",
+          "claim_text": "A greater volume of journal submissions on racial inequality increases the likelihood that a published paper discusses racial inequality.",
+          "supporting_text": "the likelihood that the likelihood of a published paper discusses racial inequality is driven by two mechanisms: the volume of submissions journals receives on the topic",
+          "antecedent_text": "the volume of submissions journals receives on the topic",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Chenjun Li",
+          "group": "student",
+          "claim_text": "When academic circles are already discussing inequality, new papers are more likely to discuss racial inequality because they follow that momentum and because data and public interest are already present.",
+          "supporting_text": "if the news and academic circles are already discussing inequality, new papers are more likely to follow that momentum because the data and public interest are already there",
+          "antecedent_text": "academic circles",
+          "mechanism_text": "new papers are more likely to follow that momentum because the data and public interest are already there"
+        },
+        {
+          "participant": "Robin Vigerbaeck",
+          "group": "student",
+          "claim_text": "When racial inequality issues are more prominent in papers, people are more likely to find racial inequality interesting to research.",
+          "supporting_text": "When these issues are more prominent in news and papers, it is more likely that people get published in this space and that people find it interesting to research.",
+          "antecedent_text": "more prominent in papers",
+          "mechanism_text": "people find it interesting to research"
+        },
+        {
+          "participant": "Robin Vigerbaeck",
+          "group": "student",
+          "claim_text": "When racial inequality issues are more prominent in papers, papers on racial inequality are more likely to be published.",
+          "supporting_text": "When these issues are more prominent in news and papers, it is more likely that people get published in this space and that people find it interesting to research.",
+          "antecedent_text": "more prominent in papers",
+          "mechanism_text": "it is more likely that people get published in this space"
+        },
+        {
+          "participant": "Skyler Yumeng Chen",
+          "group": "student",
+          "claim_text": "More prior academic discussion of inequality increases the likelihood that future papers discuss racial inequality because it signals what the field or journal values, leading future researchers to spend more effort on related topics.",
+          "supporting_text": "paper_inequality_mentions_3_years, I think it is also an important factor because it serves as a signal about what the field/journal values, and thus future researchers may spend more effort on researching the related topic",
+          "antecedent_text": "paper_inequality_mentions_3_years",
+          "mechanism_text": "it serves as a signal about what the field/journal values, and thus future researchers may spend more effort on researching the related topic"
+        },
+        {
+          "participant": "Robin Vigerbaeck",
+          "group": "student",
+          "claim_text": "When racial inequality issues are more prominent in the news, papers on racial inequality are more likely to be published.",
+          "supporting_text": "When these issues are more prominent in news and papers, it is more likely that people get published in this space and that people find it interesting to research.",
+          "antecedent_text": "more prominent in news",
+          "mechanism_text": "it is more likely that people get published in this space"
+        },
+        {
+          "participant": "Christina A. Nguyen",
+          "group": "student",
+          "claim_text": "News inequality mentions in the last three years could predict whether papers discuss racial inequality because racial inequality is politically charged.",
+          "supporting_text": "Racial inequality is more politically charged, so news inequality mentions in the last 3 years could be predictive.",
+          "antecedent_text": "news inequality mentions in the last 3 years",
+          "mechanism_text": "Racial inequality is more politically charged"
+        }
+      ]
+    },
+    {
+      "topic_id": 2,
+      "is_outlier_topic": false,
+      "n_claims": 32,
+      "n_respondents": 18,
+      "top_terms": "black; authors; people; groups; racial black; asian; black authors; black people; positively; scholars",
+      "examples": [
+        {
+          "participant": "Robin Vigerbaeck",
+          "group": "student",
+          "claim_text": "Women are more likely to be interested in racial inequality because they have more exposure to gender inequality and gender and racial inequalities are structurally similar.",
+          "supporting_text": "Because women have more direct and indirect exposure to gender inequality, and gender and racial inequalities share similarities in a structural sense, they are more likely to also be interested in racial inequality.",
+          "antecedent_text": "women",
+          "mechanism_text": "women have more direct and indirect exposure to gender inequality, and gender and racial inequalities share similarities in a structural sense"
+        },
+        {
+          "participant": "Leyun Feng",
+          "group": "student",
+          "claim_text": "Female people may talk about racial inequality more.",
+          "supporting_text": "female people and black people may talk about racial inequality more as well",
+          "antecedent_text": "female people",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Mert Kobas",
+          "group": "student",
+          "claim_text": "Authors from Black and Hispanic/other groups may be more likely to write papers discussing racial inequality because these groups are historically disadvantaged and may be more interested in racial inequality research.",
+          "supporting_text": "Also, since these groups are historically disadventagous groups, the authors from these groups might interest in racial inequality research more than other groups.",
+          "antecedent_text": "these groups",
+          "mechanism_text": "since these groups are historically disadventagous groups, the authors from these groups might interest in racial inequality research more than other groups"
+        },
+        {
+          "participant": "Mert Kobas",
+          "group": "student",
+          "claim_text": "The proportions of Black and Hispanic/other authors may be positively related to papers discussing racial inequality because racial inequality research is more popular in Western countries where authors from these identities live and produce research.",
+          "supporting_text": "black and hispanic_and_other variables might be positively related since racial inequality research is more popular in the western countries where authors from these identities live and produce.",
+          "antecedent_text": "black and hispanic_and_other variables",
+          "mechanism_text": "racial inequality research is more popular in the western countries where authors from these identities live and produce"
+        },
+        {
+          "participant": "Abhinandan Dalal",
+          "group": "student",
+          "claim_text": "Author sex does not have a significant effect on whether a paper discusses racial inequality.",
+          "supporting_text": "I do not think sex, number of authors, computer science papers and historical trends in academic racial discussions have a significant effect on whether a paper discusses race.",
+          "antecedent_text": "sex",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Abhinandan Dalal",
+          "group": "student",
+          "claim_text": "White academics are likely to discuss racial inequality because they are generally vocal about racial biases, though less so than Black academics.",
+          "supporting_text": "Members of the white community in academia are generally vocal about racial biases, and are dwarfed generally by their black peers.",
+          "antecedent_text": "Members of the white community in academia",
+          "mechanism_text": "generally vocal about racial biases"
+        },
+        {
+          "participant": "Gregory Lanzalotto",
+          "group": "student",
+          "claim_text": "Academics are more likely to study racial inequality when it is an issue in the gender discourse.",
+          "supporting_text": "academics seem more likely to study it when it is an issue in the gender discourse.",
+          "antecedent_text": "it is an issue in the gender discourse",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Weiyuan Li",
+          "group": "student",
+          "claim_text": "Papers with a female author are more likely to discuss racial inequality because the authors are more likely to be into inequality topics.",
+          "supporting_text": "If there is female author in the paper, it's also more likely that the authors are into inequality topics.",
+          "antecedent_text": "female author in the paper",
+          "mechanism_text": "the authors are into inequality topics"
+        },
+        {
+          "participant": "Weiyuan Li",
+          "group": "student",
+          "claim_text": "Papers with Black researchers are more likely to discuss racial inequality because Black researchers are assumed to be more interested in the topic.",
+          "supporting_text": "I assume that black researchers will be more interested in this topic",
+          "antecedent_text": "black researchers",
+          "mechanism_text": "more interested in this topic"
+        },
+        {
+          "participant": "Xilan Zhang",
+          "group": "student",
+          "claim_text": "Papers by underrepresented groups, specifically Black people in the case of racial inequality, are more likely to discuss racial inequality because these groups pay more attention to inequality issues.",
+          "supporting_text": "underrepresented groups will pay more attention to inequality issues, and this case, black people and racial inequality issues",
+          "antecedent_text": "underrepresented groups",
+          "mechanism_text": "pay more attention to inequality issues"
+        },
+        {
+          "participant": "Byounghoon Koh",
+          "group": "student",
+          "claim_text": "Black scholars are more likely to publish about racial inequality because racial issues are more relatable to them.",
+          "supporting_text": "For black scholars, racial issues are more relatable. This will lead to more publication likelihood of racial inequality.",
+          "antecedent_text": "black scholars",
+          "mechanism_text": "racial issues are more relatable"
+        },
+        {
+          "participant": "Leyun Feng",
+          "group": "student",
+          "claim_text": "Authors' race may influence the probability that a paper discusses racial inequality.",
+          "supporting_text": "Authors' race and news mentioned may also have some influence on the probability that a paper discusses racial inequality.",
+          "antecedent_text": "Authors' race",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Dingzhe Leng",
+          "group": "student",
+          "claim_text": "Papers with Black authors are more likely to focus on racial inequality because researchers' lived experience and social identity shape their research agendas, and marginalized scholars are more likely to study structures of their own marginalization.",
+          "supporting_text": "The \"Black\" identifier is ranked as the primary predictor based on the assumption that a researcher’s lived experience and social identity—often referred to as positionality—are the strongest drivers of their research agenda; scholars from marginalized groups are theoretically the most likely to dedicate their intellectual labor to investigating the structures of their own marginalization.",
+          "antecedent_text": "The \"Black\" identifier",
+          "mechanism_text": "a researcher’s lived experience and social identity—often referred to as positionality—are the strongest drivers of their research agenda; scholars from marginalized groups are theoretically the most likely to dedicate their intellectual labor to investigating the structures of their own marginalization"
+        },
+        {
+          "participant": "Vansh Gupta",
+          "group": "student",
+          "claim_text": "Papers with Black authors are more likely to discuss racial inequality because scholar identities shape research agendas.",
+          "supporting_text": "Since scholar identities shape their research agenda, Black and female authors are likely to explore inequality, and as a consequence, racial inequality within their research.",
+          "antecedent_text": "Black authors",
+          "mechanism_text": "scholar identities shape their research agenda"
+        },
+        {
+          "participant": "Junghyo Sun",
+          "group": "student",
+          "claim_text": "The Black author-share variable is expected to increase the likelihood that a paper discusses racial inequality because Black racial inequality is perceived as one of the most prominently discussed forms of racial inequality globally.",
+          "supporting_text": "Second, I focus on Black, which I perceive as one of the most prominently discussed forms of racial inequality globally.",
+          "antecedent_text": "Black",
+          "mechanism_text": "one of the most prominently discussed forms of racial inequality globally"
+        },
+        {
+          "participant": "Gavin Jared Bala",
+          "group": "student",
+          "claim_text": "A higher estimated share of Black authors is likely to be most correlated with a paper discussing racial inequality.",
+          "supporting_text": "probably the most correlated would be the estimated share of Black authors, because racial discrimination against them is most discussed and studied and an increased interest in studying the phenomenon seems plausible",
+          "antecedent_text": "the estimated share of Black authors",
+          "mechanism_text": "racial discrimination against them is most discussed and studied and an increased interest in studying the phenomenon seems plausible"
+        },
+        {
+          "participant": "Qingyao Sun",
+          "group": "student",
+          "claim_text": "Papers by Black people are more likely to discuss racial inequality because Black people are victims of racial discrimination.",
+          "supporting_text": "Black people are the victims of racial discrimination",
+          "antecedent_text": "Black people",
+          "mechanism_text": "are the victims of racial discrimination"
+        },
+        {
+          "participant": "Abhinandan Dalal",
+          "group": "student",
+          "claim_text": "The number of authors does not have a significant effect on whether a paper discusses racial inequality.",
+          "supporting_text": "I do not think sex, number of authors, computer science papers and historical trends in academic racial discussions have a significant effect on whether a paper discusses race.",
+          "antecedent_text": "number of authors",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Zhongyuan Liang",
+          "group": "student",
+          "claim_text": "Having women researchers is positively associated with work on racial fairness.",
+          "supporting_text": "I personally know many women doing research in racial fairness as well.",
+          "antecedent_text": "many women doing research",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Leyun Feng",
+          "group": "student",
+          "claim_text": "Black people may talk about racial inequality more.",
+          "supporting_text": "female people and black people may talk about racial inequality more as well",
+          "antecedent_text": "black people",
+          "mechanism_text": "unspecified"
+        }
+      ]
+    },
+    {
+      "topic_id": 4,
+      "is_outlier_topic": false,
+      "n_claims": 16,
+      "n_respondents": 13,
+      "top_terms": "diverse; author; diverse author; teams; author teams; racially diverse; racially; diversity; racial racially; teams racial",
+      "examples": [
+        {
+          "participant": "Gavin Jared Bala",
+          "group": "student",
+          "claim_text": "A more racially diverse author team is likely to predict that a paper discusses racial inequality.",
+          "supporting_text": "A more racially diverse team of authors seems likely to predict that the authors are interested in investigating racial inequality as well (considering the company they are keeping for writing the paper).",
+          "antecedent_text": "A more racially diverse team of authors",
+          "mechanism_text": "the authors are interested in investigating racial inequality as well (considering the company they are keeping for writing the paper)"
+        },
+        {
+          "participant": "Alexis Du",
+          "group": "student",
+          "claim_text": "More racially diverse author teams are more likely to discuss racial inequality because a diverse coauthor environment indicates a diverse origin or employment environment that makes racial concerns more salient to authors.",
+          "supporting_text": "Authors' own personal racial diversity could also play a large role, mainly due to the fact that a larger more diverse co-author environment, is indicative of a diverse environment in either the country of origin, or country of employment. This surely influences the saliency of racial concerns towards an author.",
+          "antecedent_text": "Authors' own personal racial diversity",
+          "mechanism_text": "a larger more diverse co-author environment, is indicative of a diverse environment in either the country of origin, or country of employment. This surely influences the saliency of racial concerns towards an author"
+        },
+        {
+          "participant": "Anmol Gupta",
+          "group": "student",
+          "claim_text": "Racially diverse author teams are more likely to discuss racial inequality because they bring heightened sensitivity or focus to these questions.",
+          "supporting_text": "author_race_score which I think will capture the idea that racially diverse teams likely will bring heightened sensitivity or focus to these questions",
+          "antecedent_text": "author_race_score",
+          "mechanism_text": "racially diverse teams likely will bring heightened sensitivity or focus to these questions"
+        },
+        {
+          "participant": "Skyler Yumeng Chen",
+          "group": "student",
+          "claim_text": "More racially diverse author teams are more likely to discuss racial inequality because they may engage more in conversations related to racial inequality.",
+          "supporting_text": "authors_race_diversity_score could be an important factor, since a more diverse racial composition of teams may be more likely to engage in conversations related to racial inequality",
+          "antecedent_text": "authors_race_diversity_score",
+          "mechanism_text": "a more diverse racial composition of teams may be more likely to engage in conversations related to racial inequality"
+        },
+        {
+          "participant": "Skyler Yumeng Chen",
+          "group": "student",
+          "claim_text": "More racially diverse author teams are more likely to discuss racial inequality because they have more diverse views on the topic, which could spark future collaboration.",
+          "supporting_text": "They also have more diverse view on this topic, which could also spark future collaboration",
+          "antecedent_text": "authors_race_diversity_score",
+          "mechanism_text": "more diverse view on this topic, which could also spark future collaboration"
+        },
+        {
+          "participant": "Dingzhe Leng",
+          "group": "student",
+          "claim_text": "More racially diverse author teams are more likely to produce papers focusing on racial inequality because diverse collaboration increases the salience of race through exposure to cross-cultural frictions.",
+          "supporting_text": "The \"Author Race Diversity Score\" and \"Country Race Diversity Score\" follow as secondary environmental factors. The assumption is that diverse collaborative teams and heterogeneous national contexts increase the \"salience\" of race, making it a more frequent subject of academic scrutiny through constant exposure to cross-cultural frictions.",
+          "antecedent_text": "The \"Author Race Diversity Score\"",
+          "mechanism_text": "diverse collaborative teams increase the \"salience\" of race, making it a more frequent subject of academic scrutiny through constant exposure to cross-cultural frictions"
+        },
+        {
+          "participant": "Maria Hademer",
+          "group": "student",
+          "claim_text": "More racially diverse author teams are more likely to work on or discuss racial inequality.",
+          "supporting_text": "The opposite should then hold for more racially diverse author teams",
+          "antecedent_text": "more racially diverse author teams",
+          "mechanism_text": "The opposite should then hold"
+        },
+        {
+          "participant": "Gregory Lanzalotto",
+          "group": "student",
+          "claim_text": "More diverse author teams may be associated with papers discussing racial inequality because author teams may want diversity to signal that they are not part of the problem discussed in the article, making the effect cyclic.",
+          "supporting_text": "author teams might be wanting to have more diverse author teams in order to signal that they are not part of the problem that their article is discussing. This makes the effect cyclic.",
+          "antecedent_text": "more diverse author teams",
+          "mechanism_text": "in order to signal that they are not part of the problem that their article is discussing"
+        },
+        {
+          "participant": "Irmak Dai",
+          "group": "student",
+          "claim_text": "Author racial diversity is positively related to papers discussing racial inequality because people who want to do research in this area are more likely to form diverse author teams.",
+          "supporting_text": "Authors race diversity matters because if you want to do research in this area you would be more likely to form a diverse author team.",
+          "antecedent_text": "Authors race diversity",
+          "mechanism_text": "if you want to do research in this area you would be more likely to form a diverse author team"
+        },
+        {
+          "participant": "Christina A. Nguyen",
+          "group": "student",
+          "claim_text": "Greater diversity of the author group could encourage research on racial inequality.",
+          "supporting_text": "The diversity of the author group and country racial composition could similarly encourage research in racial inequality.",
+          "antecedent_text": "The diversity of the author group",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Irmak Dai",
+          "group": "student",
+          "claim_text": "Having a diverse university or research-group community makes people more likely to be interested in research on racial inequality.",
+          "supporting_text": "if you have a diverse community at university/ research group, you would be more likely to be interested in such research.",
+          "antecedent_text": "a diverse community at university/ research group",
+          "mechanism_text": "you would be more likely to be interested in such research"
+        },
+        {
+          "participant": "Chenjun Li",
+          "group": "student",
+          "claim_text": "Papers with diverse author teams are more likely to focus on racial inequality because people study what they experience.",
+          "supporting_text": "Being in the social sciences or having a diverse team of authors naturally increases the focus on structural issues like racial inequality. Essentially, people study what they experience and what their field is built to analyze.",
+          "antecedent_text": "having a diverse team of authors",
+          "mechanism_text": "people study what they experience"
+        },
+        {
+          "participant": "Mert Kobas",
+          "group": "student",
+          "claim_text": "Author racial diversity is positively correlated with papers discussing racial inequality because this research requires contacting people from different groups, making diverse author groups more common.",
+          "supporting_text": "The variable of authors_race_diversity_score has the same logic behind. Since this research mostly requires to contact people from different groups, the diverse group of authors might be more common, so there is a positive correlation.",
+          "antecedent_text": "authors_race_diversity_score",
+          "mechanism_text": "this research mostly requires to contact people from different groups, the diverse group of authors might be more common"
+        },
+        {
+          "participant": "Chen Kai Huang",
+          "group": "student",
+          "claim_text": "Author race diversity score is positively related to racial inequality discussion because it is a race-related metric.",
+          "supporting_text": "author_race_disverstiy_score implies a metric regarding race, so I considerd it as important.",
+          "antecedent_text": "author_race_disverstiy_score",
+          "mechanism_text": "implies a metric regarding race"
+        },
+        {
+          "participant": "Yuhan Liu",
+          "group": "student",
+          "claim_text": "Greater author racial diversity is positively correlated with discussing racial inequality because authors from diverse backgrounds are more likely to be aware of the subject.",
+          "supporting_text": "Second, country's race diversity and author's race diversity are also correlated with the topic. If authors come from diverse background, they are more likely to be aware of this subject.",
+          "antecedent_text": "author's race diversity",
+          "mechanism_text": "If authors come from diverse background, they are more likely to be aware of this subject"
+        },
+        {
+          "participant": "Gregory Lanzalotto",
+          "group": "student",
+          "claim_text": "More racially diverse authors may be more likely to write papers on racial inequality because their own experiences make them more interested in the topic.",
+          "supporting_text": "more diverse authors might be more interested in this topic due to their own experience with racial inequality.",
+          "antecedent_text": "more diverse authors",
+          "mechanism_text": "more interested in this topic due to their own experience with racial inequality"
+        }
+      ]
+    },
+    {
+      "topic_id": 3,
+      "is_outlier_topic": false,
+      "n_claims": 17,
+      "n_respondents": 11,
+      "top_terms": "natural; natural science; science; engineering; engineeringtechnology; racial engineering; racial natural; racial fields; science engineeringtechnology; technology",
+      "examples": [
+        {
+          "participant": "Byounghoon Koh",
+          "group": "student",
+          "claim_text": "Natural science journals are less likely to include racial inequality studies because natural science rarely discusses inequality.",
+          "supporting_text": "Natural science rarely discuss about inequality, and it will be rare to see racial inequality studies in Natural science field.",
+          "antecedent_text": "Natural science",
+          "mechanism_text": "Natural science rarely discuss about inequality"
+        },
+        {
+          "participant": "Weiyuan Li",
+          "group": "student",
+          "claim_text": "Natural science papers are less likely to discuss racial inequality.",
+          "supporting_text": "this is a natural science paper and thus less likely that it talks about race inequality",
+          "antecedent_text": "a natural science paper",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Abhinandan Dalal",
+          "group": "student",
+          "claim_text": "A paper being in natural science makes it much less likely to discuss racial inequality because racial inequality is viewed as a social science topic outside natural science purview.",
+          "supporting_text": "Natural science is a strong negative predictor, as racial inequality is generally considered a social science topic, and not considered under natural science purview. Hence a paper being in natural science is a strong negative cause of it discussing race.",
+          "antecedent_text": "Natural science",
+          "mechanism_text": "racial inequality is generally considered a social science topic, and not considered under natural science purview"
+        },
+        {
+          "participant": "Jiuyao Lu",
+          "group": "student",
+          "claim_text": "Natural science papers are very unlikely to study racial inequality.",
+          "supporting_text": "natural_science and engineering_and_technology papers are very unlikely to study racial inequality",
+          "antecedent_text": "natural_science",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Gregory Lanzalotto",
+          "group": "student",
+          "claim_text": "Natural science papers are less likely to focus directly on racial inequality.",
+          "supporting_text": "natural sciences (and again engineering to a lesser degree), do not focus on racial inequality directly.",
+          "antecedent_text": "natural sciences",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Weiyuan Li",
+          "group": "student",
+          "claim_text": "Papers with a large number of authors are less likely to discuss racial inequality because they are more likely to be natural science papers.",
+          "supporting_text": "If the number of authors is large, it is more likely this is a natural science paper and thus less likely that it talks about race inequality.",
+          "antecedent_text": "the number of authors is large",
+          "mechanism_text": "it is more likely this is a natural science paper"
+        },
+        {
+          "participant": "Abhinandan Dalal",
+          "group": "student",
+          "claim_text": "Computer science papers do not have a significant effect on whether a paper discusses racial inequality.",
+          "supporting_text": "I do not think sex, number of authors, computer science papers and historical trends in academic racial discussions have a significant effect on whether a paper discusses race.",
+          "antecedent_text": "computer science papers",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Zeyuan Li",
+          "group": "student",
+          "claim_text": "Papers in natural science are less likely to discuss racial inequality because racial inequality is a human issue rather than a physical one.",
+          "supporting_text": "I believe racial inequality is a human issue rather than a physical one, so it does not relate closely to natural science.",
+          "antecedent_text": "natural science",
+          "mechanism_text": "racial inequality is a human issue rather than a physical one, so it does not relate closely to natural science"
+        },
+        {
+          "participant": "Alexis Du",
+          "group": "student",
+          "claim_text": "Papers in natural science or engineering/technology journals are less likely to discuss racial inequality because those fields tend to address topics unrelated to racial concerns.",
+          "supporting_text": "Negative predictive effects for natural and hard sciences (natural_science, engineering_and_technology). I believe that the predictive effect should be negative as natural sciences such as mathematics and physics, tackle topics that are almost completely unrelated to racial concerns, as they are purely interested in abstract and mathematical theories that help advance their own field of study.",
+          "antecedent_text": "natural and hard sciences (natural_science, engineering_and_technology)",
+          "mechanism_text": "natural sciences such as mathematics and physics tackle topics that are almost completely unrelated to racial concerns and focus on abstract and mathematical theories that advance their own field"
+        },
+        {
+          "participant": "Jiuyao Lu",
+          "group": "student",
+          "claim_text": "Engineering and technology papers are very unlikely to study racial inequality.",
+          "supporting_text": "natural_science and engineering_and_technology papers are very unlikely to study racial inequality",
+          "antecedent_text": "engineering_and_technology",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Skyler Yumeng Chen",
+          "group": "student",
+          "claim_text": "Papers in natural science and engineering/technology are less likely to discuss racial inequality because these fields typically focus on technical or physical problems.",
+          "supporting_text": "I assigned negative signs to natural_science and engineering_and_technology since these areas typically focus on technical or physical problems, making these papers less likely to discuss racial inequality",
+          "antecedent_text": "natural_science and engineering_and_technology",
+          "mechanism_text": "these areas typically focus on technical or physical problems"
+        },
+        {
+          "participant": "Gregory Lanzalotto",
+          "group": "student",
+          "claim_text": "Engineering papers are less likely to focus directly on racial inequality, though to a lesser degree than natural sciences.",
+          "supporting_text": "engineering to a lesser degree), do not focus on racial inequality directly.",
+          "antecedent_text": "engineering to a lesser degree",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Qingyao Sun",
+          "group": "student",
+          "claim_text": "Papers in Engineering and Technology are less likely to discuss racial inequality.",
+          "supporting_text": "not Engineering and Technology",
+          "antecedent_text": "Engineering and Technology",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Xilan Zhang",
+          "group": "student",
+          "claim_text": "Papers in engineering are less likely to discuss racial inequality because engineering is contrary to disciplines that build themselves around social issue discussions.",
+          "supporting_text": "social science naturally and inherently build themselves on these discussions, in contrary to engineering",
+          "antecedent_text": "engineering",
+          "mechanism_text": "in contrary to engineering"
+        },
+        {
+          "participant": "Peihong Liu",
+          "group": "student",
+          "claim_text": "Engineering and technology and natural science topics are less likely to cover racial inequality.",
+          "supporting_text": "engineering and technology and natural science topics are less likely to are less likely to cover topics such as inequality",
+          "antecedent_text": "engineering and technology and natural science topics",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Skyler Yumeng Chen",
+          "group": "student",
+          "claim_text": "Papers in natural science and engineering/technology are less likely to discuss racial inequality because those fields may reward research on racial inequality less, leading to less effort and less relevant work.",
+          "supporting_text": "natural_science and engineering_and_technology field fields may reward research on racial inequality less, leading to less effort spent on these topics and thus less relevant work",
+          "antecedent_text": "natural_science and engineering_and_technology field fields",
+          "mechanism_text": "may reward research on racial inequality less, leading to less effort spent on these topics and thus less relevant work"
+        },
+        {
+          "participant": "Skyler Yumeng Chen",
+          "group": "student",
+          "claim_text": "Natural science is expected to be an especially strong negative predictor of discussing racial inequality compared with engineering/technology because engineering/technology has somewhat more academic research.",
+          "supporting_text": "I expect natural_science to be a even stronger negative predictor becuase I personally think there will be a bit more academic research in the engineering_and_technology field, and so it wouldn't be as strong a negative predictor",
+          "antecedent_text": "natural_science",
+          "mechanism_text": "there will be a bit more academic research in the engineering_and_technology field, and so it wouldn't be as strong a negative predictor"
+        }
+      ]
+    },
+    {
+      "topic_id": 5,
+      "is_outlier_topic": false,
+      "n_claims": 12,
+      "n_respondents": 11,
+      "top_terms": "countries; country; diverse; authors; diverse countries; country racial; diversity; racial diversity; authors countries; different",
+      "examples": [
+        {
+          "participant": "Irmak Dai",
+          "group": "student",
+          "claim_text": "Country racial diversity affects the probability that a paper discusses racial inequality by helping people develop interest in examining their background.",
+          "supporting_text": "Country race diversity also affects the probability by helping people develop interest examining their background.",
+          "antecedent_text": "Country race diversity",
+          "mechanism_text": "helping people develop interest examining their background"
+        },
+        {
+          "participant": "Byounghoon Koh",
+          "group": "student",
+          "claim_text": "When the country is diverse, scholars are less likely to find common ground on inequality topics because of different experiences, reducing discussion of racial inequality topics.",
+          "supporting_text": "When the country is diverse, it is less likely that scholars will be able to find common ground on inequality topics due to different experience.",
+          "antecedent_text": "the country is diverse",
+          "mechanism_text": "less likely that scholars will be able to find common ground on inequality topics due to different experience"
+        },
+        {
+          "participant": "Junghyo Sun",
+          "group": "student",
+          "claim_text": "Higher country racial diversity increases the likelihood that a paper discusses racial inequality because individuals in more racially diverse environments are more exposed to discussions of racial inequality, reflecting individual-level interest.",
+          "supporting_text": "I also include two additional variables to capture individual-level interest in racial inequality. First, I consider country_race_diversity_score, as individuals in more racially diverse environments are likely to be more exposed to discussions of racial inequality.",
+          "antecedent_text": "country_race_diversity_score",
+          "mechanism_text": "individual-level interest in racial inequality; individuals in more racially diverse environments are likely to be more exposed to discussions of racial inequality"
+        },
+        {
+          "participant": "Alexis Du",
+          "group": "student",
+          "claim_text": "Greater racial or ethnic diversity in authors' countries is positively related to papers discussing racial inequality because diverse countries have larger ethnic or racial social issues.",
+          "supporting_text": "Countries that are highly diverse in ethnic population, will have much larger ethnic or racial social issues due to the nature of it's inequality structure",
+          "antecedent_text": "Countries that are highly diverse in ethnic population",
+          "mechanism_text": "will have much larger ethnic or racial social issues due to the nature of it's inequality structure"
+        },
+        {
+          "participant": "Christina A. Nguyen",
+          "group": "student",
+          "claim_text": "Country racial composition could encourage research on racial inequality.",
+          "supporting_text": "The diversity of the author group and country racial composition could similarly encourage research in racial inequality.",
+          "antecedent_text": "country racial composition",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Dingzhe Leng",
+          "group": "student",
+          "claim_text": "Greater racial diversity in authors' country contexts is more likely to lead papers to focus on racial inequality because heterogeneous national contexts increase the salience of race through exposure to cross-cultural frictions.",
+          "supporting_text": "The \"Author Race Diversity Score\" and \"Country Race Diversity Score\" follow as secondary environmental factors. The assumption is that diverse collaborative teams and heterogeneous national contexts increase the \"salience\" of race, making it a more frequent subject of academic scrutiny through constant exposure to cross-cultural frictions.",
+          "antecedent_text": "Country Race Diversity Score",
+          "mechanism_text": "heterogeneous national contexts increase the \"salience\" of race, making it a more frequent subject of academic scrutiny through constant exposure to cross-cultural frictions"
+        },
+        {
+          "participant": "Alexis Du",
+          "group": "student",
+          "claim_text": "Highly homogeneous countries are less likely to produce racial inequality papers because they tend to focus on social issues within a collective racial ethnicity rather than racial issues.",
+          "supporting_text": "highly homogenous countries often focus more on social issues within a collective racial ethnicity (Japan, China, South Korea).",
+          "antecedent_text": "highly homogenous countries",
+          "mechanism_text": "often focus more on social issues within a collective racial ethnicity"
+        },
+        {
+          "participant": "Abhinandan Dalal",
+          "group": "student",
+          "claim_text": "Authors from more racially diverse countries are more likely to write about racial inequality, while authors from less diverse countries are less likely, because diverse countries expose authors to racial inequality and make historically privileged academic communities vocal about these issues.",
+          "supporting_text": "If a country is relatively diverse, like the US, UK, countries in the EU, etc., then the historically privileged community in academia is likely to be vocal about these issues. Whereas if an author coming from a less diverse country, predominated by one race (historically marginalized or not, say African countries, India, China, Korea, Poland, etc.) is likely to have fewer exposure to the perils of racial inequality, and hence less likely to write about it.",
+          "antecedent_text": "a country is relatively diverse",
+          "mechanism_text": "the historically privileged community in academia is likely to be vocal about these issues; authors from less diverse countries are likely to have fewer exposure to the perils of racial inequality"
+        },
+        {
+          "participant": "Jiuyao Lu",
+          "group": "student",
+          "claim_text": "Authors from countries with racially diverse populations are more likely to study racial inequality.",
+          "supporting_text": "Authors from countries with diverse races are more likely to study racial inequality",
+          "antecedent_text": "Authors from countries with diverse races",
+          "mechanism_text": "unspecified"
+        },
+        {
+          "participant": "Peihong Liu",
+          "group": "student",
+          "claim_text": "Authors from countries with a dominant race are expected to resonate with and contribute more to racial inequality topics because racial inequality often hurts minorities.",
+          "supporting_text": "racial inequality often hurts minorities, therefore I would expect authors from countries with dominant race to resonate and contribute more to this topic",
+          "antecedent_text": "authors from countries with dominant race",
+          "mechanism_text": "racial inequality often hurts minorities; resonate and contribute more to this topic"
+        },
+        {
+          "participant": "Naja Pape",
+          "group": "student",
+          "claim_text": "Researchers coming from different countries may be more likely to discuss racial inequality because they may be more open to experiences involving being foreign, working abroad, or interacting with international students of different racial backgrounds.",
+          "supporting_text": "if these researchers come from different countries they may also be more open towards the experience of being a foreigner, working in a foreign (non home country) country or dealing with international students of different racial backgrounds - all factors that could contribute to a strenghtened interest in racial inequality",
+          "antecedent_text": "if these researchers come from different countries",
+          "mechanism_text": "they may also be more open towards the experience of being a foreigner, working in a foreign (non home country) country or dealing with international students of different racial backgrounds"
+        },
+        {
+          "participant": "Yuhan Liu",
+          "group": "student",
+          "claim_text": "Greater country racial diversity is more strongly correlated with discussing racial inequality because growing-up background and original culture are strongly connected with authors.",
+          "supporting_text": "Country's race diversity is stronger correlated, as the growing-up background and original culture are a stronger connection with authors.",
+          "antecedent_text": "Country's race diversity",
+          "mechanism_text": "the growing-up background and original culture are a stronger connection with authors"
+        }
+      ]
+    },
+    {
+      "topic_id": 6,
+      "is_outlier_topic": false,
+      "n_claims": 7,
+      "n_respondents": 5,
+      "top_terms": "white; white authors; topic; authors; space leading; place comfortable; aversion; white researchers; topic place; authors negatively",
+      "examples": [
+        {
+          "participant": "Robin Vigerbaeck",
+          "group": "student",
+          "claim_text": "White authors are less likely to research racial inequality because they are less likely to have direct or indirect exposure to racism.",
+          "supporting_text": "Since white people are less likely have been exposed to racism directly and indirectly, they are less likely to be interested in researching racial inequality.",
+          "antecedent_text": "white people",
+          "mechanism_text": "less likely have been exposed to racism directly and indirectly"
+        },
+        {
+          "participant": "Maria Hademer",
+          "group": "student",
+          "claim_text": "Female authors or author teams, especially perhaps when white, are less likely to work on or discuss racial inequality because they may have an aversion to the topic, may not see it as their place, or may not be comfortable claiming space in the discussion, leading to lower topic fit.",
+          "supporting_text": "there may be an aversion from majority white author teams and especially female authors/author teams (perhaps moderated by \"white\") to work on racial inequality as they may not see it as their place/may not be comfortable claiming space in this discussion leading to lower topic fit which would make these negative predictors",
+          "antecedent_text": "female authors/author teams (perhaps moderated by \"white\")",
+          "mechanism_text": "aversion; may not see it as their place/may not be comfortable claiming space in this discussion leading to lower topic fit"
+        },
+        {
+          "participant": "Anmol Gupta",
+          "group": "student",
+          "claim_text": "A higher proportion of White authors is negatively associated with discussing racial inequality because of assumptions about what topics White researchers prioritize or deprioritize.",
+          "supporting_text": "white to be negatively associated partly because of assumptions about what topics white researchers prioritize (or deprioritize)",
+          "antecedent_text": "white",
+          "mechanism_text": "assumptions about what topics white researchers prioritize (or deprioritize)"
+        },
+        {
+          "participant": "Christina A. Nguyen",
+          "group": "student",
+          "claim_text": "White authors might be less likely to pursue racial inequality as a research topic because they are less affected by racial inequality.",
+          "supporting_text": "White might be less likely because they are less affected by racial inequality and while they recognize it might not pursue it as a research topic.",
+          "antecedent_text": "White",
+          "mechanism_text": "they are less affected by racial inequality and while they recognize it might not pursue it as a research topic"
+        },
+        {
+          "participant": "Abhinandan Dalal",
+          "group": "student",
+          "claim_text": "Hispanic authors may be less likely to write about racial discrimination because they may avoid feeding stereotypes originating from their race.",
+          "supporting_text": "Hispanic authors are between the black and Asian communities, and it is likely that a Hispanic author may avoid writing about racial discrimination to avoid feeding into stereotypes that originate from their race.",
+          "antecedent_text": "Hispanic authors",
+          "mechanism_text": "to avoid feeding into stereotypes that originate from their race"
+        },
+        {
+          "participant": "Maria Hademer",
+          "group": "student",
+          "claim_text": "Majority white author teams are less likely to work on or discuss racial inequality because they may have an aversion to the topic, may not see it as their place, or may not be comfortable claiming space in the discussion, leading to lower topic fit.",
+          "supporting_text": "there may be an aversion from majority white author teams and especially female authors/author teams (perhaps moderated by \"white\") to work on racial inequality as they may not see it as their place/may not be comfortable claiming space in this discussion leading to lower topic fit which would make these negative predictors",
+          "antecedent_text": "majority white author teams",
+          "mechanism_text": "aversion; may not see it as their place/may not be comfortable claiming space in this discussion leading to lower topic fit"
+        },
+        {
+          "participant": "Anmol Gupta",
+          "group": "student",
+          "claim_text": "A higher proportion of White authors is negatively associated with discussing racial inequality because of the greater representation of White researchers in the academy.",
+          "supporting_text": "white to be negatively associated partly because of assumptions about what topics white researchers prioritize (or deprioritize) but also because of the greater representation of the racial group in the academy",
+          "antecedent_text": "white",
+          "mechanism_text": "the greater representation of the racial group in the academy"
+        }
+      ]
+    }
+  ]
+}

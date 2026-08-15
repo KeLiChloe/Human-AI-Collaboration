@@ -66,7 +66,7 @@ ASSESSMENT_PLOT_YMAX = 11.8
 
 
 CSV_PATH = ROOT / "All_Participants_All_Questions.csv"
-OUT_DIR = ROOT / "textual_analysis" / "outputs"
+OUT_DIR = ASSESSMENT_DIR / "outputs"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 TASK_SPECS = [

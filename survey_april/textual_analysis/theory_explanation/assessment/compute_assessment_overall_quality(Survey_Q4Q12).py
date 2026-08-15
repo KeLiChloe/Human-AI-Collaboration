@@ -1,6 +1,7 @@
 import pandas as pd
+from pathlib import Path
 
-INPUT_CSV = "All_Participants_All_Questions.csv"
+INPUT_CSV = Path(__file__).resolve().parents[3] / "All_Participants_All_Questions.csv"
 
 
 def normalize_header(text: str) -> str:

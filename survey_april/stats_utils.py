@@ -3,7 +3,17 @@
 from __future__ import annotations
 
 import numpy as np
-from scipy.stats import ttest_ind, ttest_rel
+from scipy.stats import binomtest, ttest_ind, ttest_rel
+
+
+def binary_split_membership(*, in_high_group: bool, want_high: bool) -> bool:
+    """Membership for a single boolean moderator (e.g. has background vs not)."""
+    return in_high_group if want_high else not in_high_group
+
+
+def gender_split_membership(*, is_female: bool, is_male: bool, want_female: bool) -> bool:
+    """Membership for Female-vs-Male splits (two distinct indicators, not one flag)."""
+    return is_female if want_female else is_male
 
 
 def bootstrap_mean_ci(
@@ -106,3 +116,71 @@ def p_value_paired_ttest_pairs(pairs: list[tuple[float, float]]) -> float:
     pre = [p[0] for p in pairs]
     post = [p[1] for p in pairs]
     return p_value_paired_ttest(pre, post)
+
+
+def p_value_paired_one_sided_post_lt_pre(pre, post) -> float:
+    """H1: post < pre (e.g. lower within-group distance post-data)."""
+    arr_pre = np.asarray(pre, dtype=float)
+    arr_post = np.asarray(post, dtype=float)
+    mask = np.isfinite(arr_pre) & np.isfinite(arr_post)
+    arr_pre = arr_pre[mask]
+    arr_post = arr_post[mask]
+    if len(arr_pre) < 2:
+        return np.nan
+    try:
+        return float(
+            ttest_rel(arr_pre, arr_post, alternative="greater").pvalue
+        )
+    except Exception:
+        return np.nan
+
+
+def p_value_exact_mcnemar_two_sided(n_b: int, n_c: int) -> float:
+    """Two-sided exact McNemar test on discordant pair counts (b, c).
+
+    Under H0, discordant outcomes are equiprobable: b ~ Binomial(b+c, 1/2).
+    Returns 1.0 when there are no discordant pairs.
+    """
+    b = int(n_b)
+    c = int(n_c)
+    n = b + c
+    if n <= 0:
+        return 1.0
+    try:
+        return float(binomtest(b, n=n, p=0.5, alternative="two-sided").pvalue)
+    except Exception:
+        return np.nan
+
+
+def p_value_paired_permutation_two_sided(
+    pre,
+    post,
+    *,
+    n_perm: int = 5000,
+    seed: int = 42,
+) -> float:
+    """Two-sided paired permutation test on mean(post − pre).
+
+    Under H0, randomly flips the sign of each paired difference (equivalent to
+    swapping pre/post within pairs). Uses add-one smoothing:
+    p = (#{|δ_perm| ≥ |δ_obs|} + 1) / (n_perm + 1).
+    """
+    arr_pre = np.asarray(pre, dtype=float)
+    arr_post = np.asarray(post, dtype=float)
+    mask = np.isfinite(arr_pre) & np.isfinite(arr_post)
+    arr_pre = arr_pre[mask]
+    arr_post = arr_post[mask]
+    n = len(arr_pre)
+    if n < 1:
+        return np.nan
+    diffs = arr_post - arr_pre
+    obs = float(np.mean(diffs))
+    if not np.isfinite(obs):
+        return np.nan
+    rng = np.random.default_rng(seed)
+    extreme = 0
+    for _ in range(n_perm):
+        signs = rng.choice(np.array([-1.0, 1.0]), size=n)
+        if abs(float(np.mean(signs * diffs))) >= abs(obs) - 1e-15:
+            extreme += 1
+    return (extreme + 1) / (n_perm + 1)

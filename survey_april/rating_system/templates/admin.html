@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Researcher export · Theory Rating</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css?v=20260721b" />
+</head>
+<body>
+  <div class="page admin-page">
+    <header class="topbar">
+      <div class="brand">
+        <p class="eyebrow">Researcher only</p>
+        <h1>Ratings export</h1>
+      </div>
+      <a class="ghost-btn" href="/">← Rater UI</a>
+    </header>
+
+    <section class="login-card admin-card">
+      <h2>Unlock exports</h2>
+      <p class="lede">
+        Raters never see source or author names. This page shows them for analysis.
+        Use the admin token set in <code>ADMIN_TOKEN</code>.
+      </p>
+      <form id="admin-form">
+        <label for="token">Admin token</label>
+        <input id="token" name="token" type="password" autocomplete="current-password" required />
+        <label for="seed-filter">Seed filter (optional)</label>
+        <input id="seed-filter" name="seed" type="text" placeholder="Leave blank for all seeds" />
+        <div class="admin-actions">
+          <button type="submit" class="primary-btn">Load sessions</button>
+          <button type="button" class="ghost-btn" id="csv-btn">Download all CSV</button>
+          <button type="button" class="ghost-btn danger-btn" id="clear-all-btn">Clear all data</button>
+        </div>
+      </form>
+      <p class="hint" id="admin-error" hidden></p>
+    </section>
+
+    <section class="admin-results" id="results" hidden>
+      <h2>Sessions</h2>
+      <div class="table-wrap">
+        <table class="admin-table" id="sessions-table">
+          <thead>
+            <tr>
+              <th>Identifier</th>
+              <th>Seed</th>
+              <th>Progress</th>
+              <th>Submitted</th>
+              <th>Updated</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="hint">
+        Use <strong>Download CSV</strong> on a row for that submission only.
+        <strong>Clear session</strong> deletes that rater’s data (ratings + assignment).
+        Top buttons: download all (optional seed filter), or wipe the entire database.
+      </p>
+    </section>
+  </div>
+
+  <script src="/static/admin.js"></script>
+</body>
+</html>

@@ -43,9 +43,15 @@ You must follow these rules:
 
 4. Preserve style and write as theory, not as a reaction to ML.
    - Preserve the participant’s vocabulary, hedging, and level of specificity.
-   - Do not turn the response into bullet points.
    - Do not add citations.
    - Write the output as a standalone theoretical explanation.
+   - Present refined_theory as a complete theory in its own right—not as a revision of
+     an earlier theory. Strip revision/update framing so a reader cannot tell whether
+     the text is a revised or updated version. Do not use (and remove if present)
+     labels or meta-commentary such as “updated,” “revised,” “modified,” “new,”
+     “post-ML,” “after seeing the evidence,” “I now think,” “I revise my earlier view,”
+     or “my updated theory is….” Keep the substantive theoretical claims, but state
+     them directly as one would state a theory.
    - The ML evidence block is provided only as background for your reconstruction task. Do not introduce ML findings into refined_theory unless the participant explicitly incorporated them into their own theoretical reasoning.
 
 5. Scope.
@@ -68,7 +74,7 @@ REFINED_THEORY_SCHEMA: Dict[str, Any] = {
         "refined_theory": {
             "type": "string",
             "description": (
-                "The reconstructed complete post-ML theory as one narrative paragraphs. "
+                "The reconstructed complete theory as one narrative paragraph. "
             ),
         },
         "status": {
@@ -150,7 +156,8 @@ Participant's post-ML revision response:
 {post_ml_response}
 
 Now reconstruct the participant's complete post-ML theoretical explanation according to the rules above.
-Write refined_theory as a standalone theoretical explanation.
+Write refined_theory as a standalone theoretical explanation: state the theory directly,
+with no revise/update framing—a reader should not be able to tell that it is a revised version.
 If the participant indicated they do not want to revise, return the pre-ML theory verbatim (status: no_change).
 """.strip()
 
@@ -348,7 +355,7 @@ def run(config: Dict[str, str], script_description: str) -> None:
     parser.add_argument(
         "--exclude-genai",
         action="store_true",
-        help="If set, skip rows where student_0, expert_1, genAI_2 == 2.",
+        help="If set, skip rows where student_0, senior_1, genAI_2 == 2.",
     )
     args = parser.parse_args()
 
@@ -382,7 +389,7 @@ def run(config: Dict[str, str], script_description: str) -> None:
         for key in ["pre_col", "post_col"]
     }
 
-    participant_type_col = "student_0, expert_1, genAI_2"
+    participant_type_col = "student_0, senior_1, genAI_2"
     if participant_type_col not in df.columns:
         participant_type_col = None
 

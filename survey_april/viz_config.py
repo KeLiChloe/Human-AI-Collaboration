@@ -2,12 +2,14 @@
 
 # Group colors (humans + GenAI)
 GROUP_COLORS = {
-    "expert": "#F4A261",
+    "senior": "#F4A261",
     "phd": "#7DB7E8",
     "genai": "#66BB6A",
+    "topic": "#B07BC9",  # soft purple, matched to other pastel group colors
+    "non_topic": "#5D7A8C",
 }
 
-# Collapsed Humans (PhD + Experts); alternatives: sage #6B8E7F, teal #4A8B8B, taupe #8B7D6B
+# Collapsed Humans (PhD + Senior Scientists); alternatives: sage #6B8E7F, teal #4A8B8B, taupe #8B7D6B
 COLOR_AGG_HUMAN = "lightcoral"
 
 # Sign-accuracy colors
